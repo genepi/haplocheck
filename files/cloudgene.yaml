@@ -1,0 +1,34 @@
+name: mt-desk
+description: A quality control tool for mtDNA data
+version: v0.1
+ 
+workflow:
+
+  setups:
+    - name: Input Validation
+      jar: imputationserver.jar
+      classname: genepi.contamination.steps.InputValidation
+      
+  inputs:
+
+    - id: input
+      description: Input Files (SAM/BAM/CRAM)
+      type: local-folder
+    
+    - id: reference
+      description: Reference FASTA
+      type: local-file
+      visible: true
+      
+    - id: level
+      description: Minor Detection Level
+      type: text
+      visible: true 
+      value: 0.01  
+      
+  outputs:  
+   
+    - id: output
+      description: Results
+      type: local-folder
+      download: true
