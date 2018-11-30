@@ -11,7 +11,6 @@ import contamination.objects.Sample;
 import core.SampleFile;
 import genepi.hadoop.common.WorkflowContext;
 import genepi.hadoop.common.WorkflowStep;
-import genepi.io.FileUtil;
 import importer.VcfImporter;
 import phylotree.Phylotree;
 import phylotree.PhylotreeManager;
@@ -20,8 +19,6 @@ public class ContaminationStep extends WorkflowStep {
 
 	@Override
 	public boolean run(WorkflowContext context) {
-		context.beginTask("Calculate Contamination");
-
 		return detectContamination(context);
 
 	}
@@ -55,7 +52,7 @@ public class ContaminationStep extends WorkflowStep {
 			Contamination contamination = new Contamination();
 			context.updateTask("Detect Contamination...", WorkflowContext.RUNNING);
 			contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples(), output);
-			context.endTask("Done ", WorkflowContext.OK);
+			context.endTask("Execution successful.", WorkflowContext.OK);
 			return true;
 
 		} catch (Exception e) {

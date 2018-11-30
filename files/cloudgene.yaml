@@ -1,24 +1,24 @@
-name: MitoCloud
+name: mitocloud
 description: A cloud platform to check the quality of mitochondrial data
-version: v0.1
+version: v0.0.1
  
 workflow:
 
   setups:
     - name: Input Validation
-      jar: target/mitocloud.jar
+      jar: mitocloud.jar
       classname: genepi.mitocloud.steps.InputValidation
 
   steps:
 
 
     - name: Contamination Checker 
-      jar: target/mitocloud.jar
+      jar: mitocloud.jar
       classname: genepi.mitocloud.steps.ContaminationStep
       output: $contaminationReport
       generates: $contaminationReport
       
-    - name: Quality Control (Report)
+    - name: Create Graphical Dashboard
       rmd2: report.Rmd
       params: $contaminationReport
       output: ${qcreport}.html

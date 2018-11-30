@@ -32,15 +32,6 @@ datatable(extract,filter = 'top',options = list(initComplete = JS(
 )
 ```
 
-### Contamination Overview
-
-```{r summary, echo=FALSE}
-p <- plot_ly(extract, x= ~Contamination, 
-  type = "histogram"
-)
-p
-```
-
 ### Haplogroups
 
 ```{r haplogroups, echo=FALSE}
