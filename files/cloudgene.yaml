@@ -6,17 +6,23 @@ workflow:
 
   setups:
     - name: Input Validation
-      jar: target/contamination.jar
+      jar: target/mitocloud.jar
       classname: genepi.mitocloud.steps.InputValidation
 
   steps:
 
 
     - name: Contamination Checker 
-      jar: target/contamination.jar
+      jar: target/mitocloud.jar
       classname: genepi.mitocloud.steps.ContaminationStep
-      generates: $contaminationOut
-      output: ${contaminationOut}.txt
+      output: $contaminationReport
+      generates: $contaminationReport
+      
+    - name: Quality Control (Report)
+      rmd2: report.Rmd
+      params: $contaminationReport
+      output: ${qcreport}.html
+      generates: $qcreport
             
   inputs:
 
@@ -32,7 +38,13 @@ workflow:
       
   outputs:  
    
-    - id: contaminationOut
+    - id: contaminationReport
       description: Contamination File
       type: local-file
       download: true
+      
+    - id: qcreport
+      description: Quality-Control Report
+      type: local-file
+      download: true
+      autoExport: true
