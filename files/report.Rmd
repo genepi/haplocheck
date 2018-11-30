@@ -20,7 +20,6 @@ args<-commandArgs(TRUE)
 input=args[1]
 input = "/data2/git/cloudgene/workspace/job-20181130-124941-442/contaminationReport/contaminationReport"
 readin = read.table(input, header = TRUE, sep="\t");
-readin
 extract = readin[,c("SampleID","Contamination","HgMajor","HgMinor", "HG_Distance")]
 datatable(extract,filter = 'top',options = list(initComplete = JS(
     "function(settings, json) {",
@@ -35,7 +34,6 @@ datatable(extract,filter = 'top',options = list(initComplete = JS(
 ### Haplogroups
 
 ```{r haplogroups, echo=FALSE}
-extract$HgMajor
 extract$Major = substr(extract$HgMajor, start = 0, stop = 2)
 p <- extract %>%
   group_by(Major) %>%
