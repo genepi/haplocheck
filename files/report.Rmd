@@ -18,7 +18,6 @@ knitr::opts_chunk$set(message = FALSE)
 
 args<-commandArgs(TRUE)
 input=args[1]
-input = "/data2/git/cloudgene/workspace/job-20181130-124941-442/contaminationReport/contaminationReport"
 readin = read.table(input, header = TRUE, sep="\t");
 extract = readin[,c("SampleID","Contamination","HgMajor","HgMinor", "HG_Distance")]
 datatable(extract,filter = 'top',options = list(initComplete = JS(
