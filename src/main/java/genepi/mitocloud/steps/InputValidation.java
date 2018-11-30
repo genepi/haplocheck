@@ -1,38 +1,21 @@
-package genepi.contamination.steps;
+package genepi.mitocloud.steps;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
+import java.util.List;
+import java.util.Vector;
 
 import genepi.hadoop.common.WorkflowContext;
 import genepi.hadoop.common.WorkflowStep;
 import genepi.hadoop.importer.IImporter;
 import genepi.hadoop.importer.ImporterFactory;
 import genepi.io.FileUtil;
-import htsjdk.variant.vcf.VCFFileReader;
+import genepi.mitocloud.steps.vcf.VcfFile;
+import genepi.mitocloud.steps.vcf.VcfFileUtil;
 
 public class InputValidation extends WorkflowStep {
 
 	@Override
 	public boolean run(WorkflowContext context) {
-
-		URLClassLoader cl = (URLClassLoader) InputValidation.class.getClassLoader();
-
-		try {
-			URL url = cl.findResource("META-INF/MANIFEST.MF");
-			Manifest manifest = new Manifest(url.openStream());
-			Attributes attr = manifest.getMainAttributes();
-			String buildVesion = attr.getValue("Version");
-			String buildTime = attr.getValue("Build-Time");
-			String builtBy = attr.getValue("Built-By");
-			context.println("Version: " + buildVesion + " (Built by " + builtBy + " on " + buildTime + ")");
-
-		} catch (IOException E) {
-			// handle
-		}
+		context.beginTask("Analyze files ");
 
 		if (!importVcfFiles(context)) {
 			return false;
@@ -44,24 +27,63 @@ public class InputValidation extends WorkflowStep {
 
 	private boolean checkFiles(WorkflowContext context) {
 		String files = context.get("files");
-		context.beginTask("Analyze files ");
 		int noSamples = 0;
+		int noSnps = 0;
+		String heteroplasmySamples = "";
 		try {
-			String[] vcfFiles = FileUtil.getFiles(files, "*.vcf.gz$|*.vcf$|*.bam$");
+			String[] input = FileUtil.getFiles(files, "*.vcf.gz$|*.vcf$");
 			noSamples = 0;
-			for (String filename : vcfFiles) {
-				VCFFileReader reader = new VCFFileReader(new File(filename), false);
-				noSamples += reader.getFileHeader().getGenotypeSamples().size();
-				reader.close();
+			String infos = null;
+			List<VcfFile> validVcfFiles = new Vector<VcfFile>();
+
+			for (String filename : input) {
+
+				if (infos == null) {
+					// first files, no infos available
+					context.updateTask("Analyze file " + FileUtil.getFilename(filename) + "...",
+							WorkflowContext.RUNNING);
+				} else {
+					context.updateTask("Analyze file " + FileUtil.getFilename(filename) + "...\n\n" + infos,
+							WorkflowContext.RUNNING);
+				}
+
+				VcfFile vcfFile = VcfFileUtil.load(filename);
+
+				if (!VcfFileUtil.isValidChromosome(vcfFile.getChromosome())) {
+					context.endTask("VCF includes " + vcfFile.getChromosome() + ". Not a valid chromosome.",
+							WorkflowContext.ERROR);
+					return false;
+				}
+
+				noSamples += vcfFile.getNoSamples();
+				noSnps += vcfFile.getNoSnps();
+
+				validVcfFiles.add(vcfFile);
+
+				infos = "Total Samples: " + noSamples + "\n" + " Total SNPs: " + noSnps + "\n";
+
+				if (vcfFile.isHeteroplasmyTag()) {
+					heteroplasmySamples += vcfFile.getVcfFilename() + "; ";
+				}
+
 			}
+
+			if (validVcfFiles.size() > 0) {
+				infos += "Files including Heteroplasmy Tag: " + heteroplasmySamples;
+				context.endTask(validVcfFiles.size() + " valid VCF file(s) found.\n\n" + infos, WorkflowContext.OK);
+				return true;
+
+			} else {
+				context.endTask("The provided files are not valid  (see <a href=\"/start.html#!pages/help\">Help</a>)",
+						WorkflowContext.ERROR);
+				return false;
+			}
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			context.endTask("Error" + e.getMessage(), WorkflowContext.ERROR);
+			context.endTask("Error: " + e.getMessage(), WorkflowContext.ERROR);
 			return false;
 		}
-
-		context.endTask("Samples found " + noSamples, WorkflowContext.OK);
-		return true;
 
 	}
 

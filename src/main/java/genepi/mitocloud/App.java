@@ -1,4 +1,4 @@
-package genepi.contamination;
+package genepi.mitocloud;
 
 import java.lang.reflect.InvocationTargetException;
 
