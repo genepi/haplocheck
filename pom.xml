@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>genepi</groupId>
-	<artifactId>contamination</artifactId>
+	<artifactId>mitocloud</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
@@ -26,7 +26,7 @@
 		</repository>
 	</repositories>
 
-<build>
+	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
 
@@ -59,12 +59,44 @@
 								</transformer>
 							</transformers>
 
+							<artifactSet>
+								<includes>
+									<include>genepi:genepi-io:*:*</include>
+									<include>genepi:genepi-hadoop:*:*</include>
+									<include>genepi:haplogrep:*:*</include>
+									<include>com.github.samtools:htsjdk:*:*</include>
+									<include>org.jdom:jdom:*:*</include>
+								</includes>
+							</artifactSet>
 
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-			</plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>create-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<finalName>mitocloud</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+							<descriptors>
+								<descriptor>src/main/assembly/assembly.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
 	</build>
 
 
@@ -74,12 +106,6 @@
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.github.samtools</groupId>
-			<artifactId>htsjdk</artifactId>
-			<version>2.18.0</version>
 		</dependency>
 
 		<dependency>
@@ -93,6 +119,20 @@
 			<artifactId>genepi-io</artifactId>
 			<version>1.0.8</version>
 		</dependency>
+
+		<dependency>
+			<groupId>genepi</groupId>
+			<artifactId>haplogrep</artifactId>
+			<version>2.0.4</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.github.samtools/htsjdk -->
+		<dependency>
+			<groupId>com.github.samtools</groupId>
+			<artifactId>htsjdk</artifactId>
+			<version>2.18.0</version>
+		</dependency>
+
 
 	</dependencies>
 </project>

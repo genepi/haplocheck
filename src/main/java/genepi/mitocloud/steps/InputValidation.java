@@ -26,50 +26,34 @@ public class InputValidation extends WorkflowStep {
 	}
 
 	private boolean checkFiles(WorkflowContext context) {
-		String files = context.get("files");
+		String filename = context.get("files");
 		int noSamples = 0;
 		int noSnps = 0;
-		String heteroplasmySamples = "";
 		try {
-			String[] input = FileUtil.getFiles(files, "*.vcf.gz$|*.vcf$");
 			noSamples = 0;
 			String infos = null;
 			List<VcfFile> validVcfFiles = new Vector<VcfFile>();
 
-			for (String filename : input) {
+			context.updateTask("Analyze file " + FileUtil.getFilename(filename) + "...", WorkflowContext.RUNNING);
 
-				if (infos == null) {
-					// first files, no infos available
-					context.updateTask("Analyze file " + FileUtil.getFilename(filename) + "...",
-							WorkflowContext.RUNNING);
-				} else {
-					context.updateTask("Analyze file " + FileUtil.getFilename(filename) + "...\n\n" + infos,
-							WorkflowContext.RUNNING);
-				}
+			VcfFile vcfFile = VcfFileUtil.load(filename);
 
-				VcfFile vcfFile = VcfFileUtil.load(filename);
-
-				if (!VcfFileUtil.isValidChromosome(vcfFile.getChromosome())) {
-					context.endTask("VCF includes " + vcfFile.getChromosome() + ". Not a valid chromosome.",
-							WorkflowContext.ERROR);
-					return false;
-				}
-
-				noSamples += vcfFile.getNoSamples();
-				noSnps += vcfFile.getNoSnps();
-
-				validVcfFiles.add(vcfFile);
-
-				infos = "Total Samples: " + noSamples + "\n" + " Total SNPs: " + noSnps + "\n";
-
-				if (vcfFile.isHeteroplasmyTag()) {
-					heteroplasmySamples += vcfFile.getVcfFilename() + "; ";
-				}
-
+			if (!VcfFileUtil.isValidChromosome(vcfFile.getChromosome())) {
+				context.endTask("VCF includes " + vcfFile.getChromosome() + ". Not a valid chromosome.",
+						WorkflowContext.ERROR);
+				return false;
 			}
 
+			noSamples += vcfFile.getNoSamples();
+			noSnps += vcfFile.getNoSnps();
+
+			validVcfFiles.add(vcfFile);
+
+			infos = "Total Samples: " + noSamples + "\n" + " Total SNPs: " + noSnps + "\n";
+
+
 			if (validVcfFiles.size() > 0) {
-				infos += "Files including Heteroplasmy Tag: " + heteroplasmySamples;
+				infos += "File includes Heteroplasmy Tag: " + vcfFile.isHeteroplasmyTag();
 				context.endTask(validVcfFiles.size() + " valid VCF file(s) found.\n\n" + infos, WorkflowContext.OK);
 				return true;
 
