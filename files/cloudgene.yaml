@@ -18,11 +18,12 @@ workflow:
       output: $contaminationReport
       generates: $contaminationReport
       
-    - name: Create Graphical Dashboard
-      rmd2: report.Rmd
+    - name: Running report script
+      type: rmd_docker
+      rmd: report.Rmd
+      image: genepi/r-cran-docker
       params: $contaminationReport
       output: ${qcreport}.html
-      generates: $qcreport
             
   inputs:
 
@@ -47,4 +48,3 @@ workflow:
       description: Quality-Control Report
       type: local-file
       download: true
-      autoExport: true
