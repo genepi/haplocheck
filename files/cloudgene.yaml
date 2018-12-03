@@ -12,18 +12,22 @@ workflow:
   steps:
 
 
+    - name: Run Haplogrep
+      jar: mitocloud.jar
+      classname: genepi.mitocloud.steps.HaplogrepStep
+      output: $haplogrep
+      
     - name: Contamination Checker 
       jar: mitocloud.jar
       classname: genepi.mitocloud.steps.ContaminationStep
-      output: $contaminationReport
-      generates: $contaminationReport
+      output: $contamination
       
     - name: Running report script
       type: rmd_docker
       rmd: report.Rmd
-      image: genepi/r-cran-docker
-      params: $contaminationReport
-      output: ${qcreport}.html
+      image: seb
+      params: $haplogrep $contamination
+      output: ${report}.html
             
   inputs:
 
@@ -39,12 +43,17 @@ workflow:
       
   outputs:  
    
-    - id: contaminationReport
-      description: Contamination File
+    - id: haplogrep
+      description: HaploGrep2 Output
       type: local-file
       download: true
       
-    - id: qcreport
+    - id: contamination
+      description: Contamination Output
+      type: local-file
+      download: true
+      
+    - id: report
       description: Quality-Control Report
       type: local-file
       download: true

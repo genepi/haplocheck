@@ -3,45 +3,64 @@ title: "mitocloud - quality control for mitochondrial projects"
 output: 
   flexdashboard::flex_dashboard:
     storyboard: true
+    theme: bootstrap
+    navbar:
+      - { title: "About Mitocloud", href: "https://github.com/seppinho/mitocloud", align: right }
+    source_code: https://github.com/seppinho/mitocloud
 ---
 
 ```{r setup, include=FALSE, echo=FALSE}
 library(DT);
 library(plotly);
 library(dplyr);
+library(flexdashboard);
 knitr::opts_chunk$set(message = FALSE)
-```
-
-### Summary
-
-```{r results, echo=FALSE}
 
 args<-commandArgs(TRUE)
-input=args[1]
-readin = read.table(input, header = TRUE, sep="\t");
-extract = readin[,c("SampleID","Contamination","HgMajor","HgMinor", "HG_Distance")]
-datatable(extract,filter = 'top',options = list(initComplete = JS(
-    "function(settings, json) {",
-    "$('body').css({'font-family': 'Helvetica'});",
-    "}"
-  ), pageLength = 15, autoWidth = TRUE)) %>% formatStyle(
-  'HG_Distance',
-  backgroundColor = styleInterval(c(1,3), c('white', 'khaki','lightcoral'))
+haplogrep=args[1]
+contamination=args[2]
+#contamination = "/home/seb/Downloads/contaminationReport.txt"
+#haplogrep = "/home/seb/Desktop/test.txt"
+
+```
+
+Haplogroups {.storyboard}
+=========================================
+### Summary
+
+
+### Haplogroups of all input samples including their quality using the Kulzinski metric.
+
+```{r haplogrep2, echo=FALSE}
+
+haplogrepTable = read.table(haplogrep, header = TRUE, sep="\t");
+haplogrepTableExtracted = haplogrepTable[,c("SampleID","Haplogroup","Overall_Rank")]
+datatable(haplogrepTableExtracted,style = 'bootstrap', extensions = 'Buttons',filter = 'top',options = list(
+    dom = 'Bfrtip',
+    buttons = c('copy', 'csv', 'excel')
+  )) %>% formatStyle(
+  'Overall_Rank', target = 'row',
+  backgroundColor = styleInterval(c(0.7,0.9), c('lightred', 'lightyellow','lightgreen'))
 )
 ```
 
-### Haplogroups
+```{r}
+gauge(12, min = 0, max = 100, symbol = '%', gaugeSectors(
+  success = c(80, 100), warning = c(40, 79), danger = c(0, 39)
+))
+```
 
-```{r haplogroups, echo=FALSE}
-extract$Major = substr(extract$HgMajor, start = 0, stop = 2)
-p <- extract %>%
-  group_by(Major) %>%
-  summarize(count = n()) %>%
-  plot_ly(labels = ~Major, values = ~count) %>%
-  add_pie(hole = 0.6) %>%
-  layout(title = "Haplogroups with HaploGrep2",  showlegend = F,
-         xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-         yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-p
 
+Contamination {.storyboard}
+=========================================
+
+### Details
+
+```{r contamination, echo=FALSE}
+contaminationTable = read.table(contamination, header = TRUE, sep="\t");
+contaminationTableExtracted = contaminationTable[,c("SampleID","Contamination","HgMajor","HgMinor", "HG_Distance")]
+datatable(contaminationTableExtracted,filter = 'top',options = list(pageLength = 15)) %>% formatStyle(
+  'HG_Distance',
+  backgroundColor = styleInterval(c(1,3), c('white', 'khaki','lightcoral'))
+)
 ```

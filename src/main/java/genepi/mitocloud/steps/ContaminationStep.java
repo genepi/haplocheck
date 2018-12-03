@@ -29,7 +29,7 @@ public class ContaminationStep extends WorkflowStep {
 			Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
 
 			String input = context.get("files");
-			String output = context.get("contaminationReport");
+			String output = context.get("contamination");
 
 			File file = new File(input);
 
