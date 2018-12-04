@@ -1,12 +1,19 @@
 package genepi.mitocloud.steps;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import contamination.Contamination;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
+
+import com.google.gson.Gson;
+
+import contamination.ContaminationDetection;
 import contamination.HaplogroupClassifier;
 import contamination.VariantSplitter;
+import contamination.objects.ContaminationObject;
 import contamination.objects.Sample;
 import core.SampleFile;
 import genepi.hadoop.common.WorkflowContext;
@@ -29,7 +36,8 @@ public class ContaminationStep extends WorkflowStep {
 			Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
 
 			String input = context.get("files");
-			String output = context.get("contamination");
+			String output = context.getConfig("output");
+			String outputJson = context.getConfig("outputCont");
 
 			File file = new File(input);
 
@@ -49,9 +57,18 @@ public class ContaminationStep extends WorkflowStep {
 			HaplogroupClassifier classifier = new HaplogroupClassifier();
 			SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
 
-			Contamination contamination = new Contamination();
+			ContaminationDetection contamination = new ContaminationDetection();
 			context.updateTask("Detect Contamination...", WorkflowContext.RUNNING);
-			contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples(), output);
+			ArrayList<ContaminationObject> contaminationList = contamination.detect(mutationServerSamples,
+					haplogrepSamples.getTestSamples());
+
+			contamination.writeFile(contaminationList, output);
+
+			String json = new Gson().toJson(contaminationList);
+			FileWriter wr = new FileWriter(outputJson);
+			wr.write(json);
+			wr.close();
+
 			context.endTask("Execution successful.", WorkflowContext.OK);
 			return true;
 

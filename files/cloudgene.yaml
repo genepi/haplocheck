@@ -20,14 +20,16 @@ workflow:
     - name: Contamination Checker 
       jar: mitocloud.jar
       classname: genepi.mitocloud.steps.ContaminationStep
-      output: $contamination
+      output: ${contamination}.txt
+      outputCont: ${contamination-json}.json
       
-    - name: Running report script
-      type: rmd_docker
-      rmd: report.Rmd
-      image: seb
-      params: $haplogrep $contamination
-      output: ${report}.html
+    - name: DataTable Widget
+      type: html_widget
+      template: report_template.html
+      scripts: https://code.jquery.com/jquery-3.3.1.js, https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js, https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js
+      stylesheet: https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css, https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css
+      output: ${reportWidget}.html
+      input: ${contamination-json}.json
             
   inputs:
 
@@ -52,8 +54,18 @@ workflow:
       description: Contamination Output
       type: local-file
       download: true
+    
+    - id: contamination-json
+      description: Contamination JSON
+      type: local-file
+      download: true  
       
     - id: report
       description: Quality-Control Report
       type: local-file
       download: true
+      
+    - id: reportWidget
+      description: Quality-Control Report
+      type: local-file
+      download: true   
