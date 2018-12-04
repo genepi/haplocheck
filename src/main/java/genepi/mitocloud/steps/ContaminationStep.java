@@ -45,7 +45,7 @@ public class ContaminationStep extends WorkflowStep {
 			context.updateTask("Split Profile into Major/Minor Profile...", WorkflowContext.RUNNING);
 			ArrayList<String> profiles = splitter.split(mutationServerSamples);
 
-			context.updateTask("Run HaploGrep2...", WorkflowContext.RUNNING);
+			context.updateTask("Classify Haplogroups...", WorkflowContext.RUNNING);
 			HaplogroupClassifier classifier = new HaplogroupClassifier();
 			SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
 

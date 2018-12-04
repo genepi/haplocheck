@@ -12,7 +12,7 @@ import genepi.hadoop.common.WorkflowStep;
 import importer.VcfImporter;
 import phylotree.Phylotree;
 import phylotree.PhylotreeManager;
-import util.FormatConverter;
+import util.ExportUtils;
 
 public class HaplogrepStep extends WorkflowStep {
 
@@ -40,16 +40,18 @@ public class HaplogrepStep extends WorkflowStep {
 			
 			HashMap<String, Sample> mutationServerSamples = reader.load(file, false);
 
-			context.updateTask("Run HaploGrep2...", WorkflowContext.RUNNING);
+			context.updateTask("Classify Haplogroups...", WorkflowContext.RUNNING);
 			
 			HaplogroupClassifier classifier = new HaplogroupClassifier();
 			
-			ArrayList<String> lines = FormatConverter.samplesMapToHsd(mutationServerSamples);
+			ArrayList<String> lines = ExportUtils.samplesMapToHsd(mutationServerSamples);
 			
 			SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, lines);
 			
-			FormatConverter.createReport(haplogrepSamples.getTestSamples(), output, false);
+			ExportUtils.createReport(haplogrepSamples.getTestSamples(), output, true);
 
+			context.endTask("Execution successful.", WorkflowContext.OK);
+			
 			return true;
 
 		} catch (Exception e) {
