@@ -1,71 +1,73 @@
-name: mitocloud
-description: A cloud platform to check the quality of mitochondrial data
+name: mitoverse
+description: A platform to check the quality of mitochondrial data
 version: v0.0.1
  
 workflow:
 
   setups:
-    - name: Input Validation
+    - name: Validate Input
       jar: mitocloud.jar
       classname: genepi.mitocloud.steps.InputValidation
 
   steps:
 
 
-    - name: Run Haplogrep
+    - name: Classify Haplogroups
       jar: mitocloud.jar
       classname: genepi.mitocloud.steps.HaplogrepStep
-      output: $haplogrep
+      outputHaplogroups: ${haplogroups}.txt
       
-    - name: Contamination Checker 
+    - name: Identify Contamination 
       jar: mitocloud.jar
       classname: genepi.mitocloud.steps.ContaminationStep
       output: ${contamination}.txt
       outputCont: ${contamination-json}.json
+      outputHsd: ${haplogrep-input}.txt
       
-    - name: DataTable Widget
+    - name: Create Report 
       type: html_widget
       template: report_template.html
-      scripts: https://code.jquery.com/jquery-3.3.1.js, https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js, https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js
+      scripts: https://code.jquery.com/jquery-3.3.1.js, https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js, https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js, https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js, https://code.highcharts.com/highcharts.js
       stylesheet: https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css, https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css
       output: ${reportWidget}.html
+      assets: assets
       input: ${contamination-json}.json
             
   inputs:
 
     - id: files
-      description: Input Files (VCF)
+      description: Input Files (vcf)
       type: local-file
     
     - id: level
-      description: Minor Detection Level
+      description: Minor Contamination Level
       type: text
       visible: true 
       value: 0.01  
       
   outputs:  
    
-    - id: haplogrep
-      description: HaploGrep2 Output
+    - id: haplogroups
+      description: Haplogroups
       type: local-file
       download: true
       
     - id: contamination
-      description: Contamination Output
+      description: Contamination Table
       type: local-file
       download: true
     
     - id: contamination-json
       description: Contamination JSON
       type: local-file
-      download: true  
-      
-    - id: report
-      description: Quality-Control Report
+      download: false
+    
+    - id: haplogrep-input
+      description: Haplogrep Input File
       type: local-file
-      download: true
+      download: true      
       
     - id: reportWidget
-      description: Quality-Control Report
+      description: Report
       type: local-file
       download: true   

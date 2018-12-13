@@ -21,6 +21,7 @@ import genepi.hadoop.common.WorkflowStep;
 import importer.VcfImporter;
 import phylotree.Phylotree;
 import phylotree.PhylotreeManager;
+import util.ExportUtils;
 
 public class ContaminationStep extends WorkflowStep {
 
@@ -38,6 +39,8 @@ public class ContaminationStep extends WorkflowStep {
 			String input = context.get("files");
 			String output = context.getConfig("output");
 			String outputJson = context.getConfig("outputCont");
+			String outputHsd = context.getConfig("outputHsd");
+			String level = context.get("level");
 
 			File file = new File(input);
 
@@ -51,7 +54,7 @@ public class ContaminationStep extends WorkflowStep {
 			HashMap<String, Sample> mutationServerSamples = reader.load(file, false);
 
 			context.updateTask("Split Profile into Major/Minor Profile...", WorkflowContext.RUNNING);
-			ArrayList<String> profiles = splitter.split(mutationServerSamples);
+			ArrayList<String> profiles = splitter.split(mutationServerSamples, Double.valueOf(level));
 
 			context.updateTask("Classify Haplogroups...", WorkflowContext.RUNNING);
 			HaplogroupClassifier classifier = new HaplogroupClassifier();
@@ -61,6 +64,8 @@ public class ContaminationStep extends WorkflowStep {
 			context.updateTask("Detect Contamination...", WorkflowContext.RUNNING);
 			ArrayList<ContaminationObject> contaminationList = contamination.detect(mutationServerSamples,
 					haplogrepSamples.getTestSamples());
+			
+			ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), outputHsd);
 
 			contamination.writeFile(contaminationList, output);
 

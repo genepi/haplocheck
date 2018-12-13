@@ -28,7 +28,7 @@ public class HaplogrepStep extends WorkflowStep {
 			Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
 
 			String input = context.get("files");
-			String output = context.get("haplogrep");
+			String output = context.getConfig("outputHaplogroups");
 
 			File file = new File(input);
 
