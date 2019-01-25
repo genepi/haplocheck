@@ -41,7 +41,8 @@ workflow:
     - id: archive
       description: Reference FASTA
       type: local-file
-      visible: true
+      visible: false
+      value: rCRS.fasta
       
     - id: level
       description: Minor Contamination Level
