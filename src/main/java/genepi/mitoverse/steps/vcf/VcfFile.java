@@ -1,4 +1,4 @@
-package genepi.mitocloud.steps.vcf;
+package genepi.mitoverse.steps.vcf;
 
 import java.util.Set;
 

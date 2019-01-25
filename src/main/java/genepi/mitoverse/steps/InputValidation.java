@@ -1,4 +1,4 @@
-package genepi.mitocloud.steps;
+package genepi.mitoverse.steps;
 
 import java.util.List;
 import java.util.Vector;
@@ -8,8 +8,8 @@ import genepi.hadoop.common.WorkflowStep;
 import genepi.hadoop.importer.IImporter;
 import genepi.hadoop.importer.ImporterFactory;
 import genepi.io.FileUtil;
-import genepi.mitocloud.steps.vcf.VcfFile;
-import genepi.mitocloud.steps.vcf.VcfFileUtil;
+import genepi.mitoverse.steps.vcf.VcfFile;
+import genepi.mitoverse.steps.vcf.VcfFileUtil;
 
 public class InputValidation extends WorkflowStep {
 
