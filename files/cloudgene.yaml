@@ -4,14 +4,15 @@ version: v0.0.1
  
 workflow:
 
-  setups:
-    - name: Validate Input
-      jar: mitocloud.jar
-      classname: genepi.mitoverse.steps.InputValidation
-
   steps:
 
-
+#if( $inType == "bam")
+    - name: BAM to VCF
+      jar: mutation-server-1.1.13.jar
+      params: analyse-local --input $files --reference $archive --level $level --output $files/out.vcf.gz
+      runtime: java
+#end      
+      
     - name: Classify Haplogroups
       jar: mitoverse.jar
       classname: genepi.mitoverse.steps.HaplogrepStep
@@ -36,14 +37,27 @@ workflow:
   inputs:
 
     - id: files
-      description: Input Files (vcf)
+      description: Input Files (VCF/BAM/CRAM)
+      type: local-folder
+
+    - id: archive
+      description: Reference FASTA
       type: local-file
-    
+      visible: true
+      
     - id: level
       description: Minor Contamination Level
       type: text
       visible: true 
       value: 0.01  
+      
+    - id: inType
+      description: Input Format
+      type: list
+      required: true
+      values:
+        bam: BAM/CRAM
+        vcf: VCF
       
   outputs:  
    
@@ -65,7 +79,12 @@ workflow:
     - id: haplogrep-input
       description: Haplogrep Input File
       type: local-file
-      download: true      
+      download: true
+      
+    - id: output
+      description: BAM Output Filename
+      type: local-file
+      download: true    
       
     - id: reportWidget
       description: Report

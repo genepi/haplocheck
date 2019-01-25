@@ -3,8 +3,11 @@ package genepi.mitoverse.steps;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
@@ -31,6 +34,12 @@ public class ContaminationStep extends WorkflowStep {
 
 	}
 
+	Collection<File>  getVcfFiles(String directoryName)
+	{
+	    File directory = new File(directoryName);
+	    return FileUtils.listFiles(directory, new WildcardFileFilter("*.vcf.gz"), null);
+	}
+	
 	private boolean detectContamination(WorkflowContext context) {
 
 		try {
@@ -42,7 +51,13 @@ public class ContaminationStep extends WorkflowStep {
 			String outputHsd = context.getConfig("outputHsd");
 			String level = context.get("level");
 
-			File file = new File(input);
+			Collection<File> out = getVcfFiles(input);
+			
+			if(out.size() > 1) {
+				context.endTask("Currently only 1 VCF file is supported!", WorkflowContext.ERROR);
+			}
+			
+			File file = out.iterator().next();
 
 			context.beginTask("Check for Contamination.. ");
 

@@ -2,7 +2,11 @@ package genepi.mitoverse.steps;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 import contamination.HaplogroupClassifier;
 import contamination.objects.Sample;
@@ -21,6 +25,12 @@ public class HaplogrepStep extends WorkflowStep {
 		return calculateHaplogroups(context);
 
 	}
+	
+	Collection<File>  getVcfFiles(String directoryName)
+	{
+	    File directory = new File(directoryName);
+	    return FileUtils.listFiles(directory, new WildcardFileFilter("*.vcf.gz"), null);
+	}
 
 	private boolean calculateHaplogroups(WorkflowContext context) {
 
@@ -30,7 +40,13 @@ public class HaplogrepStep extends WorkflowStep {
 			String input = context.get("files");
 			String output = context.getConfig("outputHaplogroups");
 
-			File file = new File(input);
+			Collection<File> out = getVcfFiles(input);
+			
+			if(out.size() > 1) {
+				context.endTask("Currently only 1 VCF file is supported!", WorkflowContext.ERROR);
+			}
+			
+			File file = out.iterator().next();
 
 			context.beginTask("Run Haplogrep2");
 
@@ -57,6 +73,7 @@ public class HaplogrepStep extends WorkflowStep {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			context.endTask("Execution failed.", WorkflowContext.ERROR);
 			return false;
 		}
 	}
