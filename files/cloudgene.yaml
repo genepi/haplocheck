@@ -7,19 +7,19 @@ workflow:
   setups:
     - name: Validate Input
       jar: mitocloud.jar
-      classname: genepi.mitocloud.steps.InputValidation
+      classname: genepi.mitoverse.steps.InputValidation
 
   steps:
 
 
     - name: Classify Haplogroups
-      jar: mitocloud.jar
-      classname: genepi.mitocloud.steps.HaplogrepStep
+      jar: mitoverse.jar
+      classname: genepi.mitoverse.steps.HaplogrepStep
       outputHaplogroups: ${haplogroups}.txt
       
     - name: Identify Contamination 
-      jar: mitocloud.jar
-      classname: genepi.mitocloud.steps.ContaminationStep
+      jar: mitoverse.jar
+      classname: genepi.mitoverse.steps.ContaminationStep
       output: ${contamination}.txt
       outputCont: ${contamination-json}.json
       outputHsd: ${haplogrep-input}.txt
