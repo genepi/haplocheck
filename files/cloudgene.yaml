@@ -6,12 +6,10 @@ workflow:
 
   steps:
 
-#if( $inType == "bam")
     - name: BAM to VCF
       jar: mutation-server-1.1.13.jar
       params: analyse-local --input $files --reference $archive --level $level --output $files/out.vcf.gz
       runtime: java
-#end      
       
     - name: Classify Haplogroups
       jar: mitoverse.jar
@@ -50,14 +48,6 @@ workflow:
       type: text
       visible: true 
       value: 0.01  
-      
-    - id: inType
-      description: Input Format
-      type: list
-      required: true
-      values:
-        bam: BAM/CRAM
-        vcf: VCF
       
   outputs:  
    
