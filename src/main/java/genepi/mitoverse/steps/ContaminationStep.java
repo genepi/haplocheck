@@ -80,14 +80,14 @@ public class ContaminationStep extends WorkflowStep {
 			ArrayList<ContaminationObject> contaminationList = contamination.detect(mutationServerSamples,
 					haplogrepSamples.getTestSamples());
 			
-			ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), outputHsd);
-
 			contamination.writeFile(contaminationList, output);
 
 			String json = new Gson().toJson(contaminationList);
 			FileWriter wr = new FileWriter(outputJson);
 			wr.write(json);
 			wr.close();
+			
+			ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), outputHsd);
 
 			context.endTask("Execution successful.", WorkflowContext.OK);
 			return true;
