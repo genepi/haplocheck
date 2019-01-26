@@ -1,0 +1,20 @@
+site_name: Mitoverse
+theme: readthedocs
+
+pages:
+- Home: index.md
+
+
+repo_name: genepi/mitoverse
+repo_url: https://github.com/genepi/mitoverse
+edit_uri: edit/master/docs
+
+extra:
+  social:
+    - type: github-alt
+
+markdown_extensions:
+    - toc:
+        permalink:
+    - admonition:
+
