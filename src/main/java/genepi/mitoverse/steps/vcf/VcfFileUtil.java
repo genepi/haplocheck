@@ -66,7 +66,7 @@ public class VcfFileUtil {
 					}
 					
 					String format = tiles[8];
-					if(format.contains("HP")) {
+					if(format.contains("AF")) {
 						heteroplasmyTag = true;
 					}
 

@@ -1,29 +1,34 @@
 name: mitoverse
-description: A platform to check the quality of mitochondrial data
+description: Mitoverse allows you to check the quality of your data and check for contamination.
 version: v0.0.1
  
 workflow:
 
+  setups:
+    - name: Validate Input
+      jar: mitoverse.jar
+      classname: genepi.mitoverse.steps.InputValidation
+      
   steps:
 
-    - name: BAM to VCF
+    - name: Detect variants
       jar: mutation-server-1.1.13.jar
       params: analyse-local --input $files --reference $archive --level $level --output $files/out.vcf.gz
       runtime: java
       
-    - name: Classify Haplogroups
+    - name: Run Haplogrep
       jar: mitoverse.jar
       classname: genepi.mitoverse.steps.HaplogrepStep
       outputHaplogroups: ${haplogroups}.txt
       
-    - name: Identify Contamination 
+    - name: Apply Contamination Detection
       jar: mitoverse.jar
       classname: genepi.mitoverse.steps.ContaminationStep
       output: ${contamination}.txt
       outputCont: ${contamination-json}.json
       outputHsd: ${haplogrep-input}.txt
       
-    - name: Create Report 
+    - name: Create Report
       type: html_widget
       template: report_template.html
       scripts: https://code.jquery.com/jquery-3.3.1.js, https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js, https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js, https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js, https://code.highcharts.com/highcharts.js
