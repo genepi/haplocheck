@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>genepi</groupId>
-	<artifactId>mitoverse</artifactId>
+	<artifactId>haplocheck</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
@@ -55,7 +55,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>genepi.mitoverse.App</mainClass>
+									<mainClass>genepi.haplocheck.App</mainClass>
 								</transformer>
 							</transformers>
 
@@ -87,7 +87,7 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<finalName>mitoverse</finalName>
+							<finalName>haplocheck</finalName>
 							<appendAssemblyId>false</appendAssemblyId>
 							<descriptors>
 								<descriptor>src/main/assembly/assembly.xml</descriptor>

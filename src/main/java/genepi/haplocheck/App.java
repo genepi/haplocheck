@@ -1,4 +1,4 @@
-package genepi.mitoverse;
+package genepi.haplocheck;
 
 import java.lang.reflect.InvocationTargetException;
 

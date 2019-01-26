@@ -1,4 +1,4 @@
-package genepi.mitoverse.steps.vcf;
+package genepi.haplocheck.steps.vcf;
 
 import java.io.File;
 import java.io.IOException;
