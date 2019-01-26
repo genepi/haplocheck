@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://getbootstrap.com/docs/4.1/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://getbootstrap.com/docs/4.1/examples/dashboard/dashboard.css" rel="stylesheet">
+	<link href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://getbootstrap.com/docs/4.1/assets/js/vendor/popper.min.js"></script>
+	<script src="https://getbootstrap.com/docs/4.1/dist/js/bootstrap.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+
+<body>
+	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Mitoserve</a>
+	</nav>
+
+	<div class="container-fluid">
+		<div class="row">
+			<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+				<div class="sidebar-sticky">
+					<ul class="nav flex-column">
+						<li class="nav-item">
+							<a class="nav-link active" href="#cont">
+								 <span data-feather="layers"></span>
+								 Contamination Table <span class="sr-only">(current)</span>
+							 </a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#">
+								 <span data-feather="bar-chart-2"></span>
+								 Haplogroups
+							 </a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#">
+								 <span data-feather="layers"></span>
+								 Other
+							 </a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+
+			<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+
+				<a name="cont"><h2>Contamination Table</h2></a>
+
+				<div class="table-responsive">
+
+					<table id="contamination" class="display table table-striped table-bordered table-hover" style="width:100%">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Contamination</th>
+								<th>Haplogroup Major</th>
+								<th>Haplogroup Minor</th>
+								<th>Distance</th>
+								<th>Major</th>
+								<th>Minor</th>
+							</tr>
+						</thead>
+					</table>
+
+					<div class="my-4 w-100">
+						<a name="highcharts"><h2>Sample Details</h2></a>
+
+						<div id="container" style="width:100%; height:400px;"></div>
+
+					</div>
+
+			</main>
+			</div>
+
+		</div>
+	</div>
+
+
+	<!-- Icons -->
+	<script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+	<script>
+		feather.replace()
+	</script>
+
+	<script>
+		$(document).ready(function() {
+			var table = $('#contamination').DataTable({
+				"columnDefs": [
+            {
+                "targets": [ 5 ],
+                "visible": false,
+                "searchable": false
+            },
+						{
+                "targets": [ 6 ],
+                "visible": false,
+                "searchable": false
+            }
+        ],
+				data: ${input},
+				"columns": [{
+						"data": "id"
+					},
+					{
+						"data": "status"
+					},
+					{
+						"data": "hgMajor"
+					},
+					{
+						"data": "hgMinor"
+					},
+					{
+						"data": "distance"
+					},
+					{
+						"data": "meanHetlevelMajor"
+					},
+					{
+						"data": "meanHetlevelMinor"
+					}
+				]
+			});
+
+			$('#contamination tbody').on('click', 'tr', function() {
+
+				var data = table.row(this).data();
+				
+				console.log(data);
+
+				Highcharts.chart('container', {
+					chart: {
+						plotBackgroundColor: null,
+						plotBorderWidth: 0,
+						plotShadow: false
+					},
+					title: {
+						text: 'Heteroplasmy <br> Levels',
+						align: 'center',
+						verticalAlign: 'middle',
+						y: 40
+					},
+					tooltip: {
+						pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+					},
+					plotOptions: {
+						pie: {
+							dataLabels: {
+								enabled: true,
+								distance: -50,
+								style: {
+									fontWeight: 'bold',
+									color: 'white'
+								}
+							},
+							startAngle: -90,
+							endAngle: 90,
+							center: ['50%', '75%'],
+							size: '110%'
+						}
+					},
+					series: [{
+						type: 'pie',
+						name: 'Browser share',
+						innerSize: '50%',
+						data: [
+							['Level Major', data.meanHetlevelMajor],
+							['Level Minor', data.meanHetlevelMinor]
+						]
+					}]
+				});
+
+
+			});
+
+
+		});
+	</script>
+
+</body>
+
+</html>
