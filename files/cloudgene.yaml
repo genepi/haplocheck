@@ -13,7 +13,7 @@ workflow:
 
     - name: Detect variants
       jar: mutation-server-1.1.13.jar
-      params: analyse-local --input $files --reference $archive --level $level --output $files/out.vcf.gz
+      params: analyse-local --input $files --reference $archive --level $level --mapQ $mapQ --baseQ $baseQ --output $files/out.vcf.gz
       runtime: java
       
     - name: Run Haplogrep
@@ -30,9 +30,7 @@ workflow:
       
     - name: Create Report
       type: html_widget
-      template: report_template.html
-      scripts: https://code.jquery.com/jquery-3.3.1.js, https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js, https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js, https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js, https://code.highcharts.com/highcharts.js
-      stylesheet: https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css, https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css
+      template: mitoserve.html
       output: ${reportWidget}.html
       assets: assets
       input: ${contamination-json}.json
@@ -50,11 +48,23 @@ workflow:
       value: rCRS.fasta
       
     - id: level
-      description: Minor Contamination Level
+      description: Contamination Level
       type: text
       visible: true 
-      value: 0.01  
+      value: 0.01
       
+    - id: baseQ
+      description: Minimal Base Quality
+      type: text
+      visible: true 
+      value: 20  
+      
+    - id: mapQ
+      description: Minimal Map Quality
+      type: text
+      visible: true 
+      value: 20  
+
   outputs:  
    
     - id: haplogroups
