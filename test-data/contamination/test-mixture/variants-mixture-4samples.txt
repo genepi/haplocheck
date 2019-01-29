@@ -1,0 +1,8 @@
+SampleID	Pos	Ref	Variant	Variant-Level	Major/Minor	Major-Percentage/Minor-Percentage	Coverage-Total	Variant-Type
+s1	11719	G	A	0.01	G/A	0.99/0.01	6531	2
+s1	12308	A	G	0.011	A/G	0.989/0.011	7022	2
+s1	1438	A	G	1.00	G/-	1.00/0.00	9402	1
+s3	12372	G	A	0.009	G/A	0.991/0.009	3874	2
+s3	13617	T	C	0.01	T/C	0.99/0.01	6229	2
+s2	1438	A	G	1.00	G/-	1.00/0.00	9402	1
+s4	1438	A	G	1.00	G/-	1.00/0.00	9402	1
