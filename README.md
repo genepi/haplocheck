@@ -1,3 +1,3 @@
 # haplocheck
 
-Haplocheck is a app for contamination check. 
+Haplocheck is a contamination tool using the mtDNA phylogeny. 
