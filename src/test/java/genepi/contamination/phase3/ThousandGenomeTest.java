@@ -22,7 +22,7 @@ import phylotree.Phylotree;
 import phylotree.PhylotreeManager;
 import util.ExportUtils;
 
-public class ContaminationTests {
+public class ThousandGenomeTest {
 
 	@Test
 	public void testHighChipMix1000G() throws Exception {
