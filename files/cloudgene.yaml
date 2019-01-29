@@ -1,5 +1,5 @@
-name: mitoverse
-description: Mitoverse allows you to check the quality of your data and check for contamination.
+name: haplocheck
+description: Haplocheck provides a contamination check based on the mtDNA phylogeny.
 version: v0.0.1
  
 workflow:
@@ -31,7 +31,7 @@ workflow:
     - name: Create Report
       type: html_widget
       template: mitoserve.html
-      output: ${reportWidget}.html
+      output: ${report}.html
       assets: assets
       input: ${contamination-json}.json
             
@@ -92,7 +92,7 @@ workflow:
       type: local-file
       download: true    
       
-    - id: reportWidget
+    - id: report
       description: Report
       type: local-file
       download: true   
