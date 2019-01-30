@@ -6,8 +6,8 @@ workflow:
 
   setups:
     - name: Validate Input
-      jar: mitoverse.jar
-      classname: genepi.mitoverse.steps.InputValidation
+      jar: haplocheck.jar
+      classname: genepi.haplocheck.steps.InputValidation
       
   steps:
 
@@ -17,23 +17,27 @@ workflow:
       runtime: java
       
     - name: Run Haplogrep
-      jar: mitoverse.jar
-      classname: genepi.mitoverse.steps.HaplogrepStep
+      jar: haplocheck.jar
+      classname: genepi.haplocheck.steps.HaplogrepStep
       outputHaplogroups: ${haplogroups}.txt
       
     - name: Apply Contamination Detection
-      jar: mitoverse.jar
-      classname: genepi.mitoverse.steps.ContaminationStep
+      jar: haplocheck.jar
+      classname: genepi.haplocheck.steps.ContaminationStep
       output: ${contamination}.txt
       outputCont: ${contamination-json}.json
       outputHsd: ${haplogrep-input}.txt
       
     - name: Create Report
       type: html_widget
-      template: mitoserve.html
+      template: haplocheck.html
       output: ${report}.html
       assets: assets
       input: ${contamination-json}.json
+      
+    - name: Sending Mail
+      jar: haplocheck.jar
+      classname: genepi.haplocheck.steps.MailStep
             
   inputs:
 
