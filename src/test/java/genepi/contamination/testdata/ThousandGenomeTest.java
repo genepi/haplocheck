@@ -1,4 +1,4 @@
-package genepi.contamination.phase3;
+package genepi.contamination.testdata;
 
 import static org.junit.Assert.*;
 
@@ -223,7 +223,54 @@ public class ThousandGenomeTest {
 
 		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
 		String folder = "test-data/contamination/1000G/final-samples/";
-		String variantFile = folder + "1000G.vcf.gz";
+		String variantFile = folder + "1000g_baq.vcf.gz";
+		String output = folder + "1000g-report.txt";
+
+		VcfImporter reader2 = new VcfImporter();
+		HashMap<String, Sample> mutationServerSamples = reader2.load(new File(variantFile), false);
+
+		VariantSplitter splitter = new VariantSplitter();
+
+		ArrayList<String> profiles = splitter.split(mutationServerSamples);
+
+		HashSet<String> set = new HashSet<String>();
+
+		String[] splits = profiles.get(0).split("\t");
+
+		for (int i = 3; i < splits.length; i++) {
+			set.add(splits[i]);
+		}
+
+		ContaminationDetection contamination = new ContaminationDetection();
+
+		HaplogroupClassifier classifier = new HaplogroupClassifier();
+		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+
+		ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), "/home/seb/Desktop/contaminated.hsd");
+
+		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
+
+		contamination.writeFile(list, output);
+
+		CsvTableReader readerOut = new CsvTableReader(output, '\t');
+		int countHigh = 0;
+		while (readerOut.next()) {
+
+			if (readerOut.getString("Contamination").equals(Status.YES.name())) {
+				countHigh++;
+			}
+		}
+
+		assertEquals(89, countHigh);
+		FileUtil.deleteFile(output);
+	}
+	
+	@Test
+	public void testNoBaq1000G() throws Exception {
+
+		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
+		String folder = "test-data/contamination/1000G/final-samples/";
+		String variantFile = folder + "1000g_nobaq.vcf.gz";
 		String output = folder + "1000g-report.txt";
 
 		VcfImporter reader2 = new VcfImporter();
@@ -262,7 +309,7 @@ public class ThousandGenomeTest {
 		}
 
 		assertEquals(91, countHigh);
-		// FileUtil.deleteFile(out);
+		FileUtil.deleteFile(output);
 	}
 
 	@Test
@@ -270,7 +317,7 @@ public class ThousandGenomeTest {
 
 		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
 		String folder = "test-data/contamination/1000G/final-samples/";
-		String variantFile = folder + "1000G.vcf.gz";
+		String variantFile = folder + "1000g_baq.vcf.gz";
 		String output = folder + "1000g-report.txt";
 
 		VcfImporter reader2 = new VcfImporter();
