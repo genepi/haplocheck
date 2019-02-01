@@ -3,10 +3,14 @@
 
 Haplocheck is a contamination tool using the mtDNA phylogeny and has been integrated into the [mitoverse](https://mitoverse.i-med.ac.at) mtDNA platform. It makes extensive use of [Haplogrep](https://haplogrep.uibk.ac.at) for haplogroup classification. 
 
-
 ## Input File Formats
-Haplocheck accepts BAM/CRAM files, vcf.gz and a text format (Pos, Variant, Level Major, Level Minor) as an input and returns a report including summary statistics and graphical representation of the files.   
+Haplocheck accepts BAM/CRAM files, vcf.gz and a text format (including ID, Pos, Variant, Level Major, Level Minor) as an input.
 
+## Output File Formats
+Haplocheck genereates a text file including summary statistics for each sample and a contamination status. It also provides a graphical report which can shared with collaborators.    
+
+## Documentation
+Please click [here](https://mitoverse.readthedocs.io/en/latest/) to get the latest documentation.
 
 ## Blog
 Check out our [blog](http://haplogrep.uibk.ac.at/blog/) regarding mtDNA topics.
