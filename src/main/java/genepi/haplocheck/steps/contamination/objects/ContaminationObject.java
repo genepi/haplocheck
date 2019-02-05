@@ -1,9 +1,11 @@
 package genepi.haplocheck.steps.contamination.objects;
 
+import genepi.haplocheck.steps.contamination.ContaminationDetection.Status;
+
 public class ContaminationObject {
 
 	private String id;
-	private String status;
+	private Status status;
 	private int sampleHeteroplasmies;
 	private int sampleHomoplasmies;
 	private int sampleMeanCoverage;
@@ -18,7 +20,6 @@ public class ContaminationObject {
 	private double meanHetlevelMajor;
 	private double meanHetlevelMinor;
 	private int distance;
-	private String heteroplasmyLevel;
 	
 	public String getId() {
 		return id;
@@ -26,12 +27,7 @@ public class ContaminationObject {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getStatus() {
-		return status;
-	}
-	public void setStatus(String status) {
-		this.status = status;
-	}
+
 	public int getSampleHeteroplasmies() {
 		return sampleHeteroplasmies;
 	}
@@ -116,10 +112,10 @@ public class ContaminationObject {
 	public void setDistance(int distance) {
 		this.distance = distance;
 	}
-	public String getHeteroplasmyLevel() {
-		return heteroplasmyLevel;
+	public Status getStatus() {
+		return status;
 	}
-	public void setHeteroplasmyLevel(String heteroplasmyLevel) {
-		this.heteroplasmyLevel = heteroplasmyLevel;
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 }

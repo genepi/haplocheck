@@ -115,7 +115,7 @@ public class ContaminationDetection {
 					status = Status.NO;
 				}
 				
-				centry.setStatus(status.toString());
+				centry.setStatus(status);
 				centry.setSampleHomoplasmies(sampleHomoplasmies);
 				centry.setSampleHeteroplasmies(sampleHeteroplasmies);
 				centry.setSampleMeanCoverage(meanCoverageSample);
@@ -313,20 +313,20 @@ public class ContaminationDetection {
 		return stringBuilder.toString();
 	}
 	
-	
-	public void writeFile(ArrayList<ContaminationObject> list, String output) {
-		
+	public void writeReport(String output, ArrayList<ContaminationObject> list) {
+
 		CsvTableWriter contaminationWriter = new CsvTableWriter(output, '\t');
-		
-		String[] columnsWrite = { "SampleID", "Contamination", "SampleHomoplasmies", "SampleHeteroplasmies", "SampleMeanCoverage", "HgMajor", "HgQualityMajor",
-				"HgMinor", "HgQualityMinor", "HomoplasmiesMajor", "HomoplasmiesMinor", "HeteroplasmiesMajor", "HeteroplasmiesMinor", "MeanHetLevelMajor",
-				"MeanHetLevelMinor", "HG_Distance"};
-		//, "DiffSnpsMajorMinor", "DiffSnpsMinorMajor", "HeteroplasmyLevelTotal" 
+
+		String[] columnsWrite = { "SampleID", "Contamination", "SampleHomoplasmies", "SampleHeteroplasmies",
+				"SampleMeanCoverage", "HgMajor", "HgQualityMajor", "HgMinor", "HgQualityMinor", "HomoplasmiesMajor",
+				"HomoplasmiesMinor", "HeteroplasmiesMajor", "HeteroplasmiesMinor", "MeanHetLevelMajor",
+				"MeanHetLevelMinor", "HG_Distance" };
+		// , "DiffSnpsMajorMinor", "DiffSnpsMinorMajor", "HeteroplasmyLevelTotal"
 		contaminationWriter.setColumns(columnsWrite);
-		
-		for(ContaminationObject entry : list) {
+
+		for (ContaminationObject entry : list) {
 			contaminationWriter.setString(0, entry.getId());
-			contaminationWriter.setString(1, entry.getStatus());
+			contaminationWriter.setString(1, entry.getStatus().name());
 			contaminationWriter.setInteger(2, entry.getSampleHomoplasmies());
 			contaminationWriter.setInteger(3, entry.getSampleHeteroplasmies());
 			contaminationWriter.setInteger(4, entry.getSampleMeanCoverage());
@@ -341,13 +341,15 @@ public class ContaminationDetection {
 			contaminationWriter.setDouble(13, entry.getMeanHetlevelMajor());
 			contaminationWriter.setDouble(14, entry.getMeanHetlevelMinor());
 			contaminationWriter.setInteger(15, entry.getDistance());
-			//contaminationWriter.setInteger(16, diffMajorMinor.size());
-			//contaminationWriter.setInteger(17, diffMinorMajor.size());
-			//contaminationWriter.setString(18, formatter.format(meanHeteroplasmyMajor + meanHeteroplasmyMinor));
+			// contaminationWriter.setInteger(16, diffMajorMinor.size());
+			// contaminationWriter.setInteger(17, diffMinorMajor.size());
+			// contaminationWriter.setString(18, formatter.format(meanHeteroplasmyMajor +
+			// meanHeteroplasmyMinor));
 			contaminationWriter.next();
 		}
-		
+
 		contaminationWriter.close();
 	}
-
+	
+	
 }

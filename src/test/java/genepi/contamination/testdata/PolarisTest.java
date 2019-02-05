@@ -54,7 +54,7 @@ public class PolarisTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
-		contamination.writeFile(list, output);
+		contamination.writeReport(output, list);
 
 		CsvTableReader readerOut = new CsvTableReader(output, '\t');
 
@@ -103,7 +103,7 @@ public class PolarisTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
-		contamination.writeFile(list, output);
+		contamination.writeReport(output, list);
 
 		CsvTableReader readerOut = new CsvTableReader(output, '\t');
 

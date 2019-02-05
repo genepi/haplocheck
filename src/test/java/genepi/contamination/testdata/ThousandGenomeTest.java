@@ -55,7 +55,7 @@ public class ThousandGenomeTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
-		contamination.writeFile(list, output);
+		contamination.writeReport(output, list);
 
 		CsvTableReader readerOut = new CsvTableReader(output, '\t');
 
@@ -103,7 +103,7 @@ public class ThousandGenomeTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
-		contamination.writeFile(list, output);
+		contamination.writeReport(output, list);
 
 		CsvTableReader readerOut = new CsvTableReader(output, '\t');
 		int count = 0;
@@ -150,7 +150,7 @@ public class ThousandGenomeTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
-		contamination.writeFile(list, output);
+		contamination.writeReport(output, list);
 
 		CsvTableReader readerOut = new CsvTableReader(output, '\t');
 		int countHigh = 0;
@@ -201,7 +201,7 @@ public class ThousandGenomeTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
-		contamination.writeFile(list, output);
+		contamination.writeReport(output, list);
 
 		CsvTableReader readerOut = new CsvTableReader(output, '\t');
 		int count = 0;
@@ -250,7 +250,7 @@ public class ThousandGenomeTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
-		contamination.writeFile(list, output);
+		contamination.writeReport(output, list);
 
 		CsvTableReader readerOut = new CsvTableReader(output, '\t');
 		int countHigh = 0;
@@ -297,7 +297,7 @@ public class ThousandGenomeTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
-		contamination.writeFile(list, output);
+		contamination.writeReport(output, list);
 
 		CsvTableReader readerOut = new CsvTableReader(output, '\t');
 		int countHigh = 0;
@@ -342,7 +342,7 @@ public class ThousandGenomeTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
-		contamination.writeFile(list, output);
+		contamination.writeReport(output, list);
 
 		CsvTableReader readerResult = new CsvTableReader(output, '\t');
 
