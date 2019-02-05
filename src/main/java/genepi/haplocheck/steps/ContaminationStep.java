@@ -13,18 +13,19 @@ import org.codehaus.jackson.map.ObjectWriter;
 
 import com.google.gson.Gson;
 
-import contamination.ContaminationDetection;
-import contamination.HaplogroupClassifier;
-import contamination.VariantSplitter;
-import contamination.objects.ContaminationObject;
-import contamination.objects.Sample;
 import core.SampleFile;
 import genepi.hadoop.common.WorkflowContext;
 import genepi.hadoop.common.WorkflowStep;
+import genepi.haplocheck.steps.contamination.ContaminationDetection;
+import genepi.haplocheck.steps.contamination.HaplogroupClassifier;
+import genepi.haplocheck.steps.contamination.VariantSplitter;
+import genepi.haplocheck.steps.contamination.objects.ContaminationObject;
+import genepi.haplocheck.util.Utils;
 import importer.VcfImporter;
 import phylotree.Phylotree;
 import phylotree.PhylotreeManager;
 import util.ExportUtils;
+import vcf.Sample;
 
 public class ContaminationStep extends WorkflowStep {
 
@@ -34,12 +35,6 @@ public class ContaminationStep extends WorkflowStep {
 
 	}
 
-	Collection<File>  getVcfFiles(String directoryName)
-	{
-	    File directory = new File(directoryName);
-	    return FileUtils.listFiles(directory, new WildcardFileFilter("*.vcf.gz"), null);
-	}
-	
 	private boolean detectContamination(WorkflowContext context) {
 
 		try {
@@ -51,7 +46,7 @@ public class ContaminationStep extends WorkflowStep {
 			String outputHsd = context.getConfig("outputHsd");
 			String level = context.get("level");
 
-			Collection<File> out = getVcfFiles(input);
+			Collection<File> out = Utils.getVcfFiles(input);
 			
 			if(out.size() > 1) {
 				context.endTask("Currently only 1 VCF file is supported!", WorkflowContext.ERROR);

@@ -9,9 +9,9 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import contamination.objects.Variant;
 import importer.VcfImporter;
-import contamination.objects.Sample;
+import vcf.Sample;
+import vcf.Variant;
 
 public class MutationServerReaderTest {
 

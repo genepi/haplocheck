@@ -9,9 +9,9 @@ import java.util.HashSet;
 
 import org.junit.Test;
 
-import contamination.VariantSplitter;
-import contamination.objects.Sample;
+import genepi.haplocheck.steps.contamination.VariantSplitter;
 import importer.VcfImporter;
+import vcf.Sample;
 
 public class VcfSplitTest {
 

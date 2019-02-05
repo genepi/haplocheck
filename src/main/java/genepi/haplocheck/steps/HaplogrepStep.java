@@ -2,21 +2,23 @@ package genepi.haplocheck.steps;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
-import contamination.HaplogroupClassifier;
-import contamination.objects.Sample;
 import core.SampleFile;
 import genepi.hadoop.common.WorkflowContext;
 import genepi.hadoop.common.WorkflowStep;
+import genepi.haplocheck.steps.contamination.HaplogroupClassifier;
+import genepi.haplocheck.util.Utils;
 import importer.VcfImporter;
 import phylotree.Phylotree;
 import phylotree.PhylotreeManager;
 import util.ExportUtils;
+import vcf.Sample;
 
 public class HaplogrepStep extends WorkflowStep {
 
@@ -26,12 +28,6 @@ public class HaplogrepStep extends WorkflowStep {
 
 	}
 	
-	Collection<File>  getVcfFiles(String directoryName)
-	{
-	    File directory = new File(directoryName);
-	    return FileUtils.listFiles(directory, new WildcardFileFilter("*.vcf.gz"), null);
-	}
-
 	private boolean calculateHaplogroups(WorkflowContext context) {
 
 		try {
@@ -40,7 +36,7 @@ public class HaplogrepStep extends WorkflowStep {
 			String input = context.get("files");
 			String output = context.getConfig("outputHaplogroups");
 
-			Collection<File> out = getVcfFiles(input);
+			Collection<File> out = Utils.getVcfFiles(input);
 			
 			if(out.size() > 1) {
 				context.endTask("Currently only 1 VCF file is supported!", WorkflowContext.ERROR);

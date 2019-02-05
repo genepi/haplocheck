@@ -8,18 +8,18 @@ import java.util.HashMap;
 import java.util.HashSet;
 import org.junit.Test;
 
-import contamination.ContaminationDetection;
-import contamination.ContaminationDetection.Status;
-import contamination.HaplogroupClassifier;
-import contamination.VariantSplitter;
-import contamination.objects.ContaminationObject;
-import contamination.objects.Sample;
 import core.SampleFile;
+import genepi.haplocheck.steps.contamination.ContaminationDetection;
+import genepi.haplocheck.steps.contamination.ContaminationDetection.Status;
+import genepi.haplocheck.steps.contamination.HaplogroupClassifier;
+import genepi.haplocheck.steps.contamination.VariantSplitter;
+import genepi.haplocheck.steps.contamination.objects.ContaminationObject;
 import genepi.io.FileUtil;
 import genepi.io.table.reader.CsvTableReader;
 import importer.VcfImporter;
 import phylotree.Phylotree;
 import phylotree.PhylotreeManager;
+import vcf.Sample;
 
 public class PolarisTest {
 
