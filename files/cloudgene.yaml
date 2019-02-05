@@ -11,8 +11,8 @@ workflow:
       
   steps:
 
-    - name: Detect variants
-      jar: mutation-server-1.1.13.jar
+    - name: Detect Variants
+      jar: mutserve-1.1.15.jar
       params: analyse-local --input $files --reference $archive --level $level --mapQ $mapQ --baseQ $baseQ --output $files/out.vcf.gz
       runtime: java
       
