@@ -1,4 +1,4 @@
-name: haplocheck
+name: haplocheckTT
 description: Haplocheck provides a contamination check based on the mtDNA phylogeny.
 version: v0.0.1
  
@@ -27,13 +27,15 @@ workflow:
       output: ${contamination}.txt
       outputCont: ${contamination-json}.json
       outputHsd: ${haplogrep-input}.txt
+      summary: ${summary}.json
       
     - name: Create Report
       type: html_widget
       template: haplocheck.html
       output: ${report}.html
       assets: assets
-      input: ${contamination-json}.json
+      cont-data: ${contamination-json}.json
+      sum-data: ${summary}.json
       
     - name: Sending Mail
       jar: haplocheck.jar
@@ -100,3 +102,8 @@ workflow:
       description: Report
       type: local-file
       download: true   
+
+    - id: summary
+      description: Contamination Summary
+      type: local-file
+      download: true    

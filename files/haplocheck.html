@@ -26,34 +26,30 @@
 				<div class="sidebar-sticky">
 					<ul class="nav flex-column">
 						<li class="nav-item">
-							<a class="nav-link active" href="#cont">
-								 <span data-feather="layers"></span>
-								 Contamination Table <span class="sr-only">(current)</span>
-							 </a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="#">
+							<a class="nav-link" id="summary">
 								 <span data-feather="bar-chart-2"></span>
-								 Haplogroups
+								 Sample Summary
 							 </a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="#">
+							<a class="nav-link active" id="cont">
 								 <span data-feather="layers"></span>
-								 Other
+								 Contamination Report <span class="sr-only">(current)</span>
 							 </a>
 						</li>
 					</ul>
 				</div>
 			</nav>
 
-			<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+			<main role="main" class="rcol-md-9 ml-sm-auto col-lg-10 px-4" id="main">
 
-				<a name="cont"><h2>Contamination Table</h2></a>
+				<div id="cont-panel">
+
+				<a><h2>Contamination Report</h2></a>
 
 				<div class="table-responsive">
 
-					<table id="contamination" class="display table table-striped table-bordered table-hover" style="width:100%">
+					<table id="contamination-table" class="display table table-striped table-bordered table-hover" style="width:100%">
 						<thead>
 							<tr>
 								<th>ID</th>
@@ -66,17 +62,32 @@
 							</tr>
 						</thead>
 					</table>
-
-					<div class="my-4 w-100">
-						<a name="highcharts"><h2>Sample Details</h2></a>
-
-						<div id="container" style="width:100%; height:400px;"></div>
-
-					</div>
-
-			</main>
 			</div>
 
+								<div class="my-4 w-100">
+									<a name="highcharts"><h2>Details</h2></a>
+
+									<div id="details" style="width:100%; height:400px;"></div>
+
+								</div>
+		</div>
+			<div id="summary-panel" style="display:none;" >
+				<div class="table-responsive">
+
+					<table id="summary-table" class="display table table-striped table-bordered table-hover" style="width:100%">
+						<thead>
+							<tr>
+								<th>Contaminated</th>
+								<th>Not Contaminated</th>
+								<th>Median (HG Distance)</th>
+								<th>25th percentile (HG Distance)</th>
+								<th>75th percentile (HG Distance)</th>
+							</tr>
+						</thead>
+					</table>
+			</div>
+			</div>
+			</main>
 		</div>
 	</div>
 
@@ -89,7 +100,11 @@
 
 	<script>
 		$(document).ready(function() {
-			var table = $('#contamination').DataTable({
+			var table = $('#contamination-table').DataTable({
+				"pageLength": 5,
+				"scrollY": "330px",
+				"scrollCollapse": true,
+				 buttons: [ 'copy'],
 				"columnDefs": [
             {
                 "targets": [ 5 ],
@@ -102,7 +117,7 @@
                 "searchable": false
             }
         ],
-				data: ${input},
+				data: ${cont-data},
 				"columns": [{
 						"data": "id"
 					},
@@ -127,13 +142,44 @@
 				]
 			});
 
-			$('#contamination tbody').on('click', 'tr', function() {
+
+			var tableSummary = $('#summary-table').DataTable({
+				"pageLength": 5,
+				data: [${sum-data}],
+				"columns": [{
+						"data": "Yes"
+					},
+					{
+						"data": "No"
+					},
+					{
+						"data": "Distance"
+					},
+					{
+						"data": "25Percentile"
+					},
+					{
+						"data": "75Percentile"
+					}
+				]
+			});
+
+			$('#cont').on('click', function() {
+				$("#cont-panel").show();
+				$("#summary-panel").hide();
+			});
+
+			$('#summary').on('click', function() {
+				$("#cont-panel").hide();
+				$("#summary-panel").show();
+			});
+
+
+			$('#contamination-table tbody').on('click', 'tr', function() {
 
 				var data = table.row(this).data();
-				
-				console.log(data);
 
-				Highcharts.chart('container', {
+				Highcharts.chart('details', {
 					chart: {
 						plotBackgroundColor: null,
 						plotBorderWidth: 0,
