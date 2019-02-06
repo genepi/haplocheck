@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+import com.google.common.math.Quantiles;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -26,7 +27,6 @@ import importer.VcfImporter;
 import phylotree.Phylotree;
 import phylotree.PhylotreeManager;
 import util.ExportUtils;
-import com.google.common.math.Quantiles;
 import vcf.Sample;
 
 public class ContaminationStep extends WorkflowStep {
