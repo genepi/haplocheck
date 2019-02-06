@@ -62,9 +62,9 @@ public class LabMixturesTest {
 
 		assertEquals(4, count);
 
-		//FileUtil.deleteFile(output);
+		FileUtil.deleteFile(output);
 		
-		ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), "/home/seb/Desktop/mixtures.hsd");
+		//ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), "/home/seb/Desktop/mixtures.hsd");
 
 	}
 }
