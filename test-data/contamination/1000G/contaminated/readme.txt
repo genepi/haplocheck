@@ -1,2 +1,2 @@
 extract all samples from 1000g with LOW or HIGH
-/home/seb/tools/bcftools-1.6/bcftools view -S /home/seb/Desktop/possible-contaminated.txt 1000G_BAQ.vcf > contaminated.vcf
+/home/seb/tools/bcftools-1.6/bcftools view -S 1000g-list.txt -Oz ../all/1000g_baq.vcf.gz > contaminated.vcf.gz

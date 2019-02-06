@@ -222,7 +222,7 @@ public class ThousandGenomeTest {
 	public void testBaq1000G() throws Exception {
 
 		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
-		String folder = "test-data/contamination/1000G/final-samples/";
+		String folder = "test-data/contamination/1000G/all/";
 		String variantFile = folder + "1000g_baq.vcf.gz";
 		String output = folder + "1000g-report.txt";
 
@@ -262,14 +262,14 @@ public class ThousandGenomeTest {
 		}
 
 		assertEquals(91, countHigh);
-		FileUtil.deleteFile(output);
+		//FileUtil.deleteFile(output);
 	}
 	
 	@Test
 	public void testNoBaq1000G() throws Exception {
 
 		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
-		String folder = "test-data/contamination/1000G/final-samples/";
+		String folder = "test-data/contamination/1000G/all/";
 		String variantFile = folder + "1000g_nobaq.vcf.gz";
 		String output = folder + "1000g-report.txt";
 
@@ -316,7 +316,7 @@ public class ThousandGenomeTest {
 	public void testBaq1000GYeContaminated() throws Exception {
 
 		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
-		String folder = "test-data/contamination/1000G/final-samples/";
+		String folder = "test-data/contamination/1000G/all/";
 		String variantFile = folder + "1000g_baq.vcf.gz";
 		String output = folder + "1000g-report.txt";
 
@@ -346,7 +346,7 @@ public class ThousandGenomeTest {
 
 		CsvTableReader readerResult = new CsvTableReader(output, '\t');
 
-		CsvTableReader readerYe = new CsvTableReader("test-data/contamination/1000G/final-samples/1000g_ye.txt", '\t');
+		CsvTableReader readerYe = new CsvTableReader("test-data/contamination/1000G/all/1000g_ye.txt", '\t');
 		HashSet<String> contSamples = new HashSet<String>();
 		while (readerYe.next()) {
 			contSamples.add(readerYe.getString("Sample"));
