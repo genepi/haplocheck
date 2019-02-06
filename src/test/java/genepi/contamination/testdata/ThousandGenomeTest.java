@@ -29,7 +29,7 @@ public class ThousandGenomeTest {
 
 		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
 		String folder = "test-data/contamination/1000G/high-chip-mix/";
-		String variantFile = folder + "high-chip-mix-1000G.vcf.gz";
+		String variantFile = folder + "chip.vcf.gz";
 		String output = folder + "chip-mix-report.txt";
 
 		VariantSplitter splitter = new VariantSplitter();
@@ -67,7 +67,7 @@ public class ThousandGenomeTest {
 			}
 		}
 
-		assertEquals(26, count);
+		assertEquals(25, count);
 
 		FileUtil.deleteFile(output);
 
@@ -78,7 +78,7 @@ public class ThousandGenomeTest {
 
 		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
 		String folder = "test-data/contamination/1000G/high-free-mix/";
-		String variantFile = folder + "high-free-mix-1000G.vcf.gz";
+		String variantFile = folder + "free.vcf.gz";
 		String output = folder + "chip-mix-report.txt";
 
 		VcfImporter reader = new VcfImporter();
@@ -125,7 +125,7 @@ public class ThousandGenomeTest {
 
 		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
 		String folder = "test-data/contamination/1000G/no-contamination/";
-		String variantFile = folder + "no-contamination-1000G.vcf.gz";
+		String variantFile = folder + "nocont.vcf.gz";
 		String output = folder + "no-contamination-report.txt";
 
 		VcfImporter reader = new VcfImporter();
@@ -177,7 +177,7 @@ public class ThousandGenomeTest {
 
 		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
 		String folder = "test-data/contamination/1000G/possible-swap/";
-		String variantFile = folder + "possible-swap-1000G.vcf.gz";
+		String variantFile = folder + "swap.vcf.gz";
 		String output = folder + "possible-swap-report.txt";
 
 		VcfImporter reader = new VcfImporter();
