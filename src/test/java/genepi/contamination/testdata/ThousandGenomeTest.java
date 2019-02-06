@@ -262,7 +262,7 @@ public class ThousandGenomeTest {
 		}
 
 		assertEquals(91, countHigh);
-		//FileUtil.deleteFile(output);
+		FileUtil.deleteFile(output);
 	}
 	
 	@Test
