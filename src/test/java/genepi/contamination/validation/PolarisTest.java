@@ -1,4 +1,4 @@
-package genepi.contamination.testdata;
+package genepi.contamination.validation;
 
 import static org.junit.Assert.*;
 
