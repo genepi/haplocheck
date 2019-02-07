@@ -33,6 +33,7 @@ public class ClassifyTest {
 		HashMap<String, Sample> mutationServerSamples = reader.load(new File("test-data/contamination/1000g-sample/HG00097.vcf"), false);
 		
 		String out = "test-data/contamination/1000g-sample/1000g-sample-report.txt";
+		String outJson = "test-data/contamination/1000g-sample/1000g-sample-report.json";
 		
 		VariantSplitter splitter = new VariantSplitter();
 
@@ -47,7 +48,8 @@ public class ClassifyTest {
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 	
 		contamination.writeReport(out, list);
-
+		
+		contamination.writeReportAsJson(outJson, list);
 		
 		assertEquals("T2f1a1", haplogrepSamples.getTestSamples().get(0).getTopResult().getHaplogroup().toString());
 		
@@ -63,6 +65,38 @@ public class ClassifyTest {
 		assertEquals(0.919, readerContamination.getDouble("HgQualityMinor"),0.01);
 		
 		FileUtil.deleteFile(out);
+
+	}
+	
+	@Test
+	public void testContaminatedSample() throws Exception {
+
+		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
+
+		VcfImporter reader = new VcfImporter();
+
+		HashMap<String, Sample> mutationServerSamples = reader.load(new File("test-data/contamination/lab-mixture/mixtures.vcf.gz"), false);
+		
+		String out = "test-data/contamination/lab-mixture/report.txt";
+		String outJson = "test-data/contamination/lab-mixture/report.json";
+		
+		VariantSplitter splitter = new VariantSplitter();
+
+		ArrayList<String> profiles = splitter.split(mutationServerSamples);
+		
+		HaplogroupClassifier classifier = new HaplogroupClassifier();
+
+		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		
+		ContaminationDetection contamination = new ContaminationDetection();
+
+		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
+	
+		contamination.writeReport(out, list);
+		
+		contamination.writeReportAsJson(outJson, list);
+		
+		//FileUtil.deleteFile(out);
 
 	}
 

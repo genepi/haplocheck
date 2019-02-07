@@ -1,5 +1,7 @@
 package genepi.haplocheck.steps.contamination.objects;
 
+import java.util.ArrayList;
+
 import genepi.haplocheck.steps.contamination.ContaminationDetection.Status;
 
 public class ContaminationObject {
@@ -20,6 +22,8 @@ public class ContaminationObject {
 	private double meanHetlevelMajor;
 	private double meanHetlevelMinor;
 	private int distance;
+	private ArrayList<Node> nodes;
+	private ArrayList<Edge> edges;
 	
 	public String getId() {
 		return id;
@@ -117,5 +121,17 @@ public class ContaminationObject {
 	}
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+	public ArrayList<Node> getNodes() {
+		return nodes;
+	}
+	public void setNodes(ArrayList<Node> nodes) {
+		this.nodes = nodes;
+	}
+	public ArrayList<Edge> getEdges() {
+		return edges;
+	}
+	public void setEdges(ArrayList<Edge> edges) {
+		this.edges = edges;
 	}
 }

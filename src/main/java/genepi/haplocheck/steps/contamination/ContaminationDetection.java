@@ -3,21 +3,34 @@ package genepi.haplocheck.steps.contamination;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import core.Haplogroup;
 import core.Polymorphism;
 import core.TestSample;
 import genepi.haplocheck.steps.contamination.objects.ContaminationObject;
+import genepi.haplocheck.steps.contamination.objects.Edge;
+import genepi.haplocheck.steps.contamination.objects.Node;
+import genepi.haplocheck.steps.contamination.objects.Tree;
 import genepi.io.table.writer.CsvTableWriter;
 import phylotree.Phylotree;
 import phylotree.PhylotreeManager;
+import search.SearchResultTreeNode;
+import search.ranking.results.RankedResult;
 import vcf.Sample;
 import vcf.Variant;
 
@@ -31,15 +44,11 @@ public class ContaminationDetection {
 	private int settingAmountLow = 2;
 	private double settingHgQuality = 0.5;
 
-	public ArrayList<ContaminationObject> detect(HashMap<String, Sample> mutationSamples, ArrayList<TestSample> haplogrepSamples) {
+	public ArrayList<ContaminationObject> detect(HashMap<String, Sample> mutationSamples,
+			ArrayList<TestSample> haplogrepSamples) {
 
-		int countEntries = 0;
-		int countPossibleContaminated = 0;
-		int countContaminated = 0;
-		int countNone = 0;
-		
 		ArrayList<ContaminationObject> contaminationList = new ArrayList<ContaminationObject>();
-		
+
 		Collections.sort((List<TestSample>) haplogrepSamples);
 
 		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
@@ -50,17 +59,20 @@ public class ContaminationDetection {
 
 			for (int i = 0; i < haplogrepSamples.size(); i += 2) {
 
-				countEntries++;
 				int distanceHG = 0;
 				Status status;
 
 				TestSample majorSample = haplogrepSamples.get(i);
 				TestSample minorSample = haplogrepSamples.get(i + 1);
 
-				ArrayList<Polymorphism> foundMajor = majorSample.getTopResult().getSearchResult().getDetailedResult().getFoundPolys();
-				ArrayList<Polymorphism> expectedMajor = majorSample.getTopResult().getSearchResult().getDetailedResult().getExpectedPolys();
-				ArrayList<Polymorphism> foundMinor = minorSample.getTopResult().getSearchResult().getDetailedResult().getFoundPolys();
-				ArrayList<Polymorphism> expectedMinor = minorSample.getTopResult().getSearchResult().getDetailedResult().getExpectedPolys();
+				ArrayList<Polymorphism> foundMajor = majorSample.getTopResult().getSearchResult().getDetailedResult()
+						.getFoundPolys();
+				ArrayList<Polymorphism> expectedMajor = majorSample.getTopResult().getSearchResult().getDetailedResult()
+						.getExpectedPolys();
+				ArrayList<Polymorphism> foundMinor = minorSample.getTopResult().getSearchResult().getDetailedResult()
+						.getFoundPolys();
+				ArrayList<Polymorphism> expectedMinor = minorSample.getTopResult().getSearchResult().getDetailedResult()
+						.getExpectedPolys();
 
 				int notFoundMajor = countNotFound(foundMajor, expectedMajor);
 				int notFoundMinor = countNotFound(foundMinor, expectedMinor);
@@ -76,7 +88,8 @@ public class ContaminationDetection {
 				int sampleHeteroplasmies = currentSample.getAmountHeteroplasmies();
 
 				int meanCoverageSample = (int) currentSample.getSumCoverage() / currentSample.getAmountVariants();
-				double meanHetLevelSample = currentSample.getSumHeteroplasmyLevel() / currentSample.getAmountHeteroplasmies();
+				double meanHetLevelSample = currentSample.getSumHeteroplasmyLevel()
+						/ currentSample.getAmountHeteroplasmies();
 
 				centry.setHgMajor(majorSample.getTopResult().getHaplogroup().toString());
 				centry.setHgMinor(minorSample.getTopResult().getHaplogroup().toString());
@@ -97,9 +110,9 @@ public class ContaminationDetection {
 
 					distanceHG = calcDistance(centry, phylotree);
 
-					if ((heteroplasmiesMajor >= settingAmountHigh || heteroplasmiesMinor >= settingAmountHigh) && distanceHG >= settingAmountHigh
-							&& hgQualityMajor > settingHgQuality && hgQualityMinor > settingHgQuality) {
-						countContaminated++;
+					if ((heteroplasmiesMajor >= settingAmountHigh || heteroplasmiesMinor >= settingAmountHigh)
+							&& distanceHG >= settingAmountHigh && hgQualityMajor > settingHgQuality
+							&& hgQualityMinor > settingHgQuality) {
 						status = Status.YES;
 						// TODO check mutation rate if heteroplasmies > 5
 					} /*
@@ -107,14 +120,12 @@ public class ContaminationDetection {
 						 * settingAmountLow) && hgQualityMajor > settingHgQuality && hgQualityMinor >
 						 * settingHgQuality) { countPossibleContaminated++; status = Status.LOW; }
 						 */ else {
-						countNone++;
 						status = Status.NO;
 					}
 				} else {
-					countNone++;
 					status = Status.NO;
 				}
-				
+
 				centry.setStatus(status);
 				centry.setSampleHomoplasmies(sampleHomoplasmies);
 				centry.setSampleHeteroplasmies(sampleHeteroplasmies);
@@ -128,9 +139,15 @@ public class ContaminationDetection {
 				centry.setMeanHetlevelMajor(meanHeteroplasmyMajor);
 				centry.setMeanHetlevelMinor(meanHeteroplasmyMinor);
 				centry.setDistance(distanceHG);
-				
+
+				ArrayList<TestSample> samples = new ArrayList<TestSample>();
+				samples.add(majorSample);
+				samples.add(minorSample);
+				Tree tree = getJsonTree(samples);
+				centry.setEdges(tree.getEdges());
+				centry.setNodes(tree.getNodes());
 				contaminationList.add(centry);
-				
+
 			}
 
 		} catch (Exception e) {
@@ -183,7 +200,8 @@ public class ContaminationDetection {
 		return count;
 	}
 
-	private ArrayList<Polymorphism> calculateHaplogroupDifference(ArrayList<Polymorphism> list1, ArrayList<Polymorphism> list2) {
+	private ArrayList<Polymorphism> calculateHaplogroupDifference(ArrayList<Polymorphism> list1,
+			ArrayList<Polymorphism> list2) {
 
 		ArrayList<Polymorphism> newList = new ArrayList<Polymorphism>(list1);
 
@@ -192,7 +210,8 @@ public class ContaminationDetection {
 		return newList;
 	}
 
-	private double calcMeanHeteroplasmy(Sample currentSample, ArrayList<Polymorphism> foundHaplogrep, boolean majorComponent) {
+	private double calcMeanHeteroplasmy(Sample currentSample, ArrayList<Polymorphism> foundHaplogrep,
+			boolean majorComponent) {
 
 		double sum = 0.0;
 		double count = 0;
@@ -312,7 +331,16 @@ public class ContaminationDetection {
 
 		return stringBuilder.toString();
 	}
-	
+
+	public void writeReportAsJson(String outputJson, ArrayList<ContaminationObject> contaminationList)
+			throws IOException {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String json = gson.toJson(contaminationList);
+		FileWriter wr = new FileWriter(outputJson);
+		wr.write(json);
+		wr.close();
+	}
+
 	public void writeReport(String output, ArrayList<ContaminationObject> list) {
 
 		CsvTableWriter contaminationWriter = new CsvTableWriter(output, '\t');
@@ -350,6 +378,54 @@ public class ContaminationDetection {
 
 		contaminationWriter.close();
 	}
-	
-	
+
+	public static Tree getJsonTree(ArrayList<TestSample> samples) throws IOException {
+
+		ArrayList<Node> nodes = new ArrayList<Node>();
+		ArrayList<Edge> edges = new ArrayList<Edge>();
+		HashSet<String> nodemapString = new HashSet<>();
+		HashMap<String, Integer> nodesMap = new HashMap<String, Integer>();
+		int i = 0;
+		String nodeTmp = "XX";
+		for (TestSample sample : samples) {
+
+			ArrayList<SearchResultTreeNode> currentPath = sample.getTopResult().getSearchResult().getDetailedResult()
+					.getPhyloTreePath();
+
+			for (SearchResultTreeNode hm : currentPath) {
+				
+				Haplogroup currentHg = hm.getHaplogroup();
+
+				if (!nodemapString.contains(currentHg.toString())) {
+					Node node = new Node();
+					node.setId(i);
+					node.setLabel(currentHg.toString());
+					nodes.add(node);
+					nodemapString.add(currentHg.toString());
+				}
+
+				if (i != 0) {
+				 Edge edge = new Edge();
+				 edge.setFrom(nodesMap.get(nodeTmp));
+				 edge.setTo(i);
+				 edges.add(edge);
+				 }
+				 nodesMap.put(currentHg.toString(), i);
+				 nodeTmp = currentHg.toString();
+				 i++;
+
+				// for (Polymorphism currentPoly : currentPath.get(i).getExpectedPolys()) {
+				// if (currentPath.get(i).getFoundPolys().contains(currentPoly)) {
+				// System.out.println(node.getLabel() + " --> " + currentPoly);
+				// }
+				// }
+
+			}
+		}
+		Tree tree = new Tree();
+		tree.setNodes(nodes);
+		tree.setEdges(edges);
+		return tree;
+	}
+
 }

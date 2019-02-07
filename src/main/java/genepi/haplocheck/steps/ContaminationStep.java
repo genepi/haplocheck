@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import com.google.common.math.Quantiles;
 import com.google.gson.Gson;
@@ -13,7 +14,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import core.Haplogroup;
+import core.Polymorphism;
 import core.SampleFile;
+import core.TestSample;
 import genepi.hadoop.common.WorkflowContext;
 import genepi.hadoop.common.WorkflowStep;
 import genepi.haplocheck.steps.contamination.ContaminationDetection;
@@ -26,6 +30,8 @@ import genepi.io.table.writer.CsvTableWriter;
 import importer.VcfImporter;
 import phylotree.Phylotree;
 import phylotree.PhylotreeManager;
+import search.SearchResultTreeNode;
+import search.ranking.results.RankedResult;
 import util.ExportUtils;
 import vcf.Sample;
 
@@ -78,8 +84,8 @@ public class ContaminationStep extends WorkflowStep {
 					haplogrepSamples.getTestSamples());
 
 			contamination.writeReport(outputReport, result);
-
-			writeReportAsJson(outputJson, result);
+			
+			contamination.writeReportAsJson(outputJson, result);
 
 			writeSummary(outputSummary, result);
 
@@ -93,15 +99,6 @@ public class ContaminationStep extends WorkflowStep {
 			e.printStackTrace();
 			return false;
 		}
-	}
-
-	private void writeReportAsJson(String outputJson, ArrayList<ContaminationObject> contaminationList)
-			throws IOException {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		String json = gson.toJson(contaminationList);
-		FileWriter wr = new FileWriter(outputJson);
-		wr.write(json);
-		wr.close();
 	}
 
 	private void writeSummary(String outSummary, ArrayList<ContaminationObject> contaminationList) throws IOException {
@@ -135,5 +132,6 @@ public class ContaminationStep extends WorkflowStep {
 		wr.close();
 
 	}
-
+	
 }
+	
