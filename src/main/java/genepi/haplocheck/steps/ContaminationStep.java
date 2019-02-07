@@ -47,7 +47,6 @@ public class ContaminationStep extends WorkflowStep {
 			String outputSummary = context.getConfig("summary");
 			String outputJson = context.getConfig("outputCont");
 			String outputHsd = context.getConfig("outputHsd");
-			String level = context.get("level");
 
 			Collection<File> out = Utils.getVcfFiles(input);
 
@@ -67,7 +66,7 @@ public class ContaminationStep extends WorkflowStep {
 			HashMap<String, Sample> mutationServerSamples = reader.load(file, false);
 
 			context.updateTask("Split Profile into Major/Minor Profile...", WorkflowContext.RUNNING);
-			ArrayList<String> profiles = splitter.split(mutationServerSamples, Double.valueOf(level));
+			ArrayList<String> profiles = splitter.split(mutationServerSamples);
 
 			context.updateTask("Classify Haplogroups...", WorkflowContext.RUNNING);
 			HaplogroupClassifier classifier = new HaplogroupClassifier();

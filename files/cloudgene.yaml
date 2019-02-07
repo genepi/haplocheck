@@ -13,7 +13,7 @@ workflow:
 
     - name: Detect Variants
       jar: mutserve-1.1.15.jar
-      params: analyse-local --input $files --reference $archive --level $level --mapQ $mapQ --baseQ $baseQ --output $files/out.vcf.gz
+      params: analyse-local --input $files --reference $archive --mapQ $mapQ --baseQ $baseQ --output $files/out.vcf.gz
       runtime: java
       
     - name: Run Haplogrep
@@ -52,12 +52,6 @@ workflow:
       type: local-file
       visible: false
       value: rCRS.fasta
-      
-    - id: level
-      description: Contamination Level
-      type: text
-      visible: true 
-      value: 0.01
       
     - id: baseQ
       description: Minimal Base Quality

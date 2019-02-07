@@ -12,13 +12,10 @@ import vcf.Sample;
 import vcf.Variant;
 
 public class VariantSplitter {
+	
+	static double requiredHetLevel = 0.0;
 
 	public ArrayList<String> split(HashMap<String, Sample> samples) {
-
-		return split(samples, 0.0);
-	}
-
-	public ArrayList<String> split(HashMap<String, Sample> samples, double requiredHetLevel) {
 
 		ArrayList<String> lines = new ArrayList<String>();
 
