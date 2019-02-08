@@ -21,6 +21,7 @@ import core.Polymorphism;
 import core.TestSample;
 import genepi.haplocheck.steps.contamination.objects.ContaminationObject;
 import genepi.haplocheck.steps.contamination.objects.Edge;
+import genepi.haplocheck.steps.contamination.objects.Font;
 import genepi.haplocheck.steps.contamination.objects.Node;
 import genepi.haplocheck.steps.contamination.objects.Tree;
 import genepi.io.table.writer.CsvTableWriter;
@@ -409,14 +410,16 @@ public class ContaminationDetection {
 					current = mapNodes.get(haplogroup);
 				}
 
-				String labels = createLabels(result, sample.getSampleID(), currentSample);
-				String edgeName = previous + "" + current + "" + labels.toString();
+				String label = getLabel(result, sample.getSampleID(), currentSample);
+				Font font = getFont(result, sample.getSampleID(), currentSample);
+				String edgeName = previous + "" + current + "" + label;
 
 				if (current != 0 && !setEdges.contains(edgeName)) {
 					Edge edge = new Edge();
 					edge.setFrom(previous);
 					edge.setTo(current);
-					edge.setLabel(labels);
+					edge.setLabel(label);
+					edge.setFont(font);
 					edges.add(edge);
 					setEdges.add(edgeName);
 				}
@@ -431,11 +434,11 @@ public class ContaminationDetection {
 		return tree;
 	}
 
-	private static String createLabels(SearchResultTreeNode result, String id, Sample currentSample) {
+	private static String getLabel(SearchResultTreeNode result, String id, Sample currentSample) {
 		StringBuilder builder = new StringBuilder();
 
 		for (Polymorphism currentPoly : result.getExpectedPolys()) {
-			
+
 			if (result.getFoundPolys().contains(currentPoly)) {
 				if (builder != null) {
 					builder.append(" ");
@@ -443,18 +446,38 @@ public class ContaminationDetection {
 
 				Variant pos = currentSample.getVariant(currentPoly.getPosition());
 				double level = 0;
-				if (pos.getType() == 1) {
-					level = pos.getMajorLevel();
-				} else if (pos.getType() == 2 && id.contains("maj")) {
+				if (pos.getType() == 2 && id.contains("maj")) {
 					level = pos.getMajorLevel();
 				} else if (pos.getType() == 2 && id.contains("min")) {
 					level = pos.getMinorLevel();
 				}
-
+				if(pos.getType() == 2) {
 				builder.append(currentPoly + " (" + level + ")");
+				} else {
+					builder.append(currentPoly);
+				}
 			}
 		}
 		return builder.toString();
+	}
+
+	private static Font getFont(SearchResultTreeNode result, String id, Sample currentSample) {
+
+		for (Polymorphism currentPoly : result.getExpectedPolys()) {
+
+			if (result.getFoundPolys().contains(currentPoly)) {
+
+				Variant pos = currentSample.getVariant(currentPoly.getPosition());
+				if (pos.getType() == 1) {
+					return new Font("blue");
+				} else if (pos.getType() == 2) {
+					return new Font("green");
+				}
+
+			}
+		}
+		return new Font("black");
+
 	}
 
 }

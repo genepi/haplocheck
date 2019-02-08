@@ -80,7 +80,7 @@
 					</div>
 
 					<div class="my-4 w-100">
-						<div id="details" style="width:100%; height:400px;"></div>
+							<div id="details" style="width:100%; height:400px;"></div>
 
 					</div>
 				</div>
@@ -134,7 +134,7 @@
 						"searchable": false
 					}
 				],
-				data: ${cont-data},
+			data: ${cont-data},
 				"columns": [{
 						"data": "id"
 					},
@@ -205,17 +205,24 @@
 				var options = {
 					layout: {
 						hierarchical: {
-							direction: "LR"
+							direction: "LR",
+							sortMethod: "directed"
 						}
 					},
 					edges: {
-						smooth: true,
 						shadow: true,
+						length: 200,
 						arrows: {
-							to: true
+							to: {
+								enabled: true
+							}
 						},
 						font: {
-							align: 'horizontal'
+							align: 'top',
+							size: 12
+						},
+						widthConstraint: {
+							maximum: 120
 						}
 					}
 				};
@@ -225,50 +232,49 @@
 
 
 			Highcharts.chart('details', {
-					chart: {
-						plotBackgroundColor: null,
-						plotBorderWidth: 0,
-						plotShadow: false
-					},
-					title: {
-						text: 'Heteroplasmy <br> Levels',
-						align: 'center',
-						verticalAlign: 'middle',
-						y: 40
-					},
-					tooltip: {
-						pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-					},
-					plotOptions: {
-						pie: {
-							dataLabels: {
-								enabled: true,
-								distance: -50,
-								style: {
-									fontWeight: 'bold',
-									color: 'white'
-								}
-							},
-							startAngle: -90,
-							endAngle: 90,
-							center: ['50%', '75%'],
-							size: '110%'
-						}
-					},
-					series: [{
-						type: 'pie',
-						name: 'Browser share',
-						innerSize: '50%',
-						data: [
-							['Level Major', data.meanHetlevelMajor],
-							['Level Minor', data.meanHetlevelMinor]
-						]
-					}]
-				});
+				chart: {
+					plotBackgroundColor: null,
+					plotBorderWidth: 0,
+					plotShadow: false
+				},
+				title: {
+					text: 'Heteroplasmy <br> Levels',
+					align: 'center',
+					verticalAlign: 'middle',
+					y: 40
+				},
+				tooltip: {
+					pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+				},
+				plotOptions: {
+					pie: {
+						dataLabels: {
+							enabled: true,
+							distance: -50,
+							style: {
+								fontWeight: 'bold',
+								color: 'white'
+							}
+						},
+						startAngle: -90,
+						endAngle: 90,
+						center: ['50%', '75%'],
+						size: '110%'
+					}
+				},
+				series: [{
+					type: 'pie',
+					name: 'Browser share',
+					innerSize: '50%',
+					data: [
+						//data.meanHetlevelMajor
+						['Level Major', 1.0],
+						['Level Minor', 0.4]
+					]
+				}]
+			});
 
 		});
-
-
 
 	</script>
 

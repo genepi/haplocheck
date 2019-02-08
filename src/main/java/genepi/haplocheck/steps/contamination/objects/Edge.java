@@ -5,6 +5,7 @@ public class Edge {
 	int from;
 	int to;
 	String label;
+	Font font;
 	
 	public int getFrom() {
 		return from;
@@ -29,4 +30,13 @@ public class Edge {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+
+	public Font getFont() {
+		return font;
+	}
+
+	public void setFont(Font font) {
+		this.font = font;
+	}
+
 }
