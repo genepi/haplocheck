@@ -445,6 +445,8 @@ public class ContaminationDetection {
 				}
 
 				Variant pos = currentSample.getVariant(currentPoly.getPosition());
+				
+				if(pos!=null) {
 				double level = 0;
 				if (pos.getType() == 2 && id.contains("maj")) {
 					level = pos.getMajorLevel();
@@ -455,6 +457,7 @@ public class ContaminationDetection {
 				builder.append(currentPoly + " (" + level + ")");
 				} else {
 					builder.append(currentPoly);
+				}
 				}
 			}
 		}
@@ -468,12 +471,13 @@ public class ContaminationDetection {
 			if (result.getFoundPolys().contains(currentPoly)) {
 
 				Variant pos = currentSample.getVariant(currentPoly.getPosition());
+				if(pos!=null) {
 				if (pos.getType() == 1) {
 					return new Font("blue");
 				} else if (pos.getType() == 2) {
 					return new Font("green");
 				}
-
+				}
 			}
 		}
 		return new Font("black");
