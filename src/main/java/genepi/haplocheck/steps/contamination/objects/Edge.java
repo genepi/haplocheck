@@ -4,6 +4,7 @@ public class Edge {
 
 	int from;
 	int to;
+	String label;
 	
 	public int getFrom() {
 		return from;
@@ -19,5 +20,13 @@ public class Edge {
 	
 	public void setTo(int to) {
 		this.to = to;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 }

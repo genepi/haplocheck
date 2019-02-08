@@ -13,6 +13,17 @@
 	<script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
 	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.css"></script>
+
+	<style type="text/css">
+		#mynetwork {
+			width: 1000px;
+			height: 400px;
+			border: 2px solid lightgray;
+		}
+	</style>
+
 </head>
 
 <body>
@@ -26,15 +37,15 @@
 				<div class="sidebar-sticky">
 					<ul class="nav flex-column">
 						<li class="nav-item">
-							<a class="nav-link" id="summary">
-								 <span data-feather="bar-chart-2"></span>
-								 Sample Summary
-							 </a>
-						</li>
-						<li class="nav-item">
 							<a class="nav-link active" id="cont">
 								 <span data-feather="layers"></span>
 								 Contamination Report <span class="sr-only">(current)</span>
+							 </a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="summary">
+								 <span data-feather="bar-chart-2"></span>
+								 Sample Summary
 							 </a>
 						</li>
 					</ul>
@@ -45,49 +56,56 @@
 
 				<div id="cont-panel">
 
-				<a><h2>Contamination Report</h2></a>
+					<a><h2>Contamination Report</h2></a>
 
-				<div class="table-responsive">
+					<div class="table-responsive">
 
-					<table id="contamination-table" class="display table table-striped table-bordered table-hover" style="width:100%">
-						<thead>
-							<tr>
-								<th>ID</th>
-								<th>Contamination</th>
-								<th>Haplogroup Major</th>
-								<th>Haplogroup Minor</th>
-								<th>Distance</th>
-								<th>Major</th>
-								<th>Minor</th>
-							</tr>
-						</thead>
-					</table>
-			</div>
+						<table id="contamination-table" class="display table table-striped table-bordered table-hover" style="width:100%">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Contamination</th>
+									<th>Haplogroup Major</th>
+									<th>Haplogroup Minor</th>
+									<th>Distance</th>
+									<th>Major</th>
+									<th>Minor</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+					<div id="mynetwork" class="my-4 w-100">
 
-								<div class="my-4 w-100">
-									<a name="highcharts"><h2>Details</h2></a>
+						<a name="network"><h4>Tree Details</h4></a>
+					</div>
 
-									<div id="details" style="width:100%; height:400px;"></div>
+					<div class="my-4 w-100">
+						<div id="details" style="width:100%; height:400px;"></div>
 
-								</div>
-		</div>
-			<div id="summary-panel" style="display:none;" >
-				<div class="table-responsive">
+					</div>
+				</div>
 
-					<table id="summary-table" class="display table table-striped table-bordered table-hover" style="width:100%">
-						<thead>
-							<tr>
-								<th>Contaminated</th>
-								<th>Not Contaminated</th>
-								<th>Median (HG Distance)</th>
-								<th>25th percentile (HG Distance)</th>
-								<th>75th percentile (HG Distance)</th>
-							</tr>
-						</thead>
-					</table>
-			</div>
-			</div>
+				<div id="summary-panel" style="display:none;">
+					<div class="table-responsive">
+
+						<table id="summary-table" class="display table table-striped table-bordered table-hover" style="width:100%">
+							<thead>
+								<tr>
+									<th>Contaminated</th>
+									<th>Not Contaminated</th>
+									<th>Median (HG Distance)</th>
+									<th>25th percentile (HG Distance)</th>
+									<th>75th percentile (HG Distance)</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+
 			</main>
+
+
+
 		</div>
 	</div>
 
@@ -104,19 +122,18 @@
 				"pageLength": 5,
 				"scrollY": "330px",
 				"scrollCollapse": true,
-				 buttons: [ 'copy'],
-				"columnDefs": [
-            {
-                "targets": [ 5 ],
-                "visible": true,
-                "searchable": false
-            },
-						{
-                "targets": [ 6 ],
-                "visible": true,
-                "searchable": false
-            }
-        ],
+				buttons: ['copy'],
+				"columnDefs": [{
+						"targets": [5],
+						"visible": true,
+						"searchable": false
+					},
+					{
+						"targets": [6],
+						"visible": true,
+						"searchable": false
+					}
+				],
 				data: ${cont-data},
 				"columns": [{
 						"data": "id"
@@ -179,7 +196,35 @@
 
 				var data = table.row(this).data();
 
-				Highcharts.chart('details', {
+				// create a network
+				var container = document.getElementById('mynetwork');
+				var data = {
+					nodes: data.nodes,
+					edges: data.edges
+				};
+				var options = {
+					layout: {
+						hierarchical: {
+							direction: "LR"
+						}
+					},
+					edges: {
+						smooth: true,
+						shadow: true,
+						arrows: {
+							to: true
+						},
+						font: {
+							align: 'horizontal'
+						}
+					}
+				};
+				var network = new vis.Network(container, data, options);
+
+			});
+
+
+			Highcharts.chart('details', {
 					chart: {
 						plotBackgroundColor: null,
 						plotBorderWidth: 0,
@@ -221,11 +266,10 @@
 					}]
 				});
 
-
-			});
-
-
 		});
+
+
+
 	</script>
 
 </body>
