@@ -164,30 +164,6 @@ public class ContaminationDetection {
 		return phylotree.getDistanceBetweenHaplogroups(hgMajor, hgMinor);
 	}
 
-	private int calcDistanceOld(ContaminationObject centry, Phylotree phylotree) {
-
-		int distanceHG;
-
-		Haplogroup hgMajor = new Haplogroup(centry.getHgMajor());
-
-		Haplogroup hgMinor = new Haplogroup(centry.getHgMinor());
-
-		if (hgMajor.isSuperHaplogroup(phylotree, hgMinor)) {
-
-			distanceHG = hgMajor.distanceToSuperHaplogroup(phylotree, hgMinor);
-
-		} else if (hgMinor.isSuperHaplogroup(phylotree, hgMajor)) {
-
-			distanceHG = hgMinor.distanceToSuperHaplogroup(phylotree, hgMajor);
-
-		} else {
-
-			distanceHG = hgMajor.distanceToSuperHaplogroup(phylotree, hgMinor);
-
-		}
-		return distanceHG;
-	}
-
 	private int countNotFound(ArrayList<Polymorphism> found, ArrayList<Polymorphism> expected) {
 		int count = 0;
 		for (Polymorphism currentPoly : expected) {
