@@ -63,7 +63,7 @@
 								<includes>
 									<include>genepi:genepi-io:*:*</include>
 									<include>genepi:genepi-hadoop:*:*</include>
-									<include>genepi:haplogrep:*:*</include>
+									<include>genepi:haplogrep-core:*:*</include>
 									<include>com.github.samtools:htsjdk:*:*</include>
 									<include>org.jdom:jdom:*:*</include>
 									<include>com.google.code.gson:gson:*:*</include>
