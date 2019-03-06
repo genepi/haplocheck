@@ -12,7 +12,7 @@ workflow:
   steps:
 
     - name: Detect Variants
-      jar: mutserve-1.1.16.jar
+      jar: mutserve-1.1.17.jar
       params: analyse-local --input $files --reference $archive --mapQ $mapQ --baseQ $baseQ --output $files/out.vcf.gz
       runtime: java
       
