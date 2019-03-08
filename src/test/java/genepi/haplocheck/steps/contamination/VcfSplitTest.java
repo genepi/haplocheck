@@ -1,4 +1,4 @@
-package genepi.contamination.splitter;
+package genepi.haplocheck.steps.contamination;
 
 import static org.junit.Assert.assertEquals;
 
