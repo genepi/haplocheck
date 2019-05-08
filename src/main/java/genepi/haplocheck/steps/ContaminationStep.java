@@ -116,6 +116,7 @@ public class ContaminationStep extends WorkflowStep {
 			}
 		}
 
+		if(distanceList.size() > 0) {
 		double distanceMedian = com.google.common.math.Quantiles.median().compute(distanceList);
 		double percentile25 = Quantiles.percentiles().index(25).compute(distanceList);
 		double percentile75 = Quantiles.percentiles().index(75).compute(distanceList);
@@ -130,7 +131,7 @@ public class ContaminationStep extends WorkflowStep {
 		FileWriter wr = new FileWriter(outSummary);
 		wr.write(result.toString());
 		wr.close();
-
+		}
 	}
 	
 }
