@@ -1,6 +1,6 @@
 name: haplocheck
 description: Haplocheck provides a contamination check based on the mtDNA phylogeny.
-version: v0.0.1
+version: v0.0.2
  
 workflow:
 
@@ -11,17 +11,17 @@ workflow:
       
   steps:
 
-    - name: Detect Variants
-      jar: mutserve-1.1.17.jar
-      params: analyse-local --input $files --reference $archive --mapQ $mapQ --baseQ $baseQ --output $files/out.vcf.gz
+    - name: Variant Calling
+      jar: mutserve-1.2.0.jar
+      params: analyse-local --input $files --reference $archive --mapQ $mapQ --baseQ $baseQ --deletions --insertions --output $files/out.vcf.gz
       runtime: java
       
-    - name: Run Haplogrep
+    - name: Haplogroup Classification
       jar: haplocheck.jar
       classname: genepi.haplocheck.steps.HaplogrepStep
       outputHaplogroups: ${haplogroups}.txt
       
-    - name: Apply Contamination Detection
+    - name: Contamination Detection
       jar: haplocheck.jar
       classname: genepi.haplocheck.steps.ContaminationStep
       output: ${contamination}.txt
