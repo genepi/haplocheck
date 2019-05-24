@@ -36,7 +36,7 @@ h_final <- p + scale_colour_brewer(palette = "Set1") + theme_light() +  theme(le
 filterHSetup = filter(simH,simH$HaplogrepFilter == 0.5  & simH$Setup ==3);
 filterHSetup$F1 = 2*(filterHSetup$Sensitivity * filterHSetup$Precision/(filterHSetup$Sensitivity + filterHSetup$Precision));
 filterHSetup
-
+install.packages("ggpubr")
 filterHSetup = filter(simH,simH$HaplogrepFilter == 0.5  & simH$Setup ==4);
 filterHSetup$F1 = 2*(filterHSetup$Sensitivity * filterHSetup$Precision/(filterHSetup$Sensitivity + filterHSetup$Precision));
 filterHSetup
@@ -44,12 +44,21 @@ filterHSetup
 ggarrange(all_final, h_final, labels = c("A", "B"),
           ncol = 2);
 
-file = "haplogroups.csv";
+file = "1000g/1000g_haplogroups.csv";
 hg = read.table(file, header = TRUE, sep=",")
 
 hg$Population= str_sub(hg$HG.mutserve, 1, 1)
 
 p = ggplot(hg, aes(x=Quality.calmom, y=Quality.mutserve, color=Population)) + geom_point() +  xlab('Quality Mutserve') +   ylab('Quality calmom')
 haplogroups_final <- p + theme_light() +  theme(legend.position="top")
-haplogroups_final
+haplogroups_final;
 
+file = "1000g/verifybam.csv";
+verifybam = read.table(file, header = TRUE, sep=",")
+head(verifybam);
+p = ggplot(verifybam, aes(x=Contamination.MUTVERSE, y=free_contam,color= factor(Contamination.MUTVERSE))) + 
+  geom_boxplot()  + scale_colour_brewer(palette = "Set1")
+p + xlab('Contamination Category') +   ylab('Free Mix Level VerifyBamId') + labs(colour = "Contamination Category")
+
+res <- t.test(free_contam ~ Contamination.MUTVERSE, data = verifybam, var.equal = TRUE)
+res
