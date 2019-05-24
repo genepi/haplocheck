@@ -37,8 +37,7 @@ public class ContaminationDetection {
 		YES, NO;
 	}
 
-	private int settingAmountHigh = 3;
-	private int settingAmountLow = 2;
+	private int settingAmountHigh = 2;
 	private double settingHgQuality = 0.5;
 
 	public ArrayList<ContaminationObject> detect(HashMap<String, Sample> mutationSamples,
@@ -260,14 +259,6 @@ public class ContaminationDetection {
 
 	public void setSettingAmountHigh(int settingAmountHigh) {
 		this.settingAmountHigh = settingAmountHigh;
-	}
-
-	public int getSettingAmountLow() {
-		return settingAmountLow;
-	}
-
-	public void setSettingAmountLow(int settingAmountLow) {
-		this.settingAmountLow = settingAmountLow;
 	}
 
 	public double getSettingHgQuality() {

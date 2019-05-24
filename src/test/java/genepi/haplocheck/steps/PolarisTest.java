@@ -67,7 +67,7 @@ public class PolarisTest {
 			}
 		}
 
-		assertEquals(1, count);
+		assertEquals(2, count);
 
 		//FileUtil.deleteFile(output);
 
@@ -116,7 +116,7 @@ public class PolarisTest {
 			}
 		}
 
-		assertEquals(1, count);
+		assertEquals(2, count);
 
 		FileUtil.deleteFile(output);
 

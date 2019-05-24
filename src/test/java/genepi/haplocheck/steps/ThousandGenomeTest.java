@@ -223,7 +223,7 @@ public class ThousandGenomeTest {
 
 		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
 		String folder = "test-data/contamination/1000G/all/";
-		String variantFile = folder + "1000g_baq.vcf.gz";
+		String variantFile = "/home/seb/Desktop/bayes-1000g-2205.vcf.gz";
 		String output = folder + "1000g-report.txt";
 
 		VcfImporter reader2 = new VcfImporter();
@@ -261,7 +261,7 @@ public class ThousandGenomeTest {
 			}
 		}
 
-		assertEquals(91, countHigh);
+		assertEquals(98, countHigh);
 		FileUtil.deleteFile(output);
 	}
 	
@@ -308,7 +308,7 @@ public class ThousandGenomeTest {
 			}
 		}
 
-		assertEquals(86, countHigh);
+		assertEquals(92, countHigh);
 		FileUtil.deleteFile(output);
 	}
 
