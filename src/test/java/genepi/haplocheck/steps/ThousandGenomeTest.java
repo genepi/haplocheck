@@ -367,6 +367,8 @@ public class ThousandGenomeTest {
 
 		readerYe.close();
 		readerResult.close();
+		
+		FileUtil.deleteFile(output);
 
 		System.out.println(found);
 	}
