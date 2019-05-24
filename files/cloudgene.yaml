@@ -12,7 +12,7 @@ workflow:
   steps:
 
     - name: Variant Calling
-      jar: mutserve-1.2.0.jar
+      jar: mutserve-1.2.1.jar
       params: analyse-local --input $files --reference $archive --mapQ $mapQ --baseQ $baseQ --deletions --insertions --output $files/out.vcf.gz
       runtime: java
       
