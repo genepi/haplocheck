@@ -38,6 +38,7 @@ public class ContaminationDetection {
 	}
 
 	private int settingAmountHigh = 2;
+	private int settingDistance = 2;
 	private double settingHgQuality = 0.5;
 
 	public ArrayList<ContaminationObject> detect(HashMap<String, Sample> mutationSamples,
@@ -107,7 +108,7 @@ public class ContaminationDetection {
 					distanceHG = calcDistance(contObject, phylotree);
 
 					if ((heteroplasmiesMajor >= settingAmountHigh || heteroplasmiesMinor >= settingAmountHigh)
-							&& distanceHG >= settingAmountHigh && hgQualityMajor > settingHgQuality
+							&& distanceHG >= settingDistance && hgQualityMajor > settingHgQuality
 							&& hgQualityMinor > settingHgQuality) {
 						status = Status.YES;
 						// TODO check mutation rate if heteroplasmies > 5
