@@ -3,7 +3,7 @@ library("tidyverse")
 library("ggpubr")
 setwd("/data2/eclipse/mtdna/haplocheck/paper-data/");
 file = "simulated-data/output/simulation_3_All_500k_kulczynski.txt";
-simAll = read.table(file, header = TRUE, sep=",");
+  simAll = read.table(file, header = TRUE, sep=",");
 simAllFilter = filter(simAll,simAll$HaplogrepFilter == 0.5  & simAll$Setup <= 7 & simAll$Group<=12);
 simAllFilter$F1 = 2*(simAllFilter$Sensitivity * simAllFilter$Precision/(simAllFilter$Sensitivity + simAllFilter$Precision));
 p <- ggplot(simAllFilter, aes(x = Group, y = F1,colour=factor(Setup))) + 
@@ -55,10 +55,10 @@ haplogroups_final;
 
 file = "1000g/verifybam.csv";
 verifybam = read.table(file, header = TRUE, sep=",")
-head(verifybam);
-p = ggplot(verifybam, aes(x=Contamination.MUTVERSE, y=free_contam,color= factor(Contamination.MUTVERSE))) + 
+verifybam1 = filter(verifybam,verifybam$X1000g==1);
+p = ggplot(verifybam1, aes(x=Contamination, y=free_contam,color= factor(Contamination))) + 
   geom_boxplot()  + scale_colour_brewer(palette = "Set1")
 p + xlab('Contamination Category') +   ylab('Free Mix Level VerifyBamId') + labs(colour = "Contamination Category")
 
-res <- t.test(free_contam ~ Contamination.MUTVERSE, data = verifybam, var.equal = TRUE)
+  res <- t.test(free_contam ~ Contamination, data = verifybam, var.equal = TRUE)
 res
