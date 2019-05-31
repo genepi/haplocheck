@@ -76,7 +76,7 @@ public class ThousandGenomeTest {
 	public void testBaq1000G1Sample() throws Exception {
 
 		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
-		String folder = "test-data/contamination/1000g-sample/all/";
+		String folder = "test-data/contamination/1000g-sample/";
 		String variantFile = folder + "HG00159.vcf.gz";
 		String output = folder + "1000g-report.txt";
 

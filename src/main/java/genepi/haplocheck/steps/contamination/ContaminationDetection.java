@@ -88,8 +88,8 @@ public class ContaminationDetection {
 				int homoplasmiesMajor = countHomoplasmies(mutserveSample, foundMajor);
 				int homoplasmiesMinor = countHomoplasmies(mutserveSample, foundMinor);
 
-				double meanHeteroplasmyMajor = calcMeanHeteroplasmy(mutserveSample, foundMajor, true);
-				double meanHeteroplasmyMinor = calcMeanHeteroplasmy(mutserveSample, foundMinor, false);
+				double meanHeteroplasmyMajor = calcMeanHeteroplasmy(mutserveSample, foundMajor, phylotree, true);
+				double meanHeteroplasmyMinor = calcMeanHeteroplasmy(mutserveSample, foundMinor, phylotree, false);
 
 				// find common ancestor
 				Haplogroup commonAncestor = getCommonAncestor(contObject, phylotree);
@@ -98,7 +98,7 @@ public class ContaminationDetection {
 						commonAncestor, true);
 				int minorHeteroplasmies = countOverlappingHeteroplasmies(haplogrepMinor, mutserveSample, phylotree,
 						commonAncestor, false);
-
+				
 				if (!contObject.getHgMajor().equals(contObject.getHgMinor())) {
 
 					distanceHG = calcDistance(contObject, phylotree);
@@ -156,8 +156,8 @@ public class ContaminationDetection {
 		return phylotree.getDistanceBetweenHaplogroups(hgMajor, hgMinor);
 	}
 
-	private double calcMeanHeteroplasmy(Sample currentSample, ArrayList<Polymorphism> foundHaplogrep,
-			boolean majorComponent) {
+	private double calcMeanHeteroplasmy(Sample currentSample, ArrayList<Polymorphism> foundHaplogrep, Phylotree phylotree, 
+			boolean major) {
 
 		double sum = 0.0;
 		double count = 0;
@@ -165,8 +165,30 @@ public class ContaminationDetection {
 		for (Polymorphism found : foundHaplogrep) {
 
 			Variant variant = currentSample.getVariant(found.getPosition());
-			if (variant != null && variant.getType() == 2) {
-				if (majorComponent) {
+			
+			if(variant == null) {
+				
+				continue;
+			}
+			
+			if(major && (variant.getRef() == variant.getMajor())) {
+				
+				continue;
+			}
+			
+			if(!major && (variant.getRef() == variant.getMinor())) {
+				
+				continue;
+			}
+			
+			//check mutation rate
+			if (phylotree.getMutationRate(found) < 5) {
+				continue;
+			}
+			
+			
+			if (variant.getType() == 2  && variant.getVariant() != 'd') {
+				if (major) {
 					sum += variant.getMajorLevel();
 				} else {
 					sum += variant.getMinorLevel();
@@ -244,7 +266,7 @@ public class ContaminationDetection {
 
 		return count;
 	}
-
+	
 	public int getSettingAmountHigh() {
 		return settingAmountHigh;
 	}
