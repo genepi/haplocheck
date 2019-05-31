@@ -19,6 +19,7 @@ import genepi.io.table.reader.CsvTableReader;
 import importer.VcfImporter;
 import phylotree.Phylotree;
 import phylotree.PhylotreeManager;
+import util.ExportUtils;
 import vcf.Sample;
 
 public class ThousandGenomeTest {
@@ -51,7 +52,7 @@ public class ThousandGenomeTest {
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
 		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
 
-		//ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), "/home/seb/Desktop/contaminated.hsd");
+		ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), "/home/seb/Desktop/contaminated.hsd");
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
@@ -66,8 +67,56 @@ public class ThousandGenomeTest {
 			}
 		}
 
-		assertEquals(140, countHigh);
+		assertEquals(114, countHigh);
 		FileUtil.deleteFile(output);
+	}
+	
+
+	@Test
+	public void testBaq1000G1Sample() throws Exception {
+
+		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
+		String folder = "test-data/contamination/1000g-sample/all/";
+		String variantFile = folder + "HG00159.vcf.gz";
+		String output = folder + "1000g-report.txt";
+
+		VcfImporter reader2 = new VcfImporter();
+		HashMap<String, Sample> mutationServerSamples = reader2.load(new File(variantFile), false);
+
+		VariantSplitter splitter = new VariantSplitter();
+
+		ArrayList<String> profiles = splitter.split(mutationServerSamples);
+
+		HashSet<String> set = new HashSet<String>();
+
+		String[] splits = profiles.get(0).split("\t");
+
+		for (int i = 3; i < splits.length; i++) {
+			set.add(splits[i]);
+		}
+
+		ContaminationDetection contamination = new ContaminationDetection();
+
+		HaplogroupClassifier classifier = new HaplogroupClassifier();
+		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+
+		ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), "/home/seb/Desktop/contaminated.hsd");
+
+		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
+
+		contamination.writeReport(output, list);
+
+		CsvTableReader readerOut = new CsvTableReader(output, '\t');
+		int countHigh = 0;
+		while (readerOut.next()) {
+
+			if (readerOut.getString("Contamination").equals(Status.YES.name())) {
+				countHigh++;
+			}
+		}
+
+		assertEquals(0, countHigh);
+		//FileUtil.deleteFile(output);
 	}
 	
 	@Test
@@ -113,7 +162,7 @@ public class ThousandGenomeTest {
 			}
 		}
 
-		assertEquals(92, countHigh);
+		assertEquals(82, countHigh);
 		FileUtil.deleteFile(output);
 	}
 

@@ -37,8 +37,8 @@ public class ContaminationDetection {
 		YES, NO;
 	}
 
-	private int settingAmountHigh = 2;
-	private int settingDistance = 2;
+	private int settingAmountHigh = 3;
+	private int settingDistance = 3;
 	private double settingHgQuality = 0.5;
 
 	public ArrayList<ContaminationObject> detect(HashMap<String, Sample> mutationSamples,
@@ -59,64 +59,56 @@ public class ContaminationDetection {
 				int distanceHG = 0;
 				Status status;
 
-				TestSample majorSample = haplogrepSamples.get(i);
-				TestSample minorSample = haplogrepSamples.get(i + 1);
+				TestSample haplogrepMajor = haplogrepSamples.get(i);
+				TestSample haplogrepMinor = haplogrepSamples.get(i + 1);
 
-				ArrayList<Polymorphism> foundMajor = majorSample.getTopResult().getSearchResult().getDetailedResult()
+				ArrayList<Polymorphism> foundMajor = haplogrepMajor.getTopResult().getSearchResult().getDetailedResult()
 						.getFoundPolys();
-				ArrayList<Polymorphism> expectedMajor = majorSample.getTopResult().getSearchResult().getDetailedResult()
-						.getExpectedPolys();
-				ArrayList<Polymorphism> foundMinor = minorSample.getTopResult().getSearchResult().getDetailedResult()
+				ArrayList<Polymorphism> foundMinor = haplogrepMinor.getTopResult().getSearchResult().getDetailedResult()
 						.getFoundPolys();
-				ArrayList<Polymorphism> expectedMinor = minorSample.getTopResult().getSearchResult().getDetailedResult()
-						.getExpectedPolys();
-
-				int notFoundMajor = countNotFound(foundMajor, expectedMajor);
-				int notFoundMinor = countNotFound(foundMinor, expectedMinor);
 
 				ContaminationObject contObject = new ContaminationObject();
-				contObject.setId(majorSample.getSampleID().split("_maj")[0]);
-				double hgQualityMajor = majorSample.getTopResult().getDistance();
-				double hgQualityMinor = minorSample.getTopResult().getDistance();
+				contObject.setId(haplogrepMajor.getSampleID().split("_maj")[0]);
+				double hgQualityMajor = haplogrepMajor.getTopResult().getDistance();
+				double hgQualityMinor = haplogrepMinor.getTopResult().getDistance();
 
-				Sample currentSample = mutationSamples.get(contObject.getId());
+				Sample mutserveSample = mutationSamples.get(contObject.getId());
 
-				int sampleHomoplasmies = currentSample.getAmountHomoplasmies();
-				int sampleHeteroplasmies = currentSample.getAmountHeteroplasmies();
+				int sampleHomoplasmies = mutserveSample.getAmountHomoplasmies();
+				int sampleHeteroplasmies = mutserveSample.getAmountHeteroplasmies();
 
-				int meanCoverageSample = (int) currentSample.getSumCoverage() / currentSample.getAmountVariants();
-				double meanHetLevelSample = currentSample.getSumHeteroplasmyLevel()
-						/ currentSample.getAmountHeteroplasmies();
+				int meanCoverageSample = (int) mutserveSample.getSumCoverage() / mutserveSample.getAmountVariants();
 
-				contObject.setHgMajor(majorSample.getTopResult().getHaplogroup().toString());
-				contObject.setHgMinor(minorSample.getTopResult().getHaplogroup().toString());
+				double meanHetLevelSample = mutserveSample.getSumHeteroplasmyLevel()
+						/ mutserveSample.getAmountHeteroplasmies();
 
-				int homoplasmiesMajor = countHomoplasmies(currentSample, foundMajor);
-				int homoplasmiesMinor = countHomoplasmies(currentSample, foundMinor);
+				contObject.setHgMajor(haplogrepMajor.getTopResult().getHaplogroup().toString());
+				contObject.setHgMinor(haplogrepMinor.getTopResult().getHaplogroup().toString());
 
-				int heteroplasmiesMajor = countHeteroplasmiesMajor(currentSample, foundMajor);
-				int heteroplasmiesMinor = countHeteroplasmiesMinor(currentSample, foundMinor);
+				int homoplasmiesMajor = countHomoplasmies(mutserveSample, foundMajor);
+				int homoplasmiesMinor = countHomoplasmies(mutserveSample, foundMinor);
 
-				double meanHeteroplasmyMajor = calcMeanHeteroplasmy(currentSample, foundMajor, true);
-				double meanHeteroplasmyMinor = calcMeanHeteroplasmy(currentSample, foundMinor, false);
+				double meanHeteroplasmyMajor = calcMeanHeteroplasmy(mutserveSample, foundMajor, true);
+				double meanHeteroplasmyMinor = calcMeanHeteroplasmy(mutserveSample, foundMinor, false);
 
-				ArrayList<Polymorphism> diffMajorMinor = calculateHaplogroupDifference(expectedMajor, expectedMinor);
-				ArrayList<Polymorphism> diffMinorMajor = calculateHaplogroupDifference(expectedMinor, expectedMajor);
+				// find common ancestor
+				Haplogroup commonAncestor = getCommonAncestor(contObject, phylotree);
+
+				int majorHeteroplasmies = countOverlappingHeteroplasmies(haplogrepMajor, mutserveSample, phylotree,
+						commonAncestor, true);
+				int minorHeteroplasmies = countOverlappingHeteroplasmies(haplogrepMinor, mutserveSample, phylotree,
+						commonAncestor, false);
 
 				if (!contObject.getHgMajor().equals(contObject.getHgMinor())) {
 
 					distanceHG = calcDistance(contObject, phylotree);
 
-					if ((heteroplasmiesMajor >= settingAmountHigh || heteroplasmiesMinor >= settingAmountHigh)
+					if ((majorHeteroplasmies >= settingAmountHigh || minorHeteroplasmies >= settingAmountHigh)
 							&& distanceHG >= settingDistance && hgQualityMajor > settingHgQuality
 							&& hgQualityMinor > settingHgQuality) {
 						status = Status.YES;
 						// TODO check mutation rate if heteroplasmies > 5
-					} /*
-						 * else if ((heteroplasmiesMinor >= settingAmountLow || distanceHG >=
-						 * settingAmountLow) && hgQualityMajor > settingHgQuality && hgQualityMinor >
-						 * settingHgQuality) { countPossibleContaminated++; status = Status.LOW; }
-						 */ else {
+					} else {
 						status = Status.NO;
 					}
 				} else {
@@ -131,16 +123,16 @@ public class ContaminationDetection {
 				contObject.setHgMinorQ(formatter.format(hgQualityMinor));
 				contObject.setHomoplasmiesMajor(homoplasmiesMajor);
 				contObject.setHomoplasmiesMinor(homoplasmiesMinor);
-				contObject.setHeteroplasmiesMajor(heteroplasmiesMajor);
-				contObject.setHeteroplasmiesMinor(heteroplasmiesMinor);
+				contObject.setHeteroplasmiesMajor(majorHeteroplasmies);
+				contObject.setHeteroplasmiesMinor(minorHeteroplasmies);
 				contObject.setMeanHetlevelMajor(meanHeteroplasmyMajor);
 				contObject.setMeanHetlevelMinor(meanHeteroplasmyMinor);
 				contObject.setDistance(distanceHG);
 
 				ArrayList<TestSample> samples = new ArrayList<TestSample>();
-				samples.add(majorSample);
-				samples.add(minorSample);
-				Tree tree = getJsonTree(currentSample, samples);
+				samples.add(haplogrepMajor);
+				samples.add(haplogrepMinor);
+				Tree tree = getJsonTree(mutserveSample, samples);
 				contObject.setEdges(tree.getEdges());
 				contObject.setNodes(tree.getNodes());
 				contaminationList.add(contObject);
@@ -162,25 +154,6 @@ public class ContaminationDetection {
 		Haplogroup hgMinor = new Haplogroup(centry.getHgMinor());
 
 		return phylotree.getDistanceBetweenHaplogroups(hgMajor, hgMinor);
-	}
-
-	private int countNotFound(ArrayList<Polymorphism> found, ArrayList<Polymorphism> expected) {
-		int count = 0;
-		for (Polymorphism currentPoly : expected) {
-			if (!found.contains(currentPoly))
-				count++;
-		}
-		return count;
-	}
-
-	private ArrayList<Polymorphism> calculateHaplogroupDifference(ArrayList<Polymorphism> list1,
-			ArrayList<Polymorphism> list2) {
-
-		ArrayList<Polymorphism> newList = new ArrayList<Polymorphism>(list1);
-
-		newList.removeAll(list2);
-
-		return newList;
 	}
 
 	private double calcMeanHeteroplasmy(Sample currentSample, ArrayList<Polymorphism> foundHaplogrep,
@@ -224,33 +197,51 @@ public class ContaminationDetection {
 		return count;
 	}
 
-	private int countHeteroplasmiesMajor(Sample currentSample, ArrayList<Polymorphism> foundHaplogrep) {
+	private int countOverlappingHeteroplasmies(TestSample haplogrepSample, Sample mutserveSample,
+			Phylotree phylotree, Haplogroup commonAncestor, boolean major) {
+
 		int count = 0;
 
-		for (Polymorphism found : foundHaplogrep) {
+		ArrayList<SearchResultTreeNode> path = haplogrepSample.getTopResult().getSearchResult().getDetailedResult()
+				.getPhyloTreePath();
 
-			Variant variant = currentSample.getVariant(found.getPosition());
+		for (SearchResultTreeNode current : path) {
+			Haplogroup node = current.getHaplogroup();
 
-			if (variant != null && variant.getType() == 2 && (variant.getRef() != variant.getMajor())) {
-				count++;
+			for (Polymorphism currentPoly : current.getExpectedPolys()) {
+
+				Variant pos = mutserveSample.getVariant(currentPoly.getPosition());
+
+				if (pos==null) {
+					continue;
+				}
+				//check mutation rate
+				if (phylotree.getMutationRate(currentPoly) < 5) {
+					continue;
+				}
+
+				// count only heteroplasmies from common ancestor and later!
+				if (!commonAncestor.isSuperHaplogroup(phylotree, node)) {
+					continue;
+				}
+				
+				if(major && (pos.getRef() == pos.getMajor())) {
+					
+					continue;
+				}
+				
+				if(!major && (pos.getRef() == pos.getMinor())) {
+					
+					continue;
+				}
+
+				if (pos.getType() == 2 && pos.getVariant() != 'd') {
+					count++;
+				}
 			}
 
 		}
-		return count;
-	}
 
-	private int countHeteroplasmiesMinor(Sample currentSample, ArrayList<Polymorphism> foundHaplogrep) {
-		int count = 0;
-
-		for (Polymorphism found : foundHaplogrep) {
-
-			Variant variant = currentSample.getVariant(found.getPosition());
-
-			if (variant != null && variant.getType() == 2 && (variant.getRef() != variant.getMinor())) {
-				count++;
-			}
-
-		}
 		return count;
 	}
 
@@ -334,10 +325,6 @@ public class ContaminationDetection {
 			contaminationWriter.setDouble(13, entry.getMeanHetlevelMajor());
 			contaminationWriter.setDouble(14, entry.getMeanHetlevelMinor());
 			contaminationWriter.setInteger(15, entry.getDistance());
-			// contaminationWriter.setInteger(16, diffMajorMinor.size());
-			// contaminationWriter.setInteger(17, diffMinorMajor.size());
-			// contaminationWriter.setString(18, formatter.format(meanHeteroplasmyMajor +
-			// meanHeteroplasmyMinor));
 			contaminationWriter.next();
 		}
 
@@ -413,19 +400,19 @@ public class ContaminationDetection {
 				}
 
 				Variant pos = currentSample.getVariant(currentPoly.getPosition());
-				
-				if(pos!=null) {
-				double level = 0;
-				if (pos.getType() == 2 && id.contains("maj")) {
-					level = pos.getMajorLevel();
-				} else if (pos.getType() == 2 && id.contains("min")) {
-					level = pos.getMinorLevel();
-				}
-				if(pos.getType() == 2) {
-				builder.append(currentPoly + " (" + level + ")");
-				} else {
-					builder.append(currentPoly);
-				}
+
+				if (pos != null) {
+					double level = 0;
+					if (pos.getType() == 2 && id.contains("maj")) {
+						level = pos.getMajorLevel();
+					} else if (pos.getType() == 2 && id.contains("min")) {
+						level = pos.getMinorLevel();
+					}
+					if (pos.getType() == 2) {
+						builder.append(currentPoly + " (" + level + ")");
+					} else {
+						builder.append(currentPoly);
+					}
 				}
 			}
 		}
@@ -439,16 +426,26 @@ public class ContaminationDetection {
 			if (result.getFoundPolys().contains(currentPoly)) {
 
 				Variant pos = currentSample.getVariant(currentPoly.getPosition());
-				if(pos!=null) {
-				if (pos.getType() == 1) {
-					return new Font("blue");
-				} else if (pos.getType() == 2) {
-					return new Font("green");
-				}
+				if (pos != null) {
+					if (pos.getType() == 1) {
+						return new Font("blue");
+					} else if (pos.getType() == 2) {
+						return new Font("green");
+					}
 				}
 			}
 		}
 		return new Font("black");
+
+	}
+
+	private Haplogroup getCommonAncestor(ContaminationObject centry, Phylotree phylotree) {
+
+		Haplogroup hgMajor = new Haplogroup(centry.getHgMajor());
+
+		Haplogroup hgMinor = new Haplogroup(centry.getHgMinor());
+
+		return phylotree.getCommonAncestor(hgMajor, hgMinor);
 
 	}
 

@@ -153,7 +153,7 @@ public class ClassifyTest {
 		assertEquals("0.987", readerContamination.getString("MeanHetLevelMajor"));
 		assertEquals("6", readerContamination.getString("HomoplasmiesMinor"));
 		assertEquals(0.011, readerContamination.getDouble("MeanHetLevelMinor"),0.001);
-		assertEquals("12", readerContamination.getString("HeteroplasmiesMinor"));
+		assertEquals("10", readerContamination.getString("HeteroplasmiesMinor"));
 		assertEquals("18", readerContamination.getString("SampleHeteroplasmies"));
 		assertEquals("H1", readerContamination.getString("HgMajor"));
 		assertEquals("U5a2e", readerContamination.getString("HgMinor"));
