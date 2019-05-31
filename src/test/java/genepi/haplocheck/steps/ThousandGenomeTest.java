@@ -52,7 +52,7 @@ public class ThousandGenomeTest {
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
 		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
 
-		ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), "/home/seb/Desktop/contaminated.hsd");
+		//ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), "/home/seb/Desktop/contaminated.hsd");
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
@@ -100,7 +100,7 @@ public class ThousandGenomeTest {
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
 		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
 
-		ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), "/home/seb/Desktop/contaminated.hsd");
+		//ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), "/home/seb/Desktop/contaminated.hsd");
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
@@ -116,7 +116,7 @@ public class ThousandGenomeTest {
 		}
 
 		assertEquals(0, countHigh);
-		//FileUtil.deleteFile(output);
+		FileUtil.deleteFile(output);
 	}
 	
 	@Test
