@@ -1,6 +1,6 @@
 name: haplocheck
 description: Haplocheck provides a contamination check based on the mtDNA phylogeny.
-version: v0.0.2
+version: v1.0
  
 workflow:
 
