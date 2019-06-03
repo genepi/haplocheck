@@ -61,12 +61,12 @@ public class Jenks {
             return computeBreaks(list, uniqueValues);
         }
 
-        Breaks lastBreaks = computeBreaks(list, 3);
+        Breaks lastBreaks = computeBreaks(list, 2);
         double lastGvf = lastBreaks.gvf();
-        double lastImprovement = lastGvf - computeBreaks(list, 2).gvf();
+        double lastImprovement = lastGvf - computeBreaks(list, 1).gvf();
 
         for (int i = 3; i <= Math.min(6, uniqueValues); ++i) {
-            Breaks breaks = computeBreaks(list, 3);
+            Breaks breaks = computeBreaks(list, 2);
             double gvf = breaks.gvf();
             double marginalImprovement = gvf - lastGvf;
             if (marginalImprovement < lastImprovement) {
@@ -301,6 +301,20 @@ public class Jenks {
                 }
                 sb.append(" (" + getClassCount(i) + ")");
                 sb.append(" = ").append(Arrays.toString(classList(i)));
+                sb.append("\n");
+            }
+            return sb.toString();
+        }
+        
+        public  String printClusters() {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i != numClassses(); ++i) {
+                if (getClassMin(i) == getClassMax(i)) {
+                    sb.append(getClassMin(i));
+                } else {
+                    sb.append(getClassMin(i)).append(" - ").append(getClassMax(i));
+                }
+                sb.append(" (" + getClassCount(i) + ")");
                 sb.append("\n");
             }
             return sb.toString();

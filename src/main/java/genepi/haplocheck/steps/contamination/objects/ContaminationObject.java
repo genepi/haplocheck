@@ -22,7 +22,7 @@ public class ContaminationObject {
 	private double meanHetlevelMajor;
 	private double meanHetlevelMinor;
 	private int distance;
-	private int amountCluster;
+	private String clusterInfo;
 	private ArrayList<Node> nodes;
 	private ArrayList<Edge> edges;
 	
@@ -135,10 +135,10 @@ public class ContaminationObject {
 	public void setEdges(ArrayList<Edge> edges) {
 		this.edges = edges;
 	}
-	public int getAmountCluster() {
-		return amountCluster;
+	public String getClusterInfo() {
+		return clusterInfo;
 	}
-	public void setAmountCluster(int amountCluster) {
-		this.amountCluster = amountCluster;
+	public void setClusterInfo(String clusterInfo) {
+		this.clusterInfo = clusterInfo;
 	}
 }

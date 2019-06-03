@@ -101,22 +101,21 @@ public class ContaminationDetection {
 				int minorHeteroplasmies = countOverlappingHeteroplasmies(haplogrepMinor, mutserveSample, phylotree,
 						commonAncestor, false);
 				
-				int clusters = 0;
+				String clusters = "";
 
 				if (!contObject.getHgMajor().equals(contObject.getHgMinor())) {
 
 					distanceHG = calcDistance(contObject, phylotree);
 					
-					Jenks j = new Jenks();
-					calcBreaks(mutserveSample, foundMajor, j, true);
-					calcBreaks(mutserveSample, foundMinor, j, false);
-					Breaks f = j.computeBreaks();
+					Jenks j = calcBreaks(mutserveSample);
 					
-					clusters = f.numClassses();
+					Breaks f = j.computeBreaks();
+			
+					clusters = f.printClusters();
 					
 					if ((majorHeteroplasmies >= settingAmountHigh || minorHeteroplasmies >= settingAmountHigh)
 							&& distanceHG >= settingDistance && hgQualityMajor > settingHgQuality
-							&& hgQualityMinor > settingHgQuality && f.numClassses()>1) {
+							&& hgQualityMinor > settingHgQuality) {
 						status = Status.YES;
 					} else {
 						status = Status.NO;
@@ -133,7 +132,7 @@ public class ContaminationDetection {
 				contObject.setHgMinorQ(formatter.format(hgQualityMinor));
 				contObject.setHomoplasmiesMajor(homoplasmiesMajor);
 				contObject.setHomoplasmiesMinor(homoplasmiesMinor);
-				contObject.setAmountCluster(clusters);
+				contObject.setClusterInfo(clusters);
 				contObject.setHeteroplasmiesMajor(majorHeteroplasmies);
 				contObject.setHeteroplasmiesMinor(minorHeteroplasmies);
 				contObject.setMeanHetlevelMajor(meanHeteroplasmyMajor);
@@ -214,24 +213,15 @@ public class ContaminationDetection {
 
 	}
 
-	private void calcBreaks(Sample currentSample, ArrayList<Polymorphism> foundHaplogrep, Jenks j, boolean a) {
-
-		for (Polymorphism found : foundHaplogrep) {
-
-			Variant variant = currentSample.getVariant(found.getPosition());
-
-			if (variant == null) {
-				continue;
-			}
-			
-			if (variant.getType() == 2) {
-				if (a) {
-					j.addValue(variant.getMajorLevel());
-				} else {
-					j.addValue(variant.getMinorLevel());
-				}
+	private Jenks calcBreaks(Sample currentSample) {
+		Jenks j = new Jenks();
+		for(Variant variant : currentSample.getVariants()) {
+			if(variant.getType() == 2) {
+			j.addValue(variant.getMajorLevel());
+			j.addValue(variant.getMinorLevel());
 			}
 		}
+		return j;
 	}
 
 	private int countHomoplasmies(Sample currentSample, ArrayList<Polymorphism> foundHaplogrep) {
@@ -377,7 +367,7 @@ public class ContaminationDetection {
 			contaminationWriter.setDouble(13, entry.getMeanHetlevelMajor());
 			contaminationWriter.setDouble(14, entry.getMeanHetlevelMinor());
 			contaminationWriter.setInteger(15, entry.getDistance());
-			contaminationWriter.setInteger(16, entry.getAmountCluster());
+			contaminationWriter.setString(16, entry.getClusterInfo());
 			contaminationWriter.next();
 		}
 
