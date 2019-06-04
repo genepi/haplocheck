@@ -19,7 +19,6 @@ import genepi.io.table.reader.CsvTableReader;
 import importer.VcfImporter;
 import phylotree.Phylotree;
 import phylotree.PhylotreeManager;
-import util.ExportUtils;
 import vcf.Sample;
 
 public class ThousandGenomeTest {
