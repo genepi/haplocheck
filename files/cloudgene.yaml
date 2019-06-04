@@ -1,5 +1,5 @@
 name: haplocheck
-description: Haplocheck provides a contamination check based on the mtDNA phylogeny.
+description: A contamination check using the mtDNA phylogeny.
 version: v1.0
  
 workflow:
