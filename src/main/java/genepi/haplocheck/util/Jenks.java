@@ -314,7 +314,7 @@ public class Jenks {
                 } else {
                     sb.append(getClassMin(i)).append(" - ").append(getClassMax(i));
                 }
-                sb.append(" (" + getClassCount(i) + ")");
+                sb.append(" (" + getClassCount(i) + ");");
                 sb.append("\n");
             }
             return sb.toString();
