@@ -19,8 +19,8 @@ public class ContaminationObject {
 	private int homoplasmiesMinor;
 	private int heteroplasmiesMajor;
 	private int heteroplasmiesMinor;
-	private double meanHetlevelMajor;
-	private double meanHetlevelMinor;
+	private String meanHetlevelMajor;
+	private String meanHetlevelMinor;
 	private int distance;
 	private String clusterInfo;
 	private ArrayList<Node> nodes;
@@ -99,16 +99,16 @@ public class ContaminationObject {
 	public void setHeteroplasmiesMinor(int heteroplasmiesMinor) {
 		this.heteroplasmiesMinor = heteroplasmiesMinor;
 	}
-	public double getMeanHetlevelMajor() {
+	public String getMeanHetlevelMajor() {
 		return meanHetlevelMajor;
 	}
-	public void setMeanHetlevelMajor(double meanHetlevelMajor) {
+	public void setMeanHetlevelMajor(String meanHetlevelMajor) {
 		this.meanHetlevelMajor = meanHetlevelMajor;
 	}
-	public double getMeanHetlevelMinor() {
+	public String getMeanHetlevelMinor() {
 		return meanHetlevelMinor;
 	}
-	public void setMeanHetlevelMinor(double meanHetlevelMinor) {
+	public void setMeanHetlevelMinor(String meanHetlevelMinor) {
 		this.meanHetlevelMinor = meanHetlevelMinor;
 	}
 	public int getDistance() {

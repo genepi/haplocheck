@@ -135,8 +135,8 @@ public class ContaminationDetection {
 				contObject.setClusterInfo(clusters);
 				contObject.setHeteroplasmiesMajor(majorHeteroplasmies);
 				contObject.setHeteroplasmiesMinor(minorHeteroplasmies);
-				contObject.setMeanHetlevelMajor(meanHeteroplasmyMajor);
-				contObject.setMeanHetlevelMinor(meanHeteroplasmyMinor);
+				contObject.setMeanHetlevelMajor(formatter.format(meanHeteroplasmyMajor));
+				contObject.setMeanHetlevelMinor(formatter.format(meanHeteroplasmyMinor));
 				contObject.setDistance(distanceHG);
 
 				ArrayList<TestSample> samples = new ArrayList<TestSample>();
@@ -364,8 +364,8 @@ public class ContaminationDetection {
 			contaminationWriter.setInteger(10, entry.getHomoplasmiesMinor());
 			contaminationWriter.setInteger(11, entry.getHeteroplasmiesMajor());
 			contaminationWriter.setInteger(12, entry.getHeteroplasmiesMinor());
-			contaminationWriter.setDouble(13, entry.getMeanHetlevelMajor());
-			contaminationWriter.setDouble(14, entry.getMeanHetlevelMinor());
+			contaminationWriter.setString(13, entry.getMeanHetlevelMajor());
+			contaminationWriter.setString(14, entry.getMeanHetlevelMinor());
 			contaminationWriter.setInteger(15, entry.getDistance());
 			contaminationWriter.setString(16, entry.getClusterInfo());
 			contaminationWriter.next();
