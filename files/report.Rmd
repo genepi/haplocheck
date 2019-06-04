@@ -1,12 +1,12 @@
 ---
 title: "mitocloud - quality control for mitochondrial projects"
-output: 
+output:
   flexdashboard::flex_dashboard:
     storyboard: true
     theme: bootstrap
     navbar:
       - { title: "About Mitocloud", href: "https://github.com/seppinho/mitocloud", align: right }
-    source_code: https://github.com/seppinho/mitocloud
+    source_code: https://github.com/github/mitocloud
 ---
 
 ```{r setup, include=FALSE, echo=FALSE}
