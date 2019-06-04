@@ -6,15 +6,22 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="https://getbootstrap.com/docs/4.1/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="https://getbootstrap.com/docs/4.1/examples/dashboard/dashboard.css" rel="stylesheet">
-	<link href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+	<link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+	<link href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.css" rel="stylesheet">
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://getbootstrap.com/docs/4.1/assets/js/vendor/popper.min.js"></script>
 	<script src="https://getbootstrap.com/docs/4.1/dist/js/bootstrap.min.js"></script>
-	<script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
-	<script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 	<script src="https://code.highcharts.com/highcharts.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.css"></script>
+	<script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
+
 
 	<style type="text/css">
 		#mynetwork {
@@ -28,7 +35,7 @@
 
 <body>
 	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Mitoserve</a>
+		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Haplocheck Report (v1.0)</a>
 	</nav>
 
 	<div class="container-fluid">
@@ -39,7 +46,7 @@
 						<li class="nav-item">
 							<a class="nav-link active" id="cont">
 								 <span data-feather="layers"></span>
-								 Contamination Report <span class="sr-only">(current)</span>
+								 Haplocheck Graphical Report <span class="sr-only">(current)</span>
 							 </a>
 						</li>
 						<li class="nav-item">
@@ -55,34 +62,35 @@
 			<main role="main" class="rcol-md-9 ml-sm-auto col-lg-10 px-4" id="main">
 
 				<div id="cont-panel">
+					<br>
+					<a><h2>Haplocheck Graphical Report</h2></a>
 
-					<a><h2>Contamination Report</h2></a>
-
-					<div class="table-responsive">
+				<div class="table-responsive">
 
 						<table id="contamination-table" class="display table table-striped table-bordered table-hover" style="width:100%">
 							<thead>
 								<tr>
 									<th>ID</th>
 									<th>Contamination</th>
-									<th>Haplogroup Major</th>
-									<th>Haplogroup Minor</th>
 									<th>Distance</th>
-									<th>Major</th>
-									<th>Minor</th>
+									<th>Major Level (%) </th>
+									<th>Minor Level (%)</th>
 								</tr>
 							</thead>
 						</table>
-					</div>
-					<div id="mynetwork" class="my-4 w-100">
 
-						<a name="network"><h4>Tree Details</h4></a>
 					</div>
 
 					<div class="my-4 w-100">
-							<div id="details" style="width:100%; height:400px;"></div>
+						<h2>Sample Details & Phylogenetic Tree</h2>
+						<div id="detailsSample" style="width:100%; height:100px;"></div>
 
 					</div>
+
+					<div id="mynetwork" class="my-4 w-100">
+					</div>
+
+
 				</div>
 
 				<div id="summary-panel" style="display:none;">
@@ -101,11 +109,7 @@
 						</table>
 					</div>
 				</div>
-
 			</main>
-
-
-
 		</div>
 	</div>
 
@@ -119,33 +123,29 @@
 	<script>
 		$(document).ready(function() {
 			var table = $('#contamination-table').DataTable({
-				"pageLength": 5,
+				dom: 'Bfrtip',
+				"pageLength": 10,
+				"pagingType": "simple",
 				"scrollY": "330px",
 				"scrollCollapse": true,
-				buttons: ['copy'],
+				buttons: ['csv'],
 				"columnDefs": [{
-						"targets": [5],
+						"targets": [3],
 						"visible": true,
 						"searchable": false
 					},
 					{
-						"targets": [6],
+						"targets": [4],
 						"visible": true,
 						"searchable": false
 					}
 				],
-			data: ${cont-data},
+				data: ${cont-data},
 				"columns": [{
 						"data": "id"
 					},
 					{
 						"data": "status"
-					},
-					{
-						"data": "hgMajor"
-					},
-					{
-						"data": "hgMinor"
 					},
 					{
 						"data": "distance"
@@ -195,10 +195,31 @@
 			$('#contamination-table tbody').on('click', 'tr', function() {
 
 				var data = table.row(this).data();
+				var details = document.getElementById('detailsSample');
 
+				if (data.status == "NO") {
+					details.innerHTML = "<div class=\"alert alert-success\" role=\"alert\"> No contamination detected for sample <b>" + data.id + "</b>.</div>";
+				} else {
+					details.innerHTML = "<div class=\"alert alert-danger\" role=\"alert\"> Contamination detected for sample <b>" + data.id + "</b>. Please check the details and the phylogenetic tree.</div>";
+				}
+				var sampleDetails = "Distance: " + data.distance
+				+ "<br> Coverage: "+ data.sampleMeanCoverage
+				+ "<br> Major Haplogroup: "	+ data.hgMajor + " (" + data.hgMajorQ
+				+ "%) <br> Minor Haplogroup: "+ data.hgMinor + " (" + data.hgMinorQ
+				+ "%)<br> Total Heteroplasmies: "+ data.sampleHeteroplasmies
+				+ "<br> Total Homoplasmies: "+ data.sampleHomoplasmies
+				+ "<br> Used Major/Minor Heteroplasmies: "+ data.heteroplasmiesMajor +"/"+ data.heteroplasmiesMinor
+				+ "<br> Heteroplasmy Clusters: <br>"+ data.clusterInfo;
+
+				details.innerHTML += "<button type=\"button\" class=\"btn btn-xs btn-info details-popover\" data-toggle=\"popover\" data-content=\"" + sampleDetails + "\">Show Sample Details</button>";
+
+				$('.details-popover').popover({
+					html: true,
+					container: 'body'
+				});
 				// create a network
 				var container = document.getElementById('mynetwork');
-				var data = {
+				var dataNetwork = {
 					nodes: data.nodes,
 					edges: data.edges
 				};
@@ -226,56 +247,12 @@
 						}
 					}
 				};
-				var network = new vis.Network(container, data, options);
 
-			});
+				var network = new vis.Network(container, dataNetwork, options);
 
-
-			Highcharts.chart('details', {
-				chart: {
-					plotBackgroundColor: null,
-					plotBorderWidth: 0,
-					plotShadow: false
-				},
-				title: {
-					text: 'Heteroplasmy <br> Levels',
-					align: 'center',
-					verticalAlign: 'middle',
-					y: 40
-				},
-				tooltip: {
-					pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-				},
-				plotOptions: {
-					pie: {
-						dataLabels: {
-							enabled: true,
-							distance: -50,
-							style: {
-								fontWeight: 'bold',
-								color: 'white'
-							}
-						},
-						startAngle: -90,
-						endAngle: 90,
-						center: ['50%', '75%'],
-						size: '110%'
-					}
-				},
-				series: [{
-					type: 'pie',
-					name: 'Browser share',
-					innerSize: '50%',
-					data: [
-						//data.meanHetlevelMajor
-						['Level Major', 1.0],
-						['Level Minor', 0.4]
-					]
-				}]
 			});
 
 		});
-
 	</script>
 
 </body>
