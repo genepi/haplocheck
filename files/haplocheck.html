@@ -4,30 +4,35 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href="https://getbootstrap.com/docs/4.1/dist/css/bootstrap.min.css" rel="stylesheet">
-	<link href="https://getbootstrap.com/docs/4.1/examples/dashboard/dashboard.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.js"></script>
+	<script src="https://getbootstrap.com/docs/4.3/assets/js/vendor/popper.min.js"></script>
+	<script src="https://getbootstrap.com/docs/4.3/dist/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+	<link href="https://getbootstrap.com/docs/4.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://getbootstrap.com/docs/4.3/examples/dashboard/dashboard.css" rel="stylesheet">
 	<link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-	<link href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.css" rel="stylesheet">
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-	<script src="https://getbootstrap.com/docs/4.1/assets/js/vendor/popper.min.js"></script>
-	<script src="https://getbootstrap.com/docs/4.1/dist/js/bootstrap.min.js"></script>
 	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-	<script src="https://code.highcharts.com/highcharts.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.js"></script>
-	<script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
-	<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-	<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
-	<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
+
 
 
 	<style type="text/css">
-		#mynetwork {
-			width: 1000px;
-			height: 400px;
-			border: 2px solid lightgray;
+		#contamination-table tr {
+			cursor: pointer;
+		}
+
+		.modal-lg {
+			max-width: 90%;
+		}
+
+		#mynetwork2 {
+			height: 500px;
+		}
+
+		.bootbox .modal-header {
+			display: block;
 		}
 	</style>
 
@@ -63,9 +68,9 @@
 
 				<div id="cont-panel">
 					<br>
-					<a><h2>Haplocheck Graphical Report</h2></a>
-
-				<div class="table-responsive">
+					<div class="table-responsive">
+						<h3> Sample Overview </h3>
+					<p class="text-justify"> This table includes all samples analyzed. Please <b>click on a row </b> to open the details and load the phylogenetic tree.</p>
 
 						<table id="contamination-table" class="display table table-striped table-bordered table-hover" style="width:100%">
 							<thead>
@@ -82,14 +87,11 @@
 					</div>
 
 					<div class="my-4 w-100">
-						<h2>Sample Details & Phylogenetic Tree</h2>
+						<hr>
 						<div id="detailsSample" style="width:100%; height:100px;"></div>
 
-					</div>
 
-					<div id="mynetwork" class="my-4 w-100">
 					</div>
-
 
 				</div>
 
@@ -121,9 +123,65 @@
 	</script>
 
 	<script>
+		$(document).on("click", ".details-phylotree", function(e) {
+			var data = window.data;
+			var dialog = bootbox.dialog({
+				title: "Phylogenetic Tree for <b>" + data.id + "</b>",
+				message: '<div id="mynetwork2"></div>',
+				show: false
+			});
+
+			dialog.find("div.modal-dialog").addClass("modal-lg");
+
+			dialog.on('shown.bs.modal', function() {
+
+
+				// create a network
+				var networkContainer = document.getElementById('mynetwork2');
+				var data = window.data;
+
+				var dataNetwork = {
+					nodes: data.nodes,
+					edges: data.edges
+				};
+				var options = {
+					layout: {
+						hierarchical: {
+							direction: "LR",
+							sortMethod: "directed",
+							parentCentralization: true
+						}
+					},
+					edges: {
+						shadow: true,
+						length: 100,
+						arrows: {
+							to: {
+								enabled: true
+							}
+						},
+						font: {
+							align: 'top',
+							size: 15
+						},
+						widthConstraint: {
+							maximum: 50
+						}
+					}
+				};
+
+				var network = new vis.Network(networkContainer, dataNetwork, options);
+			});
+
+			dialog.modal('show');
+
+
+		});
+	</script>
+
+	<script>
 		$(document).ready(function() {
 			var table = $('#contamination-table').DataTable({
-				dom: 'Bfrtip',
 				"pageLength": 10,
 				"pagingType": "simple",
 				"scrollY": "330px",
@@ -194,61 +252,68 @@
 
 			$('#contamination-table tbody').on('click', 'tr', function() {
 
+				if (window.row) {
+					$(window.row).removeClass('bg-secondary text-white');
+				}
+
+				$(this).addClass('bg-secondary text-white');
+				window.row = this;
+
 				var data = table.row(this).data();
 				var details = document.getElementById('detailsSample');
+
 
 				if (data.status == "NO") {
 					details.innerHTML = "<div class=\"alert alert-success\" role=\"alert\"> No contamination detected for sample <b>" + data.id + "</b>.</div>";
 				} else {
 					details.innerHTML = "<div class=\"alert alert-danger\" role=\"alert\"> Contamination detected for sample <b>" + data.id + "</b>. Please check the details and the phylogenetic tree.</div>";
 				}
-				var sampleDetails = "Distance: " + data.distance
-				+ "<br> Coverage: "+ data.sampleMeanCoverage
-				+ "<br> Major Haplogroup: "	+ data.hgMajor + " (" + data.hgMajorQ
-				+ "%) <br> Minor Haplogroup: "+ data.hgMinor + " (" + data.hgMinorQ
-				+ "%)<br> Total Heteroplasmies: "+ data.sampleHeteroplasmies
-				+ "<br> Total Homoplasmies: "+ data.sampleHomoplasmies
-				+ "<br> Used Major/Minor Heteroplasmies: "+ data.heteroplasmiesMajor +"/"+ data.heteroplasmiesMinor
-				+ "<br> Heteroplasmy Clusters: <br>"+ data.clusterInfo;
 
-				details.innerHTML += "<button type=\"button\" class=\"btn btn-xs btn-info details-popover\" data-toggle=\"popover\" data-content=\"" + sampleDetails + "\">Show Sample Details</button>";
+details.innerHTML += "<h3> Sample Details </h3>";
 
-				$('.details-popover').popover({
-					html: true,
-					container: 'body'
-				});
-				// create a network
-				var container = document.getElementById('mynetwork');
-				var dataNetwork = {
-					nodes: data.nodes,
-					edges: data.edges
-				};
-				var options = {
-					layout: {
-						hierarchical: {
-							direction: "LR",
-							sortMethod: "directed"
-						}
-					},
-					edges: {
-						shadow: true,
-						length: 200,
-						arrows: {
-							to: {
-								enabled: true
-							}
-						},
-						font: {
-							align: 'top',
-							size: 12
-						},
-						widthConstraint: {
-							maximum: 120
-						}
-					}
-				};
+				details.innerHTML +=
+					`<table class="table table-bordered fixed">
+					<col width="20px" />
+ 				  <col width="30px" />
+  <thead>
+	<tr>
+	<th scope="col">Distance</th>
+		<th scope="col">${data.distance}</th>
+	</tr>
+  <tr>
+      <th scope="col">Coverage</th>
+      <th scope="col">${data.sampleMeanCoverage}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+		<th scope="col">Major Haplogroup</th>
+      <th scope="col">${data.hgMajor}</th>
+    </tr>
+    <tr>
+		<th scope="col">Minor Haplogroup</th>
+      <th scope="col">${data.hgMinor}</th>
+    </tr>
+    <tr>
+		<th scope="col">Sample Heteroplasmies</th>
+		<th scope="col">${data.sampleHeteroplasmies}</th>
+    </tr>
+		<tr>
+		<th scope="col">Sample Homoplasmies</th>
+		<th scope="col">${data.sampleHomoplasmies}</th>
+		</tr>
+		<tr>
+		<th scope="col">Heteroplasmy Clusters</th>
+		<th scope="col">${data.clusterInfo}</th>
+		</tr>
+  </tbody>
+</table>`;
 
-				var network = new vis.Network(container, dataNetwork, options);
+				details.innerHTML += "<h3> Phylogenetic Tree </h3>";
+				details.innerHTML += '<p class="text-justify">  For each sample, we are creating a phylogenetic tree combining the haplogroup of the major and minor componenent. It starts from the Phylotree node (rcRS) and ends with the final haplogroup for both components.</p>';
+				details.innerHTML += "<button type=\"button\" class=\"btn btn-xs btn-info details-phylotree\">Inspect Phylogenetic Tree</button>";
+
+				window.data = data;
 
 			});
 
