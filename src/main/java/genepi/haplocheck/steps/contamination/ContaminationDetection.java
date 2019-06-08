@@ -100,17 +100,20 @@ public class ContaminationDetection {
 				int minorHeteroplasmies = countOverlappingHeteroplasmies(haplogrepMinor, mutserveSample, phylotree,
 						commonAncestor, false);
 
-				Jenks j = calcBreaks(mutserveSample);
+				Jenks jenks = new Jenks();
 
-				Breaks f = j.computeBreaks();
+				calcBreaks(jenks, haplogrepMajor, mutserveSample, phylotree, commonAncestor, true);
+				calcBreaks(jenks, haplogrepMinor, mutserveSample, phylotree, commonAncestor, false);
 
-				String clusters = f.printClusters();
+				Breaks jenkBreaks = jenks.computeBreaks();
+
+				String clusters = jenkBreaks.printClusters();
 
 				if (!contamination.getHgMajor().equals(contamination.getHgMinor())) {
 
 					distance = calcDistance(contamination, phylotree);
 
-					if (majorHeteroplasmies + minorHeteroplasmies >= heteroplasmyDistance 
+					if ((majorHeteroplasmies + minorHeteroplasmies) >= heteroplasmyDistance
 							&& distance >= haplogroupDistance && hgQualityMajor > haplogroupQ
 							&& hgQualityMinor > haplogroupQ) {
 						status = Status.YES;
@@ -163,17 +166,6 @@ public class ContaminationDetection {
 		return phylotree.getDistanceBetweenHaplogroups(hgMajor, hgMinor);
 	}
 
-	private Jenks calcBreaks(Sample currentSample) {
-		Jenks j = new Jenks();
-		for (Variant variant : currentSample.getVariants()) {
-			if (variant.getType() == 2) {
-				j.addValue(variant.getMajorLevel());
-				j.addValue(variant.getMinorLevel());
-			}
-		}
-		return j;
-	}
-
 	private int countHomoplasmies(Sample currentSample, ArrayList<Polymorphism> foundHaplogrep) {
 
 		int count = 0;
@@ -187,6 +179,60 @@ public class ContaminationDetection {
 			}
 
 		}
+		return count;
+	}
+
+	private int calcBreaks(Jenks j, TestSample haplogrepSample, Sample mutserveSample, Phylotree phylotree,
+			Haplogroup commonAncestor, boolean major) {
+
+		int count = 0;
+
+		ArrayList<SearchResultTreeNode> path = haplogrepSample.getTopResult().getSearchResult().getDetailedResult()
+				.getPhyloTreePath();
+
+		for (SearchResultTreeNode current : path) {
+			Haplogroup node = current.getHaplogroup();
+
+			for (Polymorphism currentPoly : current.getExpectedPolys()) {
+
+				Variant pos = mutserveSample.getVariant(currentPoly.getPosition());
+
+				if (pos == null) {
+					continue;
+				}
+				// check mutation rate
+				if (phylotree.getMutationRate(currentPoly) < 5) {
+					continue;
+				}
+
+				// count only heteroplasmies from common ancestor and later!
+				if (!commonAncestor.isSuperHaplogroup(phylotree, node)) {
+					continue;
+				}
+
+				if (major && (pos.getRef() == pos.getMajor())) {
+
+					continue;
+				}
+
+				if (!major && (pos.getRef() == pos.getMinor())) {
+
+					continue;
+				}
+
+				if (pos.getType() == 2 && pos.getVariant() != 'd') {
+
+					if (major) {
+						j.addValue(pos.getMajorLevel());
+					} else {
+						j.addValue(pos.getMinorLevel());
+					}
+					count++;
+				}
+			}
+
+		}
+
 		return count;
 	}
 
@@ -229,7 +275,7 @@ public class ContaminationDetection {
 				}
 
 				if (pos.getType() == 2 && pos.getVariant() != 'd') {
-					
+
 					count++;
 				}
 			}
