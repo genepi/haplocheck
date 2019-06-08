@@ -39,9 +39,9 @@ public class ContaminationDetection {
 		YES, NO;
 	}
 
-	private int settingAmountHigh = 3;
-	private int settingDistance = 3;
-	private double settingHgQuality = 0.5;
+	private int heteroplasmyDistance = 2;
+	private int haplogroupDistance = 2;
+	private double haplogroupQ = 0.5;
 
 	public ArrayList<ContaminationObject> detect(HashMap<String, Sample> mutationSamples,
 			ArrayList<TestSample> haplogrepSamples) {
@@ -110,9 +110,9 @@ public class ContaminationDetection {
 
 					distance = calcDistance(contamination, phylotree);
 
-					if ((majorHeteroplasmies >= settingAmountHigh || minorHeteroplasmies >= settingAmountHigh)
-							&& distance >= settingDistance && hgQualityMajor > settingHgQuality
-							&& hgQualityMinor > settingHgQuality) {
+					if (majorHeteroplasmies + minorHeteroplasmies >= heteroplasmyDistance 
+							&& distance >= haplogroupDistance && hgQualityMajor > haplogroupQ
+							&& hgQualityMinor > haplogroupQ) {
 						status = Status.YES;
 					} else {
 						status = Status.NO;
@@ -229,6 +229,7 @@ public class ContaminationDetection {
 				}
 
 				if (pos.getType() == 2 && pos.getVariant() != 'd') {
+					
 					count++;
 				}
 			}
@@ -295,19 +296,19 @@ public class ContaminationDetection {
 	}
 
 	public int getSettingAmountHigh() {
-		return settingAmountHigh;
+		return heteroplasmyDistance;
 	}
 
 	public void setSettingAmountHigh(int settingAmountHigh) {
-		this.settingAmountHigh = settingAmountHigh;
+		this.heteroplasmyDistance = settingAmountHigh;
 	}
 
 	public double getSettingHgQuality() {
-		return settingHgQuality;
+		return haplogroupQ;
 	}
 
 	public void setSettingHgQuality(double settingHgQuality) {
-		this.settingHgQuality = settingHgQuality;
+		this.haplogroupQ = settingHgQuality;
 	}
 
 	public static String readInReference(String file) {
