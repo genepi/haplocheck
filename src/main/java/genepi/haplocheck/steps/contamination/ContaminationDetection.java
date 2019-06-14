@@ -39,7 +39,7 @@ public class ContaminationDetection {
 		YES, NO;
 	}
 
-	private int heteroplasmyDistance = 2;
+	private int heteroplasmyDistance = 3;
 	private int haplogroupDistance = 2;
 	private double haplogroupQ = 0.5;
 
@@ -200,6 +200,11 @@ public class ContaminationDetection {
 				if (pos == null) {
 					continue;
 				}
+				
+				if (currentPoly.isBackMutation()) {
+					continue;
+				}
+
 				// check mutation rate
 				if (phylotree.getMutationRate(currentPoly) < 5) {
 					continue;
@@ -254,6 +259,11 @@ public class ContaminationDetection {
 				if (pos == null) {
 					continue;
 				}
+
+				if (currentPoly.isBackMutation()) {
+					continue;
+				}
+
 				// check mutation rate
 				if (phylotree.getMutationRate(currentPoly) < 5) {
 					continue;
@@ -275,7 +285,6 @@ public class ContaminationDetection {
 				}
 
 				if (pos.getType() == 2 && pos.getVariant() != 'd') {
-
 					count++;
 				}
 			}
@@ -303,6 +312,11 @@ public class ContaminationDetection {
 				if (pos == null) {
 					continue;
 				}
+
+				if (currentPoly.isBackMutation()) {
+					continue;
+				}
+
 				// check mutation rate
 				if (phylotree.getMutationRate(currentPoly) < 5) {
 					continue;
