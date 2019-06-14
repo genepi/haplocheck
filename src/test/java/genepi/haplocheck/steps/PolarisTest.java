@@ -116,7 +116,7 @@ public class PolarisTest {
 			}
 		}
 
-		assertEquals(2, count);
+		assertEquals(1, count);
 
 		FileUtil.deleteFile(output);
 
