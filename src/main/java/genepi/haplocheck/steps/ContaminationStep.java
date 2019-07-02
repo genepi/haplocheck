@@ -116,7 +116,7 @@ public class ContaminationStep extends WorkflowStep {
 			}
 		}
 
-		if(distanceList.size() > 0) {
+		if(contaminationList.size() > 0) {
 		double distanceMedian = com.google.common.math.Quantiles.median().compute(distanceList);
 		double percentile25 = Quantiles.percentiles().index(25).compute(distanceList);
 		double percentile75 = Quantiles.percentiles().index(75).compute(distanceList);
