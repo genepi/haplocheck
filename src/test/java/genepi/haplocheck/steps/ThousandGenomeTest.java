@@ -71,7 +71,7 @@ public class ThousandGenomeTest {
 	}
 	
 
-	@Test
+/*	@Test
 	public void testBaq1000G1Sample() throws Exception {
 
 		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
@@ -116,7 +116,7 @@ public class ThousandGenomeTest {
 
 		assertEquals(0, countHigh);
 		FileUtil.deleteFile(output);
-	}
+	}*/
 	
 	@Test
 	public void testNoBaq1000G() throws Exception {
