@@ -69,7 +69,8 @@ public class InputValidation extends WorkflowStep {
 					VcfFile vcfFile = VcfFileUtil.load(filename);
 
 					if (!VcfFileUtil.isValidChromosome(vcfFile.getChromosome())) {
-						context.endTask("VCF includes " + vcfFile.getChromosome() + ". Not a valid chromosome",
+						context.endTask("VCF includes " + vcfFile.getChromosome()
+								+ ". Not a valid chromosome. Please upload a VCF with chromosome: chrMT, chrM, MT",
 								WorkflowContext.ERROR);
 						return false;
 					}
