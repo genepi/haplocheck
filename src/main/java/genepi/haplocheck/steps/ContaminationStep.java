@@ -84,7 +84,7 @@ public class ContaminationStep extends WorkflowStep {
 					haplogrepSamples.getTestSamples());
 
 			contamination.writeReport(outputReport, result);
-			
+
 			contamination.writeReportAsJson(outputJson, result);
 
 			writeSummary(outputSummary, result);
@@ -116,23 +116,22 @@ public class ContaminationStep extends WorkflowStep {
 			}
 		}
 
-		if(contaminationList.size() > 0) {
-		double distanceMedian = com.google.common.math.Quantiles.median().compute(distanceList);
-		double percentile25 = Quantiles.percentiles().index(25).compute(distanceList);
-		double percentile75 = Quantiles.percentiles().index(75).compute(distanceList);
-
 		JsonObject result = new JsonObject();
 		result.add("Yes", new JsonPrimitive(countYes));
 		result.add("No", new JsonPrimitive(countNo));
-		result.add("Distance", new JsonPrimitive(distanceMedian));
-		result.add("25Percentile", new JsonPrimitive(percentile25));
-		result.add("75Percentile", new JsonPrimitive(percentile75));
+
+		if (distanceList.size() > 0) {
+			double distanceMedian = com.google.common.math.Quantiles.median().compute(distanceList);
+			double percentile25 = Quantiles.percentiles().index(25).compute(distanceList);
+			double percentile75 = Quantiles.percentiles().index(75).compute(distanceList);
+			result.add("Distance", new JsonPrimitive(distanceMedian));
+			result.add("25Percentile", new JsonPrimitive(percentile25));
+			result.add("75Percentile", new JsonPrimitive(percentile75));
+		}
 
 		FileWriter wr = new FileWriter(outSummary);
 		wr.write(result.toString());
 		wr.close();
-		}
 	}
-	
+
 }
-	
