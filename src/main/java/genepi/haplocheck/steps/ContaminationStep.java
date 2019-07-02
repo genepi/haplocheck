@@ -119,6 +119,9 @@ public class ContaminationStep extends WorkflowStep {
 		JsonObject result = new JsonObject();
 		result.add("Yes", new JsonPrimitive(countYes));
 		result.add("No", new JsonPrimitive(countNo));
+		result.add("Distance", new JsonPrimitive(0.0));
+		result.add("25Percentile", new JsonPrimitive(0.0));
+		result.add("75Percentile", new JsonPrimitive(0.0));
 
 		if (distanceList.size() > 0) {
 			double distanceMedian = com.google.common.math.Quantiles.median().compute(distanceList);
