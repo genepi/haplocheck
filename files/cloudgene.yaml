@@ -1,6 +1,6 @@
 name: haplocheck
 description: A contamination check using the mtDNA phylogeny.
-version: v1.0
+version: 1.0.2
  
 workflow:
 
@@ -49,20 +49,20 @@ workflow:
 
     - id: archive
       description: Reference FASTA
-      type: local-file
+      type: text
       visible: false
       value: rCRS.fasta
       
     - id: baseQ
       description: Minimal Base Quality
       type: text
-      visible: true 
+      visible: false 
       value: 20  
       
     - id: mapQ
       description: Minimal Map Quality
       type: text
-      visible: true 
+      visible: false
       value: 20  
 
   outputs:  
