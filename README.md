@@ -1,11 +1,11 @@
 # Haplocheck
 [![Build Status](https://travis-ci.org/genepi/haplocheck.svg?branch=master)](https://travis-ci.org/genepi/haplocheck)
 
-# Run Haplocheck as a cloud service
+## Run Haplocheck as a cloud service
 
 Haplocheck is a contamination tool using the mtDNA phylogeny and has been integrated into the [mitoverse](https://mitoverse.i-med.ac.at) mtDNA platform based on [Cloudgene](https://www.cloudgene.io). 
 
-# Run Haplocheck locally
+## Run Haplocheck locally
 
 Using Cloudgene, the complete workflow can also be executed locally. The final report is located `outfolder/report`.
 
