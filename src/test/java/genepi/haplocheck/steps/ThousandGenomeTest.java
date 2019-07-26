@@ -75,7 +75,7 @@ public class ThousandGenomeTest {
 
 		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
 		String folder = "test-data/contamination/1000G/all/";
-		String variantFile = folder + "1000g_nobaq.vcf.gz";
+		String variantFile = folder + "1000g-nobaq.vcf.gz";
 		String output = folder + "1000g-report.txt";
 
 		VcfImporter reader2 = new VcfImporter();
@@ -113,7 +113,7 @@ public class ThousandGenomeTest {
 			}
 		}
 
-		assertEquals(86, countHigh);
+		assertEquals(119, countHigh);
 		FileUtil.deleteFile(output);
 	}
 	

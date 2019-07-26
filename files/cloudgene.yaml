@@ -11,9 +11,9 @@ workflow:
       
   steps:
 
-    - name: Variant Calling
+    - name: Variant Calling using mutserve
       jar: mutserve-1.2.1.jar
-      params: analyse-local --input $files --reference $archive --mapQ $mapQ --baseQ $baseQ --deletions --insertions --output $files/out.vcf.gz
+      params: analyse-local --input $files --noBaq --reference $archive --mapQ $mapQ --baseQ $baseQ --deletions --insertions --output $files/out.vcf.gz
       runtime: java
       
     - name: Haplogroup Classification
