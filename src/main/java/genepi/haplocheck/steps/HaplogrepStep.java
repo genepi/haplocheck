@@ -10,8 +10,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 import core.SampleFile;
-import genepi.hadoop.common.WorkflowContext;
-import genepi.hadoop.common.WorkflowStep;
+import cloudgene.sdk.internal.WorkflowContext;
+import cloudgene.sdk.internal.WorkflowStep;
 import genepi.haplocheck.steps.contamination.HaplogroupClassifier;
 import genepi.haplocheck.util.Utils;
 import importer.VcfImporter;

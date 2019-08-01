@@ -1,6 +1,6 @@
 name: haplocheck
-description: A contamination check using the mtDNA phylogeny.
-version: 1.0.2
+description: Within-species contamination leveraging the mtDNA phylogeny.
+version: 1.0.3
  
 workflow:
 
@@ -70,7 +70,7 @@ workflow:
     - id: haplogroups
       description: Haplogroups
       type: local-file
-      download: true
+      download: false
       
     - id: contamination
       description: Contamination Table
@@ -100,4 +100,4 @@ workflow:
     - id: summary
       description: Contamination Summary
       type: local-file
-      download: true    
+      download: false    

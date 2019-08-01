@@ -1,7 +1,7 @@
 package genepi.haplocheck.steps;
 
-import genepi.hadoop.common.WorkflowContext;
-import genepi.hadoop.common.WorkflowStep;
+import cloudgene.sdk.internal.WorkflowContext;
+import cloudgene.sdk.internal.WorkflowStep;
 
 public class MailStep extends WorkflowStep {
 
