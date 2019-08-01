@@ -50,8 +50,8 @@ hg = read.table(file, header = TRUE, sep=",")
 
 hg$Population= str_sub(hg$HG.mutserve, 1, 1)
 
-p = ggplot(hg, aes(x=Quality.calmom, y=Quality.mutserve, color=Population)) + geom_point() +  xlab('Quality Mutserve') +   ylab('Quality calmom')
-haplogroups_final <- p + theme_light() +  theme(legend.position="top")
+p = ggplot(hg, aes(x=Quality.calmom, y=Quality.mutserve, color=Population)) + geom_point() +  xlab('Haplogroup Quality Mutserve') +   ylab('Haplogroup Quality callMom')
+haplogroups_final <- p + theme_light() +  theme(legend.position="right") + theme(text = element_text(size=14))
 haplogroups_final;
 
 file = "1000g/verifybam.csv";
@@ -59,7 +59,7 @@ verifybam = read.table(file, header = TRUE, sep=",")
 verifybam1 = filter(verifybam,verifybam$X1000g==1);
 p = ggplot(verifybam1, aes(x=Contamination, y=free_contam,color= factor(Contamination))) + 
   geom_boxplot()  + scale_colour_brewer(palette = "Set1")
-p + xlab('Contamination Category') +   ylab('Free Mix Level VerifyBamId') + labs(colour = "Contamination Category")
+p + xlab('Contamination Category (Haplocheck)') +   ylab('Free Mix Level (VerifyBamID)') + labs(colour = "Contamination Category (Haplocheck)")
 
   res <- t.test(free_contam ~ Contamination, data = verifybam, var.equal = TRUE)
 res
