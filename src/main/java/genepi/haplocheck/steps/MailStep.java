@@ -12,10 +12,14 @@ public class MailStep extends WorkflowStep {
 		Object name = context.getData("cloudgene.user.name");
 		
 		if (mail != null && !mail.equals("")) {
-
+			
 			context.ok("We have sent an email to <b>" + mail
 					+ "</b>.");
-
+			
+			StringBuffer text = new StringBuffer();
+			text.append("The final contamination report can be found here: " + context.createLinkToFile("report", "report.html") +"<br>");
+			context.ok(text.toString());
+			
 			String subject = "Job " + context.getJobName() + " is complete.";
 			String message = "Dear "
 					+ name
