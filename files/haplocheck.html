@@ -1,5 +1,12 @@
 <!DOCTYPE html>
 <html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<!DOCTYPE html>
+<html>
 
 <head>
 	<meta charset="utf-8">
@@ -15,6 +22,7 @@
 	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
 
 
 
@@ -40,7 +48,7 @@
 
 <body>
 	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Haplocheck Report (v1.0)</a>
+		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Haplocheck Report (v1.0.3)</a>
 	</nav>
 
 	<div class="container-fluid">
@@ -49,15 +57,21 @@
 				<div class="sidebar-sticky">
 					<ul class="nav flex-column">
 						<li class="nav-item">
-							<a class="nav-link active" id="cont">
+							<a class="nav-link active" id="samples" style="cursor: pointer">
 								 <span data-feather="layers"></span>
-								 Haplocheck Graphical Report <span class="sr-only">(current)</span>
+								 Samples <span class="sr-only">(current)</span>
 							 </a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" id="summary">
+							<a class="nav-link" id="summary" style="cursor: pointer">
 								 <span data-feather="bar-chart-2"></span>
-								 Sample Summary
+								 Summary
+							 </a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="about" style="cursor: pointer">
+								 <span data-feather="info"></span>
+								 About
 							 </a>
 						</li>
 					</ul>
@@ -69,7 +83,7 @@
 				<div id="cont-panel">
 					<br>
 					<div class="table-responsive">
-						<h3> Sample Overview </h3>
+						<h3> Samples </h3>
 					<p class="text-justify"> This table includes all samples analyzed. Please <b>click on a row </b> to open the details and load the phylogenetic tree.</p>
 
 						<table id="contamination-table" class="display table table-striped table-bordered table-hover" style="width:100%">
@@ -88,7 +102,9 @@
 
 					<div class="my-4 w-100">
 						<hr>
-						<div id="detailsSample" style="width:100%; height:100px;"></div>
+						<div id="detailsSample" style="width:100%; height:100px;">
+							<i>Please click on a sample to get more details</i>
+						</div>
 
 
 					</div>
@@ -96,7 +112,9 @@
 				</div>
 
 				<div id="summary-panel" style="display:none;">
+					<br>
 					<div class="table-responsive">
+						<h3> Summary </h3>
 
 						<table id="summary-table" class="display table table-striped table-bordered table-hover" style="width:100%">
 							<thead>
@@ -111,6 +129,13 @@
 						</table>
 					</div>
 				</div>
+
+				<div id="about-panel" style="display:none;">
+					<br>
+					<h3> About </h3>
+		This report has been created with <a href="https://mitoverse.i-med.ac.at/index.html#!">mitoverse</a>. <br> Please contact <a href="mailto:sebastian.schoenherr@i-med.ac.at">Sebastian</a> in case of any problems or have a look at the <a href="https://mitoverse.readthedocs.io">documentation</a>.</p>
+			</div>
+
 			</main>
 		</div>
 	</div>
@@ -239,14 +264,30 @@
 				]
 			});
 
-			$('#cont').on('click', function() {
+			$('#samples').on('click', function() {
+				$("#samples").addClass('active');
+				$("#summary").removeClass('active');
+				$("#about").removeClass('active');
 				$("#cont-panel").show();
 				$("#summary-panel").hide();
+				$("#about-panel").hide();
 			});
 
 			$('#summary').on('click', function() {
+				$("#samples").removeClass('active');
+				$("#summary").addClass('active');
+				$("#about").removeClass('active');
 				$("#cont-panel").hide();
 				$("#summary-panel").show();
+				$("#about-panel").hide();
+			});
+			$('#about').on('click', function() {
+				$("#samples").removeClass('active');
+				$("#summary").removeClass('active');
+				$("#about").addClass('active');
+				$("#cont-panel").hide();
+				$("#summary-panel").hide();
+				$("#about-panel").show();
 			});
 
 
@@ -263,16 +304,11 @@
 				var details = document.getElementById('detailsSample');
 
 
-				if (data.status == "NO") {
-					details.innerHTML = "<div class=\"alert alert-success\" role=\"alert\"> No contamination detected for sample <b>" + data.id + "</b>.</div>";
-				} else {
-					details.innerHTML = "<div class=\"alert alert-danger\" role=\"alert\"> Contamination detected for sample <b>" + data.id + "</b>. Please check the details and the phylogenetic tree.</div>";
-				}
-
-details.innerHTML += "<h3> Sample Details </h3>";
+details.innerHTML = "<h3>" + data.id +"</h3>";
+				details.innerHTML += "<br> <button type='button' class='btn btn-xs btn-primary details-phylotree'><i class='far fa-eye'></i> Phylogenetic Tree</button>";
 
 				details.innerHTML +=
-					`<table class="table table-bordered fixed">
+					`<br><br> <table class="table table-bordered fixed">
 					<col width="20px" />
  				  <col width="30px" />
   <thead>
@@ -294,7 +330,7 @@ details.innerHTML += "<h3> Sample Details </h3>";
 		<th scope="col">Minor Haplogroup</th>
       <th scope="col">${data.hgMinor}</th>
     </tr>
-    
+
       <tr>
 		<th scope="col">Total Heteroplasmies Sample</th>
 		<th scope="col">${data.sampleHeteroplasmies}</th>
@@ -314,10 +350,6 @@ details.innerHTML += "<h3> Sample Details </h3>";
   </tbody>
 </table>`;
 
-				details.innerHTML += "<h3> Phylogenetic Tree </h3>";
-				details.innerHTML += '<p class="text-justify">  For each sample, we are creating a phylogenetic tree combining the haplogroup of the major and minor componenent. It starts from the Phylotree node (rcRS) and ends with the final haplogroup for both components.</p>';
-				details.innerHTML += "<button type=\"button\" class=\"btn btn-xs btn-info details-phylotree\">Inspect Phylogenetic Tree</button>";
-
 				window.data = data;
 
 			});
@@ -327,4 +359,7 @@ details.innerHTML += "<h3> Sample Details </h3>";
 
 </body>
 
+</html>
+
+  </body>
 </html>
