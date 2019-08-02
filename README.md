@@ -10,8 +10,8 @@ Haplocheck is a contamination tool using the mtDNA phylogeny and has been integr
 Using Cloudgene, the complete workflow can also be executed locally. The final report is located `outfolder/report`.
 
         curl -s install.cloudgene.io | bash -s 2.0.0-rc9
-        ./cloudgene install https://github.com/genepi/haplocheck/releases/download/v1.0.2/haplocheck.zip
-        ./cloudgene run haplocheck@1.0.2 --files <input-files> --output <folder>  
+        ./cloudgene install https://github.com/genepi/haplocheck/releases/download/v1.0.5/haplocheck.zip
+        ./cloudgene run haplocheck@1.0.5 --files <input-files> --output <folder>  
 
 ## Input File Formats
 Haplocheck accepts BAM/CRAM files, vcf.gz as an input.
