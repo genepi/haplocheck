@@ -1,6 +1,8 @@
 # Haplocheck
 [![Build Status](https://travis-ci.org/genepi/haplocheck.svg?branch=master)](https://travis-ci.org/genepi/haplocheck)
 
+Within-species DNA contamination is a possible source for false results in sequencing studies. Haplocheck is a tool that leverages the mitochondrial phylogeny to detect sample contamination in sequencing studies. For user experience, we provide haplocheck as a standalone pipeline but also as a cloud web service for graphical workflow execution and phylogenetic tree exploration. 
+
 ## Run Haplocheck as a cloud service
 
 Haplocheck is a contamination tool using the mtDNA phylogeny and has been integrated into the [mitoverse](https://mitoverse.i-med.ac.at) mtDNA platform based on [Cloudgene](https://www.cloudgene.io). 
