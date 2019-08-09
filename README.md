@@ -28,4 +28,4 @@ Please click [here](https://mitoverse.readthedocs.io/en/latest/) to get the late
 Check out our [blog](http://haplogrep.uibk.ac.at/blog/) regarding mtDNA topics.
 
 ## Contact
-[Hansi Weissensteiner](mailto:hansi.weissensteiner@i-med.ac.at) ([@haansi](https://twitter.com/whansi)) and [Sebastian Schoenherr](mailto:sebastian.schoenherr@i-med.ac.at) ([@seppinho](https://twitter.com/seppinho)); Division of Genetic Epidemiology, Medical University of Innsbruck;
+[Hansi Weissensteiner](mailto:hansi.weissensteiner@i-med.ac.at) ([@haansi](https://twitter.com/whansi)) and [Sebastian Schoenherr](mailto:sebastian.schoenherr@i-med.ac.at) ([@seppinho](https://twitter.com/seppinho)); Institute of Genetic Epidemiology, Medical University of Innsbruck;
