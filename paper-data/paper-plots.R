@@ -8,11 +8,11 @@ file = "simulated-data/output/simulation_3_All_500k_kulczynski.txt";
 simAllFilter = filter(simAll,simAll$HaplogrepFilter == 0.5  & simAll$Setup <= 6 & simAll$Group<=8);
 simAllFilter$F1 = 2*(simAllFilter$Sensitivity * simAllFilter$Precision/(simAllFilter$Sensitivity + simAllFilter$Precision));
 p <- ggplot(simAllFilter, aes(x = Group, y = F1,colour=factor(Setup))) + 
-  geom_line();
-p <- p + xlab('Variant Noise') +   ylab('F1 Score') + labs(colour = "Haplocheck Setup") + 
+  geom_line(size = 0.8)
+p <- p + xlab('Amount of Noise (Overall Phylogeny)') +   ylab('Contamination Accuracy (F1 Score)') + labs(colour = "Haplocheck Setup") + 
   scale_x_continuous(breaks = c(0,4,8), labels = c("0", "4", "8")) + coord_cartesian(ylim=c(0.7,1))
 p <- p + scale_colour_brewer(palette = "Set1")
-all_final <- p + theme_light() +  theme(legend.position="top")
+all_final <- p + theme_light() +  theme(legend.position="top") + theme(text = element_text(size=14))
 
 all_final
 
@@ -29,18 +29,17 @@ simH = read.table(file, header = TRUE, sep=",");
 simHFilter = filter(simH,simH$HaplogrepFilter == 0.5  & simH$Setup <= 6 & simH$Group<=8);
 simHFilter$F1 = 2*(simHFilter$Sensitivity * simHFilter$Precision/(simHFilter$Sensitivity + simHFilter$Precision));
 p <- ggplot(simHFilter, aes(x = Group, y = F1,colour=factor(Setup))) + 
-  geom_line();
-p <- p + xlab('Variant Noise') +   ylab('F1 Score') + labs(colour = "Haplocheck Setup") + 
+  geom_line(size = 0.8);
+p <- p + xlab('Amount of Noise (Haplogroup H subtree)') +   ylab('Contamination Accuracy (F1 Score)') + labs(colour = "Haplocheck Setup") + 
   scale_x_continuous(breaks = c(0,4,8), labels = c("0", "4", "8")) + coord_cartesian(ylim=c(0.7,1))
-h_final <- p + scale_colour_brewer(palette = "Set1") + theme_light() +  theme(legend.position="top")
-h_final
+h_final <- p + scale_colour_brewer(palette = "Set1") + theme_light() +  theme(legend.position="top") + theme(text = element_text(size=14))
 
 filterHSetup = filter(simH,simH$HaplogrepFilter == 0.5  & simH$Setup ==3);
 filterHSetup$F1 = 2*(filterHSetup$Sensitivity * filterHSetup$Precision/(filterHSetup$Sensitivity + filterHSetup$Precision));
 filterHSetup
 filterHSetup = filter(simH,simH$HaplogrepFilter == 0.5  & simH$Setup ==4);
 filterHSetup$F1 = 2*(filterHSetup$Sensitivity * filterHSetup$Precision/(filterHSetup$Sensitivity + filterHSetup$Precision));
-filterHSetup
+
 
 ggarrange(all_final, h_final, labels = c("A", "B"),
           ncol = 2);
