@@ -11,7 +11,7 @@ Haplocheck is a contamination tool using the mtDNA phylogeny and has been integr
 
 Using Cloudgene, the complete workflow can also be executed locally. The final report is located `outfolder/report`.
 
-        curl -s install.cloudgene.io | bash -s 2.0.0-rc9
+        curl -s install.cloudgene.io | bash -s 2.0.0-rc14
         ./cloudgene install https://github.com/genepi/haplocheck/releases/download/v1.0.5/haplocheck.zip
         ./cloudgene run haplocheck@1.0.5 --files <input-files> --output <folder>  
 
