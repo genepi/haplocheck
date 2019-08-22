@@ -16,13 +16,16 @@ Using Cloudgene, the complete workflow can also be executed locally. The final r
         ./cloudgene run haplocheck@1.0.5 --files <input-files> --output <folder>  
 
 ## Input File Formats
-Haplocheck accepts BAM/CRAM files, vcf.gz as an input.
+Haplocheck accepts BAM/CRAM files, vcf.gz as an input. 
 
 ## Output File Formats
 Haplocheck genereates a text file including summary statistics for each sample and a contamination status. It also provides a graphical report which can shared with collaborators.    
 
 ## Documentation
 Please click [here](https://mitoverse.readthedocs.io/en/latest/) to get the latest documentation.
+
+## Testdata
+The 1000 Genomes Phase3 file analyzed with mutserve can be found [here](https://github.com/genepi/haplocheck/raw/master/test-data/contamination/1000G/all/1000g-nobaq.vcf.gz). 
 
 ## Blog
 Check out our [blog](http://haplogrep.uibk.ac.at/blog/) regarding mtDNA topics.
