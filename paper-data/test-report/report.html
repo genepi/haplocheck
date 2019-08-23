@@ -1,0 +1,7370 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.js"></script>
+	<script src="https://getbootstrap.com/docs/4.3/assets/js/vendor/popper.min.js"></script>
+	<script src="https://getbootstrap.com/docs/4.3/dist/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+	<link href="https://getbootstrap.com/docs/4.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://getbootstrap.com/docs/4.3/examples/dashboard/dashboard.css" rel="stylesheet">
+	<link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.css" rel="stylesheet">
+	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+
+
+
+	<style type="text/css">
+		#contamination-table tr {
+			cursor: pointer;
+		}
+
+		.modal-lg {
+			max-width: 90%;
+		}
+
+		#mynetwork2 {
+			height: 500px;
+		}
+
+		.bootbox .modal-header {
+			display: block;
+		}
+	</style>
+
+</head>
+
+<body>
+	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Haplocheck Report (v1.0.3)</a>
+	</nav>
+
+	<div class="container-fluid">
+		<div class="row">
+			<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+				<div class="sidebar-sticky">
+					<ul class="nav flex-column">
+						<li class="nav-item">
+							<a class="nav-link active" id="samples" style="cursor: pointer">
+								 <span data-feather="layers"></span>
+								 Samples <span class="sr-only">(current)</span>
+							 </a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="summary" style="cursor: pointer">
+								 <span data-feather="bar-chart-2"></span>
+								 Summary
+							 </a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="about" style="cursor: pointer">
+								 <span data-feather="info"></span>
+								 About
+							 </a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+
+			<main role="main" class="rcol-md-9 ml-sm-auto col-lg-10 px-4" id="main">
+
+				<div id="cont-panel">
+					<br>
+					<div class="table-responsive">
+						<h3> Samples </h3>
+					<p class="text-justify"> This table includes all samples analyzed. Please <b>click on a row </b> to open the details and load the phylogenetic tree.</p>
+
+						<table id="contamination-table" class="display table table-striped table-bordered table-hover" style="width:100%">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Contamination</th>
+									<th>Distance</th>
+									<th>Major Level (%) </th>
+									<th>Minor Level (%)</th>
+								</tr>
+							</thead>
+						</table>
+
+					</div>
+
+					<div class="my-4 w-100">
+						<hr>
+						<div id="detailsSample" style="width:100%; height:100px;">
+							<i>Please click on a sample to get more details</i>
+						</div>
+
+
+					</div>
+
+				</div>
+
+				<div id="summary-panel" style="display:none;">
+					<br>
+					<div class="table-responsive">
+						<h3> Summary </h3>
+
+						<table id="summary-table" class="display table table-striped table-bordered table-hover" style="width:100%">
+							<thead>
+								<tr>
+									<th>Contaminated</th>
+									<th>Not Contaminated</th>
+									<th>Median (HG Distance)</th>
+									<th>25th percentile (HG Distance)</th>
+									<th>75th percentile (HG Distance)</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+
+				<div id="about-panel" style="display:none;">
+					<br>
+					<h3> About </h3>
+		This report has been created with <a href="https://mitoverse.i-med.ac.at/index.html#!">mitoverse</a>. <br> Please contact <a href="mailto:sebastian.schoenherr@i-med.ac.at">Sebastian</a> in case of any problems or have a look at the <a href="https://mitoverse.readthedocs.io">documentation</a>.</p>
+			</div>
+
+			</main>
+		</div>
+	</div>
+
+
+	<!-- Icons -->
+	<script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+	<script>
+		feather.replace()
+	</script>
+
+	<script>
+		$(document).on("click", ".details-phylotree", function(e) {
+			var data = window.data;
+			var dialog = bootbox.dialog({
+				title: "Phylogenetic Tree for <b>" + data.id + "</b>",
+				message: '<div id="mynetwork2"></div>',
+				show: false
+			});
+
+			dialog.find("div.modal-dialog").addClass("modal-lg");
+
+			dialog.on('shown.bs.modal', function() {
+
+
+				// create a network
+				var networkContainer = document.getElementById('mynetwork2');
+				var data = window.data;
+
+				var dataNetwork = {
+					nodes: data.nodes,
+					edges: data.edges
+				};
+				var options = {
+					layout: {
+						hierarchical: {
+							direction: "LR",
+							sortMethod: "directed",
+							parentCentralization: true
+						}
+					},
+					edges: {
+						shadow: true,
+						length: 100,
+						arrows: {
+							to: {
+								enabled: true
+							}
+						},
+						font: {
+							align: 'top',
+							size: 15
+						},
+						widthConstraint: {
+							maximum: 50
+						}
+					}
+				};
+
+				var network = new vis.Network(networkContainer, dataNetwork, options);
+			});
+
+			dialog.modal('show');
+
+
+		});
+	</script>
+
+	<script>
+		$(document).ready(function() {
+			var table = $('#contamination-table').DataTable({
+				"pageLength": 10,
+				"pagingType": "simple",
+				"scrollY": "330px",
+				"scrollCollapse": true,
+				buttons: ['csv'],
+				"columnDefs": [{
+						"targets": [3],
+						"visible": true,
+						"searchable": false
+					},
+					{
+						"targets": [4],
+						"visible": true,
+						"searchable": false
+					}
+				],
+				data: [
+  {
+    "id": "HG00098.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 60,
+    "sampleHomoplasmies": 8,
+    "sampleMeanCoverage": 3357,
+    "hgMajor": "J1b1a1a",
+    "hgMajorQ": "0.981",
+    "hgMinor": "H1a1",
+    "hgMinorQ": "0.774",
+    "homoplasmiesMajor": 8,
+    "homoplasmiesMinor": 8,
+    "heteroplasmiesMajor": 22,
+    "heteroplasmiesMinor": 2,
+    "meanHetlevelMajor": "0.904",
+    "meanHetlevelMinor": "0.084",
+    "distance": 15,
+    "clusterInfo": "0.082 - 0.085 (2);0.87 - 0.918 (22);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "R2\u0027JT"
+      },
+      {
+        "id": 11,
+        "label": "JT"
+      },
+      {
+        "id": 12,
+        "label": "J"
+      },
+      {
+        "id": 13,
+        "label": "J1"
+      },
+      {
+        "id": 14,
+        "label": "J1b"
+      },
+      {
+        "id": 15,
+        "label": "J1b1"
+      },
+      {
+        "id": 16,
+        "label": "J1b1a"
+      },
+      {
+        "id": 17,
+        "label": "J1b1a1"
+      },
+      {
+        "id": 18,
+        "label": "J1b1a1a"
+      },
+      {
+        "id": 19,
+        "label": "H1"
+      },
+      {
+        "id": 20,
+        "label": "H1a"
+      },
+      {
+        "id": 21,
+        "label": "H1a1"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G (0.908) 7028T (0.903)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T (0.901)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G 11719A (0.899)",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 4216C (0.915)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 11251G (0.905) 15452A (0.908) 16126C (0.907)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 295T (0.902) 489C (0.918) 10398G (0.907) 12612G (0.911) 13708A (0.912) 16069T (0.904)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 462T (0.914) 3010A",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 8269A (0.91) 16145A (0.906) 16222T (0.896) 16261T (0.909)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 5460A (0.89) 13879C (0.905)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "label": " 242T (0.895) 2158C (0.899) 8557A (0.87) 12007A (0.904)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 16,
+        "to": 17,
+        "label": " 16172C (0.903)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 17,
+        "to": 18,
+        "label": " 5463T (0.892) 6911C (0.898) 16192T (0.899)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 6,
+        "to": 19,
+        "label": " 3010A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "label": " 73G 16162G (0.085)",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 20,
+        "to": 21,
+        "label": " 6365C (0.082) 16209C (0.091)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG00157.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 43,
+    "sampleHomoplasmies": 5,
+    "sampleMeanCoverage": 1768,
+    "hgMajor": "H5",
+    "hgMajorQ": "1.000",
+    "hgMinor": "T2",
+    "hgMinorQ": "0.782",
+    "homoplasmiesMajor": 3,
+    "homoplasmiesMinor": 3,
+    "heteroplasmiesMajor": 2,
+    "heteroplasmiesMinor": 19,
+    "meanHetlevelMajor": "0.980",
+    "meanHetlevelMinor": "0.022",
+    "distance": 9,
+    "clusterInfo": "0.009 - 0.03 (19);0.971 - 0.989 (2);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "H5\u002736"
+      },
+      {
+        "id": 8,
+        "label": "H5"
+      },
+      {
+        "id": 9,
+        "label": "HV"
+      },
+      {
+        "id": 10,
+        "label": "R0"
+      },
+      {
+        "id": 11,
+        "label": "R"
+      },
+      {
+        "id": 12,
+        "label": "R2\u0027JT"
+      },
+      {
+        "id": 13,
+        "label": "JT"
+      },
+      {
+        "id": 14,
+        "label": "T"
+      },
+      {
+        "id": 15,
+        "label": "T2"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G (0.986) 15326G",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G (0.99)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G (0.989)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 456T (0.971)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 16304C (0.983)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 6,
+        "to": 9,
+        "label": " 2706G (0.024) 7028T (0.026)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 14766T (0.021)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 73G (0.02) 11719A (0.019)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 4216C (0.03)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 11251G (0.014) 15452A (0.026) 16126C (0.028)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 709A (0.018) 1888A (0.019) 4917G (0.022) 8697A (0.023) 10463C (0.025) 13368A (0.018) 14905A (0.021) 15607G (0.025) 15928A (0.023) 16294T (0.021)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 14233G (0.009) 16296T (0.013)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG00249.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 39,
+    "sampleHomoplasmies": 6,
+    "sampleMeanCoverage": 2490,
+    "hgMajor": "H5b",
+    "hgMajorQ": "0.951",
+    "hgMinor": "U4a",
+    "hgMinorQ": "0.926",
+    "homoplasmiesMajor": 6,
+    "homoplasmiesMinor": 6,
+    "heteroplasmiesMajor": 2,
+    "heteroplasmiesMinor": 18,
+    "meanHetlevelMajor": "0.956",
+    "meanHetlevelMinor": "0.044",
+    "distance": 11,
+    "clusterInfo": "0.037 - 0.051 (18);0.953 - 0.958 (2);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "H5\u002736"
+      },
+      {
+        "id": 8,
+        "label": "H5"
+      },
+      {
+        "id": 9,
+        "label": "H5b"
+      },
+      {
+        "id": 10,
+        "label": "HV"
+      },
+      {
+        "id": 11,
+        "label": "R0"
+      },
+      {
+        "id": 12,
+        "label": "R"
+      },
+      {
+        "id": 13,
+        "label": "U"
+      },
+      {
+        "id": 14,
+        "label": "U2\u00273\u00274\u00277\u00278\u00279"
+      },
+      {
+        "id": 15,
+        "label": "U4\u00279"
+      },
+      {
+        "id": 16,
+        "label": "U4"
+      },
+      {
+        "id": 17,
+        "label": "U4a"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 456T (0.958)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 16304C (0.95)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 5471A (0.953)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 6,
+        "to": 10,
+        "label": " 2706G (0.045) 7028T (0.044)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 14766T (0.037)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 73G (0.04) 11719A (0.048)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 11467G (0.044) 12308G (0.04) 12372A (0.051)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 1811G (0.051)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 195C (0.049) 499A (0.037) 5999C (0.046)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "label": " 4646C (0.037) 6047G (0.044) 11332T (0.048) 14620T (0.038) 15693C (0.05) 16356C (0.045)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 16,
+        "to": 17,
+        "label": " 8818T (0.043)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG00740.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 105,
+    "sampleHomoplasmies": 19,
+    "sampleMeanCoverage": 1421,
+    "hgMajor": "L1b1a7a",
+    "hgMajorQ": "0.988",
+    "hgMinor": "B2b3a",
+    "hgMinorQ": "0.786",
+    "homoplasmiesMajor": 17,
+    "homoplasmiesMinor": 12,
+    "heteroplasmiesMajor": 55,
+    "heteroplasmiesMinor": 16,
+    "meanHetlevelMajor": "0.970",
+    "meanHetlevelMinor": "0.026",
+    "distance": 22,
+    "clusterInfo": "0.013 - 0.033 (16);0.93 - 0.982 (55);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "N"
+      },
+      {
+        "id": 11,
+        "label": "L3"
+      },
+      {
+        "id": 12,
+        "label": "L3\u00274"
+      },
+      {
+        "id": 13,
+        "label": "L3\u00274\u00276"
+      },
+      {
+        "id": 14,
+        "label": "L2\u00273\u00274\u00276"
+      },
+      {
+        "id": 15,
+        "label": "L2\u00273\u00274\u00276+"
+      },
+      {
+        "id": 16,
+        "label": "L2\u00273\u00274\u00275\u00276"
+      },
+      {
+        "id": 17,
+        "label": "L1"
+      },
+      {
+        "id": 18,
+        "label": "L1b"
+      },
+      {
+        "id": 19,
+        "label": "L1b1"
+      },
+      {
+        "id": 20,
+        "label": "L1b1a"
+      },
+      {
+        "id": 21,
+        "label": "L1b1a7"
+      },
+      {
+        "id": 22,
+        "label": "L1b1a7a"
+      },
+      {
+        "id": 23,
+        "label": "R+16189"
+      },
+      {
+        "id": 24,
+        "label": "B4\u00275"
+      },
+      {
+        "id": 25,
+        "label": "B4"
+      },
+      {
+        "id": 26,
+        "label": "B4b\u0027d\u0027e\u0027j"
+      },
+      {
+        "id": 27,
+        "label": "B4b"
+      },
+      {
+        "id": 28,
+        "label": "B2"
+      },
+      {
+        "id": 29,
+        "label": "B2b"
+      },
+      {
+        "id": 30,
+        "label": "B2b3"
+      },
+      {
+        "id": 31,
+        "label": "B2b3a"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G 7028T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G 11719A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 12705T (0.968) 16223T (0.978)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 8701G (0.96) 9540C (0.971) 10398G (0.968) 10873C (0.963)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 769A (0.967) 1018A (0.972) 16311C (0.977)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 182T (0.972) 3594T (0.966) 7256T 13650T (0.967) 16278T (0.98)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 4104G (0.953) 7521A",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 195C (0.976) 247A 825A (0.973) 8655T (0.95) 10688A (0.965) 10810C (0.971) 13105G (0.964) 13506T (0.97)  16187T (0.93) 16189C",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "label": " 152C 2758A (0.974) 2885C (0.981) 7146G 8468T (0.976)",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 16,
+        "to": 17,
+        "label": " 3666A (0.971) 7055G (0.954) 7389C (0.967) 13789C (0.968) 14178C (0.977) 14560A (0.98)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 17,
+        "to": 18,
+        "label": " 185T (0.975) 357G (0.982) 709A (0.967) 710C (0.965) 1438G! (0.972) 1738C (0.971) 2352C (0.973) 2768G (0.972) 3308C (0.97) 3693A (0.967) 6548T (0.964) 6827C 6989G (0.966) 7867T (0.968) 8248G (0.969) 12519C (0.965) 14769G (0.972) 15115C (0.967) 16126C (0.977)  16264T (0.98) 16270T (0.981) 16293G (0.976)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 18,
+        "to": 19,
+        "label": " 5036G (0.968) 5046A (0.972) 5655C (0.97) 13880A (0.977) 14203G (0.982)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "label": " 5393C (0.968)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 20,
+        "to": 21,
+        "label": " 6378C (0.969)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 21,
+        "to": 22,
+        "label": " 228A (0.977) 14053G (0.974)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G (0.028)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 9,
+        "to": 23,
+        "label": " 16189C",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 23,
+        "to": 24,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 24,
+        "to": 25,
+        "label": " 16217C (0.013)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 25,
+        "to": 26,
+        "label": " 827G (0.026) 15535T (0.03)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 26,
+        "to": 27,
+        "label": " 499A (0.015) 4820A (0.027) 13590A (0.029)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 27,
+        "to": 28,
+        "label": " 3547G (0.026) 4977C (0.033) 6473T (0.026) 9950C (0.026) 11177T (0.032)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 28,
+        "to": 29,
+        "label": " 6755A (0.032)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 29,
+        "to": 30,
+        "label": " 13708A (0.024)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 30,
+        "to": 31,
+        "label": " 152C 3918A (0.03) 4232C (0.033) 15784C (0.014) 16249C (0.024) 16312G (0.021)",
+        "font": {
+          "color": "blue"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG01326.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 40,
+    "sampleHomoplasmies": 8,
+    "sampleMeanCoverage": 176,
+    "hgMajor": "L3e1e2",
+    "hgMajorQ": "0.987",
+    "hgMinor": "H3an",
+    "hgMinorQ": "0.848",
+    "homoplasmiesMajor": 6,
+    "homoplasmiesMinor": 6,
+    "heteroplasmiesMajor": 24,
+    "heteroplasmiesMinor": 2,
+    "meanHetlevelMajor": "0.879",
+    "meanHetlevelMinor": "0.071",
+    "distance": 12,
+    "clusterInfo": "0.071 (2);0.819 - 0.94 (24);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "N"
+      },
+      {
+        "id": 11,
+        "label": "L3"
+      },
+      {
+        "id": 12,
+        "label": "L3e\u0027i\u0027k\u0027x"
+      },
+      {
+        "id": 13,
+        "label": "L3e"
+      },
+      {
+        "id": 14,
+        "label": "L3e1"
+      },
+      {
+        "id": 15,
+        "label": "L3e1e"
+      },
+      {
+        "id": 16,
+        "label": "L3e1e2"
+      },
+      {
+        "id": 17,
+        "label": "H3"
+      },
+      {
+        "id": 18,
+        "label": "H3an"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G (0.862) 7028T (0.856)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T (0.885)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 11719A (0.925)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 12705T (0.901) 16223T (0.858)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 8701G (0.882) 9540C (0.88) 10398G (0.911) 10873C (0.882) 15301A (0.88)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 150T (0.88) 10819G (0.862)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 2352C (0.881) 14212C (0.823)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 189G (0.921) 200G (0.905) 6221C (0.823) 6587T (0.858) 14152G (0.883) 15670C (0.878) 15942C (0.906) 16327T (0.835)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 10370C (0.94)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "label": "  90A (0.868) 97A (0.856) 106d (0.753) 107d (0.723) 108d (0.723) 109d (0.71) 110d (0.727) 4562G (0.819) 9098C (0.88)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 6,
+        "to": 17,
+        "label": " 6776C (0.071)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 17,
+        "to": 18,
+        "label": " 251A (0.071)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG01503.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 18,
+    "sampleHomoplasmies": 6,
+    "sampleMeanCoverage": 1910,
+    "hgMajor": "H1z",
+    "hgMajorQ": "0.928",
+    "hgMinor": "HV0f",
+    "hgMinorQ": "0.885",
+    "homoplasmiesMajor": 6,
+    "homoplasmiesMinor": 6,
+    "heteroplasmiesMajor": 3,
+    "heteroplasmiesMinor": 5,
+    "meanHetlevelMajor": "0.981",
+    "meanHetlevelMinor": "0.017",
+    "distance": 7,
+    "clusterInfo": "0.016 - 0.024 (5);0.98 - 0.984 (3);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "H1"
+      },
+      {
+        "id": 8,
+        "label": "H1+16189"
+      },
+      {
+        "id": 9,
+        "label": "H1z"
+      },
+      {
+        "id": 10,
+        "label": "HV"
+      },
+      {
+        "id": 11,
+        "label": "HV0"
+      },
+      {
+        "id": 12,
+        "label": "HV0+195"
+      },
+      {
+        "id": 13,
+        "label": "HV0f"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 3010A (0.981)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 16189C (0.842)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 327T (0.984) 11428T (0.98)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 6,
+        "to": 10,
+        "label": " 2706G (0.017) 7028T (0.022)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 72C (0.016) 16298C (0.016)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 195C (0.021)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 8706G (0.024)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG01597.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 31,
+    "sampleHomoplasmies": 22,
+    "sampleMeanCoverage": 1957,
+    "hgMajor": "F1+16189",
+    "hgMajorQ": "0.812",
+    "hgMinor": "F1f",
+    "hgMinorQ": "0.954",
+    "homoplasmiesMajor": 21,
+    "homoplasmiesMinor": 20,
+    "heteroplasmiesMajor": 0,
+    "heteroplasmiesMinor": 5,
+    "meanHetlevelMajor": "0.000",
+    "meanHetlevelMinor": "0.028",
+    "distance": 3,
+    "clusterInfo": "0.026 - 0.03 (4);0.036 (1);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "R9"
+      },
+      {
+        "id": 11,
+        "label": "F"
+      },
+      {
+        "id": 12,
+        "label": "F1"
+      },
+      {
+        "id": 13,
+        "label": "F1+16189"
+      },
+      {
+        "id": 14,
+        "label": "F1a\u0027c\u0027f"
+      },
+      {
+        "id": 15,
+        "label": "F1f"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G 7028T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G 11719A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 3970T 13928C 16304C",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 6392C 10310A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 6962A 10609C 12406A 12882T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 16189C",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 12,
+        "to": 14,
+        "label": " 9053A (0.036) 13759A (0.03) 16129A (0.031)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 4715G (0.026) 6515C (0.028) 12771A (0.027)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG01668.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 16,
+    "sampleHomoplasmies": 6,
+    "sampleMeanCoverage": 1279,
+    "hgMajor": "H8c",
+    "hgMajorQ": "0.992",
+    "hgMinor": "H1",
+    "hgMinorQ": "1.000",
+    "homoplasmiesMajor": 6,
+    "homoplasmiesMinor": 6,
+    "heteroplasmiesMajor": 4,
+    "heteroplasmiesMinor": 1,
+    "meanHetlevelMajor": "0.950",
+    "meanHetlevelMinor": "0.042",
+    "distance": 7,
+    "clusterInfo": "0.042 (1);0.944 - 0.96 (4);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "H+195"
+      },
+      {
+        "id": 8,
+        "label": "H+195+146"
+      },
+      {
+        "id": 9,
+        "label": "H8"
+      },
+      {
+        "id": 10,
+        "label": "H8+(114)"
+      },
+      {
+        "id": 11,
+        "label": "H8+(114)+152"
+      },
+      {
+        "id": 12,
+        "label": "H8c"
+      },
+      {
+        "id": 13,
+        "label": "H1"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 195C (0.955)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 146C (0.954)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 709A (0.966) 13101C (0.947) 16288C (0.944) 16362C (0.942)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 114T (0.953)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 152C (0.952)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 13711A (0.96)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 6,
+        "to": 13,
+        "label": " 3010A (0.042)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG01912.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 27,
+    "sampleHomoplasmies": 24,
+    "sampleMeanCoverage": 160,
+    "hgMajor": "L3e2a1b",
+    "hgMajorQ": "1.000",
+    "hgMinor": "L3\u00274\u00276",
+    "hgMinorQ": "0.782",
+    "homoplasmiesMajor": 23,
+    "homoplasmiesMinor": 18,
+    "heteroplasmiesMajor": 4,
+    "heteroplasmiesMinor": 5,
+    "meanHetlevelMajor": "0.941",
+    "meanHetlevelMinor": "0.043",
+    "distance": 8,
+    "clusterInfo": "0.022 - 0.065 (5);0.932 - 0.958 (4);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "N"
+      },
+      {
+        "id": 11,
+        "label": "L3"
+      },
+      {
+        "id": 12,
+        "label": "L3e\u0027i\u0027k\u0027x"
+      },
+      {
+        "id": 13,
+        "label": "L3e"
+      },
+      {
+        "id": 14,
+        "label": "L3e2"
+      },
+      {
+        "id": 15,
+        "label": "L3e2a"
+      },
+      {
+        "id": 16,
+        "label": "L3e2a1"
+      },
+      {
+        "id": 17,
+        "label": "L3e2a1b"
+      },
+      {
+        "id": 18,
+        "label": "L3\u00274"
+      },
+      {
+        "id": 19,
+        "label": "L3\u00274\u00276"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G 7028T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G 11719A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 12705T 16223T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 8701G 9540C 10398G 10873C 15301A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 150T (0.946) 10819G (0.938)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 2352C 14212C",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 195C 14905A 16320T (0.954)",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 4823C (0.932) 13105G 14869A (0.958)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "label": " 198T (0.938)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 16,
+        "to": 17,
+        "label": " 6413C (0.944)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 11,
+        "to": 18,
+        "label": " 769A (0.065) 1018A (0.043)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 18,
+        "to": 19,
+        "label": " 182T (0.022) 7256T (0.026) 13650T (0.053) 16278T (0.027)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG02231.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 20,
+    "sampleHomoplasmies": 4,
+    "sampleMeanCoverage": 1150,
+    "hgMajor": "H3+152",
+    "hgMajorQ": "0.835",
+    "hgMinor": "H2a1",
+    "hgMinorQ": "0.946",
+    "homoplasmiesMajor": 4,
+    "homoplasmiesMinor": 4,
+    "heteroplasmiesMajor": 3,
+    "heteroplasmiesMinor": 2,
+    "meanHetlevelMajor": "0.958",
+    "meanHetlevelMinor": "0.038",
+    "distance": 5,
+    "clusterInfo": "0.038 - 0.039 (2);0.947 - 0.96 (3);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "H3"
+      },
+      {
+        "id": 8,
+        "label": "H3+152"
+      },
+      {
+        "id": 9,
+        "label": "H2a1"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G (0.947)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G (0.958)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 6776C (0.96)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 152C (0.96)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 4,
+        "to": 9,
+        "label": " 951A (0.038) 16354T (0.039)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG02436.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 74,
+    "sampleHomoplasmies": 11,
+    "sampleMeanCoverage": 165,
+    "hgMajor": "L3b2b",
+    "hgMajorQ": "0.988",
+    "hgMinor": "B4a1a1b",
+    "hgMinorQ": "0.669",
+    "homoplasmiesMajor": 10,
+    "homoplasmiesMinor": 10,
+    "heteroplasmiesMajor": 22,
+    "heteroplasmiesMinor": 11,
+    "meanHetlevelMajor": "0.732",
+    "meanHetlevelMinor": "0.224",
+    "distance": 15,
+    "clusterInfo": "0.122 - 0.28 (11);0.689 - 0.838 (22);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "N"
+      },
+      {
+        "id": 11,
+        "label": "L3"
+      },
+      {
+        "id": 12,
+        "label": "L3b\u0027f"
+      },
+      {
+        "id": 13,
+        "label": "L3b"
+      },
+      {
+        "id": 14,
+        "label": "L3b2"
+      },
+      {
+        "id": 15,
+        "label": "L3b2b"
+      },
+      {
+        "id": 16,
+        "label": "R+16189"
+      },
+      {
+        "id": 17,
+        "label": "B4\u00275"
+      },
+      {
+        "id": 18,
+        "label": "B4"
+      },
+      {
+        "id": 19,
+        "label": "B4+16261"
+      },
+      {
+        "id": 20,
+        "label": "B4a"
+      },
+      {
+        "id": 21,
+        "label": "B4a1"
+      },
+      {
+        "id": 22,
+        "label": "B4a1a"
+      },
+      {
+        "id": 23,
+        "label": "B4a1a1"
+      },
+      {
+        "id": 24,
+        "label": "B4a1a1b"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G (0.96)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G 7028T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G 11719A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 12705T (0.729) 16223T (0.838)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 8701G (0.707) 9540C (0.75) 10398G (0.721) 10873C (0.777) 15301A (0.689)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 3450T (0.759) 5773A (0.741) 6221C (0.718) 9449T (0.76) 10086G (0.747) 13105G (0.713) 13914A (0.719) 15311G (0.734) 15824G (0.71) 16124C (0.737) 16278T (0.738) 16362C (0.782)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 3420T (0.813) 10640C (0.731) 16527T (0.767)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 9053A (0.713) 9067G (0.702) 15550T (0.703)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 9,
+        "to": 16,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 16,
+        "to": 17,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 17,
+        "to": 18,
+        "label": " 16217C (0.122)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 18,
+        "to": 19,
+        "label": " 16261T (0.197)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "label": " 5465C (0.28) 9123A (0.242)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 20,
+        "to": 21,
+        "label": " 10238C (0.217)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 21,
+        "to": 22,
+        "label": " 146C (0.276) 6719C (0.231) 12239T (0.224) 15746G (0.228)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 22,
+        "to": 23,
+        "label": " 14022G (0.267) 16247G (0.149)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 23,
+        "to": 24,
+        "label": " 1473T (0.199) 3423A (0.183)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG02567.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 52,
+    "sampleHomoplasmies": 35,
+    "sampleMeanCoverage": 3620,
+    "hgMajor": "L2a1c4",
+    "hgMajorQ": "0.972",
+    "hgMinor": "L2d1",
+    "hgMinorQ": "0.973",
+    "homoplasmiesMajor": 34,
+    "homoplasmiesMinor": 34,
+    "heteroplasmiesMajor": 12,
+    "heteroplasmiesMinor": 17,
+    "meanHetlevelMajor": "0.913",
+    "meanHetlevelMinor": "0.087",
+    "distance": 10,
+    "clusterInfo": "0.067 - 0.095 (17);0.902 - 0.923 (12);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "N"
+      },
+      {
+        "id": 11,
+        "label": "L3"
+      },
+      {
+        "id": 12,
+        "label": "L3\u00274"
+      },
+      {
+        "id": 13,
+        "label": "L3\u00274\u00276"
+      },
+      {
+        "id": 14,
+        "label": "L2\u00273\u00274\u00276"
+      },
+      {
+        "id": 15,
+        "label": "L2"
+      },
+      {
+        "id": 16,
+        "label": "L2a\u0027b\u0027c\u0027d"
+      },
+      {
+        "id": 17,
+        "label": "L2a"
+      },
+      {
+        "id": 18,
+        "label": "L2a1\u00272\u00273\u00274"
+      },
+      {
+        "id": 19,
+        "label": "L2a1"
+      },
+      {
+        "id": 20,
+        "label": "L2a1+143"
+      },
+      {
+        "id": 21,
+        "label": "L2a1c"
+      },
+      {
+        "id": 22,
+        "label": "L2a1c4"
+      },
+      {
+        "id": 23,
+        "label": "L2b\u0027c\u0027d"
+      },
+      {
+        "id": 24,
+        "label": "L2d"
+      },
+      {
+        "id": 25,
+        "label": "L2d+16129"
+      },
+      {
+        "id": 26,
+        "label": "L2d1"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G 7028T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G 11719A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 12705T 16223T (0.949)",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 8701G 9540C 10398G 10873C 15301A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 769A 1018A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 3594T 7256T 13650T 16278T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 4104G 7521A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 146C 152C (0.915) 2416C 8206A 9221G 10115C 13590A  16390A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "label": " 195C 11944C",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 16,
+        "to": 17,
+        "label": " 150T! (0.919) 7175C (0.913)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 17,
+        "to": 18,
+        "label": " 2789T (0.919) 7274T (0.912) 7771G (0.902) 11914A (0.923) 13803G (0.909) 14566G (0.904) 16294T (0.922)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 18,
+        "to": 19,
+        "label": "  12693G (0.903) 15784C (0.913) 16309G (0.923)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "label": " 143A (0.901)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 20,
+        "to": 21,
+        "label": " 3010A (0.913) 6663G (0.903)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 21,
+        "to": 22,
+        "label": " 12172G (0.915)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 12705T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 146C 150T (0.081) 2416C 8206A 9221G 10115C 13590A  16390A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 16,
+        "to": 23,
+        "label": " 2332T (0.088)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 23,
+        "to": 24,
+        "label": " 152C! (0.08499999999999996)  456T (0.087) 870T (0.083) 2159C (0.074) 3254A (0.095) 3434G (0.087) 3693A (0.089) 6231T (0.086) 9554A (0.088) 9941G (0.089) 10955T (0.085) 11353C (0.08) 14845T (0.092) 15777C (0.079) 16189C (0.009) 16223T! (0.051000000000000045) 16300G (0.067) 16354T (0.07) 16399G (0.069)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 24,
+        "to": 25,
+        "label": " 16129A (0.069)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 25,
+        "to": 26,
+        "label": " 10700G (0.092)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG02851.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 49,
+    "sampleHomoplasmies": 36,
+    "sampleMeanCoverage": 3192,
+    "hgMajor": "L2a1c3b",
+    "hgMajorQ": "0.992",
+    "hgMinor": "L2c2",
+    "hgMinorQ": "0.912",
+    "homoplasmiesMajor": 36,
+    "homoplasmiesMinor": 36,
+    "heteroplasmiesMajor": 11,
+    "heteroplasmiesMinor": 14,
+    "meanHetlevelMajor": "0.971",
+    "meanHetlevelMinor": "0.027",
+    "distance": 11,
+    "clusterInfo": "0.023 - 0.032 (14);0.966 - 0.974 (11);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "N"
+      },
+      {
+        "id": 11,
+        "label": "L3"
+      },
+      {
+        "id": 12,
+        "label": "L3\u00274"
+      },
+      {
+        "id": 13,
+        "label": "L3\u00274\u00276"
+      },
+      {
+        "id": 14,
+        "label": "L2\u00273\u00274\u00276"
+      },
+      {
+        "id": 15,
+        "label": "L2"
+      },
+      {
+        "id": 16,
+        "label": "L2a\u0027b\u0027c\u0027d"
+      },
+      {
+        "id": 17,
+        "label": "L2a"
+      },
+      {
+        "id": 18,
+        "label": "L2a1\u00272\u00273\u00274"
+      },
+      {
+        "id": 19,
+        "label": "L2a1"
+      },
+      {
+        "id": 20,
+        "label": "L2a1+143"
+      },
+      {
+        "id": 21,
+        "label": "L2a1c"
+      },
+      {
+        "id": 22,
+        "label": "L2a1c3"
+      },
+      {
+        "id": 23,
+        "label": "L2a1c3b"
+      },
+      {
+        "id": 24,
+        "label": "L2b\u0027c\u0027d"
+      },
+      {
+        "id": 25,
+        "label": "L2b\u0027c"
+      },
+      {
+        "id": 26,
+        "label": "L2c"
+      },
+      {
+        "id": 27,
+        "label": "L2c2"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G 7028T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G 11719A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 12705T 16223T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 8701G 9540C 10398G 10873C 15301A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 769A 1018A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 3594T 7256T 13650T 16278T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 4104G 7521A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 146C 152C 2416C 8206A 9221G 10115C 13590A  16390A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "label": " 195C 11944C",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 16,
+        "to": 17,
+        "label": "  7175C (0.971)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 17,
+        "to": 18,
+        "label": " 2789T (0.971) 7274T (0.966) 7771G (0.97) 11914A (0.975) 13803G (0.966) 14566G (0.974) 16294T (0.973)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 18,
+        "to": 19,
+        "label": "  12693G (0.971) 15784C (0.97)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "label": " 143A (0.972)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 20,
+        "to": 21,
+        "label": " 3010A (0.972) 6663G (0.968)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 21,
+        "to": 22,
+        "label": " 9932A (0.972)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 22,
+        "to": 23,
+        "label": "  16355T (0.968)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 16,
+        "to": 24,
+        "label": " 2332T (0.026)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 24,
+        "to": 25,
+        "label": " 1442A (0.025) 7624A (0.029) 12236A (0.026) 15110A (0.026) 15217A (0.029)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 25,
+        "to": 26,
+        "label": " 325T (0.03) 680C (0.028) 709A (0.033) 3200A (0.03) 13928C (0.024) 13958C (0.028) 15849T (0.025)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 26,
+        "to": 27,
+        "label": " 1040C (0.032) 16264T (0.023)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG03398.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 90,
+    "sampleHomoplasmies": 19,
+    "sampleMeanCoverage": 2772,
+    "hgMajor": "L3f1b+16292",
+    "hgMajorQ": "0.954",
+    "hgMinor": "L1c1c",
+    "hgMinorQ": "0.882",
+    "homoplasmiesMajor": 18,
+    "homoplasmiesMinor": 18,
+    "heteroplasmiesMajor": 12,
+    "heteroplasmiesMinor": 47,
+    "meanHetlevelMajor": "0.957",
+    "meanHetlevelMinor": "0.037",
+    "distance": 16,
+    "clusterInfo": "0.014 - 0.051 (47);0.951 - 0.962 (12);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "N"
+      },
+      {
+        "id": 11,
+        "label": "L3"
+      },
+      {
+        "id": 12,
+        "label": "L3b\u0027f"
+      },
+      {
+        "id": 13,
+        "label": "L3f"
+      },
+      {
+        "id": 14,
+        "label": "L3f1"
+      },
+      {
+        "id": 15,
+        "label": "L3f1b"
+      },
+      {
+        "id": 16,
+        "label": "L3f1b+16292"
+      },
+      {
+        "id": 17,
+        "label": "L3\u00274"
+      },
+      {
+        "id": 18,
+        "label": "L3\u00274\u00276"
+      },
+      {
+        "id": 19,
+        "label": "L2\u00273\u00274\u00276"
+      },
+      {
+        "id": 20,
+        "label": "L2\u00273\u00274\u00276+"
+      },
+      {
+        "id": 21,
+        "label": "L2\u00273\u00274\u00275\u00276"
+      },
+      {
+        "id": 22,
+        "label": "L1"
+      },
+      {
+        "id": 23,
+        "label": "L1c"
+      },
+      {
+        "id": 24,
+        "label": "L1c1\u00272\u00274\u00275\u00276"
+      },
+      {
+        "id": 25,
+        "label": "L1c1\u00272\u00274\u00276"
+      },
+      {
+        "id": 26,
+        "label": "L1c1"
+      },
+      {
+        "id": 27,
+        "label": "L1c1c"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G 7028T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G 11719A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 12705T 16223T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 8701G 9540C 10398G 10873C 15301A (0.953)",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 3396C (0.957) 4218C (0.962) 15514C (0.96) 16209C (0.978)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 5601T (0.961) 9950C (0.953)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 189G (0.947) 200G (0.959) 1822C (0.955) 7819A (0.957) 8527G (0.953) 8932T (0.958) 11440A (0.96) 14769G (0.951) 16311C",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "label": " 16292T (0.971)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 8701G 9540C 10398G 10873C",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 11,
+        "to": 17,
+        "label": " 769A (0.038) 1018A (0.039) 16311C",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 17,
+        "to": 18,
+        "label": " 182T (0.034) 3594T (0.043) 7256T (0.026) 13650T (0.044) 16278T (0.026)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 18,
+        "to": 19,
+        "label": " 4104G (0.036) 7521A (0.016)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "label": " 195C (0.036) 825A (0.038) 8655T (0.021) 10688A (0.036) 10810C (0.044) 13105G (0.04) 13506T (0.045) 15301A! (0.04700000000000004) 16129A (0.028)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 20,
+        "to": 21,
+        "label": " 2758A (0.037) 2885C (0.038) 7146G (0.014) 8468T (0.039)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 21,
+        "to": 22,
+        "label": " 3666A (0.044) 7055G (0.03) 7389C (0.031) 13789C (0.05) 14178C (0.038) 14560A (0.051)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 22,
+        "to": 23,
+        "label": " 186A (0.035) 189C (0.035) 5951G (0.034) 6071C (0.037) 8027A (0.038) 9072G (0.028) 10586A (0.046) 12810G (0.033) 13485G (0.051) 14000A (0.046) 16360T (0.032)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 23,
+        "to": 24,
+        "label": " 297G (0.034)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 24,
+        "to": 25,
+        "label": " 10321C (0.035)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 25,
+        "to": 26,
+        "label": " 3796T (0.046) 3843G (0.042) 14148G (0.036) 16293G (0.025)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 26,
+        "to": 27,
+        "label": "  6267A (0.043) 8387A (0.037) 8389G (0.036) 9233C (0.033) 11335T (0.035) 12879C (0.036) 16172C (0.019)  ",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG03644.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 50,
+    "sampleHomoplasmies": 7,
+    "sampleMeanCoverage": 369,
+    "hgMajor": "M5b",
+    "hgMajorQ": "0.910",
+    "hgMinor": "H13a1a1a",
+    "hgMinorQ": "0.842",
+    "homoplasmiesMajor": 6,
+    "homoplasmiesMinor": 6,
+    "heteroplasmiesMajor": 18,
+    "heteroplasmiesMinor": 7,
+    "meanHetlevelMajor": "0.762",
+    "meanHetlevelMinor": "0.211",
+    "distance": 15,
+    "clusterInfo": "0.174 - 0.241 (7);0.728 - 0.81 (18);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "N"
+      },
+      {
+        "id": 11,
+        "label": "L3"
+      },
+      {
+        "id": 12,
+        "label": "M"
+      },
+      {
+        "id": 13,
+        "label": "M5"
+      },
+      {
+        "id": 14,
+        "label": "M5b\u0027c"
+      },
+      {
+        "id": 15,
+        "label": "M5b"
+      },
+      {
+        "id": 16,
+        "label": "H13"
+      },
+      {
+        "id": 17,
+        "label": "H13a"
+      },
+      {
+        "id": 18,
+        "label": "H13a1"
+      },
+      {
+        "id": 19,
+        "label": "H13a1a"
+      },
+      {
+        "id": 20,
+        "label": "H13a1a1"
+      },
+      {
+        "id": 21,
+        "label": "H13a1a1a"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G (0.734) 7028T (0.791)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T (0.756)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G (0.772) 11719A (0.728)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 12705T (0.773) 16223T (0.733)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 8701G (0.766) 9540C (0.778) 10398G (0.772) 10873C (0.81) 15301A (0.782)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 489C (0.753) 10400T (0.777) 14783C (0.747) 15043A (0.799)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 1888A (0.757) 16129A (0.788)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 13368A (0.753)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 8784T (0.731)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 6,
+        "to": 16,
+        "label": " 14872T (0.241)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 16,
+        "to": 17,
+        "label": " 2259T (0.174)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 17,
+        "to": 18,
+        "label": " 4745G (0.197)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 18,
+        "to": 19,
+        "label": " 13680T (0.222)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "label": " 7337A (0.181) 13326C (0.211)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 20,
+        "to": 21,
+        "label": " 14831A (0.235)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG03721.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 48,
+    "sampleHomoplasmies": 16,
+    "sampleMeanCoverage": 260,
+    "hgMajor": "J1",
+    "hgMajorQ": "0.852",
+    "hgMinor": "M5a4",
+    "hgMinorQ": "0.882",
+    "homoplasmiesMajor": 14,
+    "homoplasmiesMinor": 13,
+    "heteroplasmiesMajor": 8,
+    "heteroplasmiesMinor": 14,
+    "meanHetlevelMajor": "0.561",
+    "meanHetlevelMinor": "0.393",
+    "distance": 11,
+    "clusterInfo": "0.053 - 0.439 (14);0.521 - 0.649 (8);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "R2\u0027JT"
+      },
+      {
+        "id": 11,
+        "label": "JT"
+      },
+      {
+        "id": 12,
+        "label": "J"
+      },
+      {
+        "id": 13,
+        "label": "J1"
+      },
+      {
+        "id": 14,
+        "label": "N"
+      },
+      {
+        "id": 15,
+        "label": "L3"
+      },
+      {
+        "id": 16,
+        "label": "M"
+      },
+      {
+        "id": 17,
+        "label": "M5"
+      },
+      {
+        "id": 18,
+        "label": "M5a\u0027d"
+      },
+      {
+        "id": 19,
+        "label": "M5a"
+      },
+      {
+        "id": 20,
+        "label": "M5a4"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G 7028T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G 11719A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 4216C (0.631)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 11251G (0.55) 15452A (0.563) 16126C (0.521)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 295T (0.649) 489C 10398G 12612G (0.559) 13708A (0.644) 16069T",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 462T (0.569) 3010A (0.551)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 9,
+        "to": 14,
+        "label": " 12705T (0.38)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 8701G (0.42) 9540C (0.351) 10398G 10873C (0.419) 15301A (0.381)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "label": " 489C 10400T (0.401) 14783C (0.398) 15043A (0.393)",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 16,
+        "to": 17,
+        "label": " 1888A (0.425) 16129A (0.466)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 17,
+        "to": 18,
+        "label": " 3921T (0.382) 14323A (0.363)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 18,
+        "to": 19,
+        "label": " 12477C (0.392)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "label": " 146C (0.388) 10547T (0.439) 16224C (0.053)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG03723.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 33,
+    "sampleHomoplasmies": 23,
+    "sampleMeanCoverage": 187,
+    "hgMajor": "M5c1",
+    "hgMajorQ": "0.895",
+    "hgMinor": "M4",
+    "hgMinorQ": "0.867",
+    "homoplasmiesMajor": 21,
+    "homoplasmiesMinor": 21,
+    "heteroplasmiesMajor": 4,
+    "heteroplasmiesMinor": 3,
+    "meanHetlevelMajor": "0.590",
+    "meanHetlevelMinor": "0.424",
+    "distance": 7,
+    "clusterInfo": "0.4 - 0.521 (4);0.556 - 0.673 (3);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "N"
+      },
+      {
+        "id": 11,
+        "label": "L3"
+      },
+      {
+        "id": 12,
+        "label": "M"
+      },
+      {
+        "id": 13,
+        "label": "M5"
+      },
+      {
+        "id": 14,
+        "label": "M5b\u0027c"
+      },
+      {
+        "id": 15,
+        "label": "M5c"
+      },
+      {
+        "id": 16,
+        "label": "M5c1"
+      },
+      {
+        "id": 17,
+        "label": "M4\"67"
+      },
+      {
+        "id": 18,
+        "label": "M4\"67+16311"
+      },
+      {
+        "id": 19,
+        "label": "M4"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G 7028T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G 11719A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 12705T 16223T (0.967)",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 8701G 9540C 10398G 10873C 15301A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 489C 10400T 14783C 15043A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 1888A (0.521) 16129A (0.603)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 5319G (0.624)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "label": " 4851T (0.556) 6413C (0.673) ",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 12705T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 12,
+        "to": 17,
+        "label": " 12007A (0.4)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 17,
+        "to": 18,
+        "label": " 16311C (0.418)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 18,
+        "to": 19,
+        "label": " 6620C (0.457) 7859A (0.424) 16145A (0.407) 16261T (0.43)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "HG03725.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 50,
+    "sampleHomoplasmies": 16,
+    "sampleMeanCoverage": 252,
+    "hgMajor": "J1",
+    "hgMajorQ": "0.797",
+    "hgMinor": "M5a4",
+    "hgMinorQ": "0.756",
+    "homoplasmiesMajor": 13,
+    "homoplasmiesMinor": 12,
+    "heteroplasmiesMajor": 5,
+    "heteroplasmiesMinor": 11,
+    "meanHetlevelMajor": "0.561",
+    "meanHetlevelMinor": "0.398",
+    "distance": 11,
+    "clusterInfo": "0.362 - 0.438 (11);0.552 - 0.584 (5);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "R2\u0027JT"
+      },
+      {
+        "id": 11,
+        "label": "JT"
+      },
+      {
+        "id": 12,
+        "label": "J"
+      },
+      {
+        "id": 13,
+        "label": "J1"
+      },
+      {
+        "id": 14,
+        "label": "N"
+      },
+      {
+        "id": 15,
+        "label": "L3"
+      },
+      {
+        "id": 16,
+        "label": "M"
+      },
+      {
+        "id": 17,
+        "label": "M5"
+      },
+      {
+        "id": 18,
+        "label": "M5a\u0027d"
+      },
+      {
+        "id": 19,
+        "label": "M5a"
+      },
+      {
+        "id": 20,
+        "label": "M5a4"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G 7028T (0.976)",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G 11719A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 4216C",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 11251G 15452A (0.558)",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 295T (0.561) 489C 10398G (0.987) 12612G (0.552) 13708A (0.581)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 462T (0.566) 3010A (0.584)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 9,
+        "to": 14,
+        "label": " 12705T (0.415)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 8701G (0.362) 9540C (0.39) 10873C (0.419) 15301A (0.418)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "label": " 489C 10400T (0.39) 14783C (0.398)",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 16,
+        "to": 17,
+        "label": " 1888A (0.377) 16129A",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 17,
+        "to": 18,
+        "label": " 709A (0.407) 14323A (0.373)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 18,
+        "to": 19,
+        "label": " 12477C (0.438)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "label": " 146C (0.432) 10547T (0.407) 16311C (0.029)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "NA11993.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 61,
+    "sampleHomoplasmies": 4,
+    "sampleMeanCoverage": 3774,
+    "hgMajor": "H5a1b",
+    "hgMajorQ": "1.000",
+    "hgMinor": "U5a1a2b",
+    "hgMinorQ": "0.722",
+    "homoplasmiesMajor": 4,
+    "homoplasmiesMinor": 4,
+    "heteroplasmiesMajor": 5,
+    "heteroplasmiesMinor": 16,
+    "meanHetlevelMajor": "0.724",
+    "meanHetlevelMinor": "0.026",
+    "distance": 17,
+    "clusterInfo": "0.02 - 0.033 (16);0.682 - 0.986 (5);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "H5\u002736"
+      },
+      {
+        "id": 8,
+        "label": "H5"
+      },
+      {
+        "id": 9,
+        "label": "H5a"
+      },
+      {
+        "id": 10,
+        "label": "H5a1"
+      },
+      {
+        "id": 11,
+        "label": "H5a1b"
+      },
+      {
+        "id": 12,
+        "label": "HV"
+      },
+      {
+        "id": 13,
+        "label": "R0"
+      },
+      {
+        "id": 14,
+        "label": "R"
+      },
+      {
+        "id": 15,
+        "label": "U"
+      },
+      {
+        "id": 16,
+        "label": "U5"
+      },
+      {
+        "id": 17,
+        "label": "U5a\u0027b"
+      },
+      {
+        "id": 18,
+        "label": "U5a"
+      },
+      {
+        "id": 19,
+        "label": "U5a1"
+      },
+      {
+        "id": 20,
+        "label": "U5a1+@16192"
+      },
+      {
+        "id": 21,
+        "label": "U5a1a"
+      },
+      {
+        "id": 22,
+        "label": "U5a1a2"
+      },
+      {
+        "id": 23,
+        "label": "U5a1a2b"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G (0.981)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G (0.986)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 456T (0.682)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 16304C (0.727)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 4336C (0.718)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 15833T (0.726)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 11719A (0.724)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 6,
+        "to": 12,
+        "label": " 2706G (0.033) 7028T (0.032)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 14766T (0.031)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 73G (0.026)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 11467G (0.026) 12308G (0.023) 12372A (0.024)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "label": " 16270T (0.022)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 16,
+        "to": 17,
+        "label": " 3197C (0.025) 9477A (0.027) 13617C (0.025)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 17,
+        "to": 18,
+        "label": " 14793G (0.028) 16256T (0.02)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 18,
+        "to": 19,
+        "label": " 15218G (0.022) 16399G (0.026)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "label": " ",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 20,
+        "to": 21,
+        "label": " 1700C (0.021)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 21,
+        "to": 22,
+        "label": " 12346T (0.02)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 22,
+        "to": 23,
+        "label": " 13105G (0.031)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "NA18576.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 58,
+    "sampleHomoplasmies": 6,
+    "sampleMeanCoverage": 2976,
+    "hgMajor": "D5b1d",
+    "hgMajorQ": "0.981",
+    "hgMinor": "H11a6",
+    "hgMinorQ": "0.929",
+    "homoplasmiesMajor": 6,
+    "homoplasmiesMinor": 6,
+    "heteroplasmiesMajor": 29,
+    "heteroplasmiesMinor": 6,
+    "meanHetlevelMajor": "0.879",
+    "meanHetlevelMinor": "0.124",
+    "distance": 18,
+    "clusterInfo": "0.096 - 0.131 (6);0.82 - 0.902 (29);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "N"
+      },
+      {
+        "id": 11,
+        "label": "L3"
+      },
+      {
+        "id": 12,
+        "label": "M"
+      },
+      {
+        "id": 13,
+        "label": "M80\u0027D"
+      },
+      {
+        "id": 14,
+        "label": "D"
+      },
+      {
+        "id": 15,
+        "label": "D+16189"
+      },
+      {
+        "id": 16,
+        "label": "D5"
+      },
+      {
+        "id": 17,
+        "label": "D5a\u0027b"
+      },
+      {
+        "id": 18,
+        "label": "D5b"
+      },
+      {
+        "id": 19,
+        "label": "D5b1"
+      },
+      {
+        "id": 20,
+        "label": "D5b1d"
+      },
+      {
+        "id": 21,
+        "label": "H+195"
+      },
+      {
+        "id": 22,
+        "label": "H11"
+      },
+      {
+        "id": 23,
+        "label": "H11a"
+      },
+      {
+        "id": 24,
+        "label": "H11a6"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G (0.878) 7028T (0.902)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T (0.889)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G (0.878) 11719A (0.874)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 12705T (0.876) 16223T (0.82)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 8701G (0.886) 9540C (0.897) 10398G (0.863) 10873C (0.885) 15301A (0.879)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 489C (0.878) 10400T (0.868) 14783C (0.889) 15043A (0.874)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 4883T (0.872)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 5178A (0.877) 16362C (0.855)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "label": " 150T (0.864) 1107C (0.886) 5301G (0.882) 10397G (0.86)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 16,
+        "to": 17,
+        "label": " 9180G (0.898)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 17,
+        "to": 18,
+        "label": " 456T (0.852) 681C (0.881) 1048T (0.886) 5153G (0.888) 15724G (0.884)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 18,
+        "to": 19,
+        "label": " 6253C (0.895)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "label": " 146C (0.861) 4048A (0.857) 10810C (0.875)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 6,
+        "to": 21,
+        "label": " 195C (0.116)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 21,
+        "to": 22,
+        "label": " 8448C (0.109) 13759A (0.131) 16311C (0.133)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 22,
+        "to": 23,
+        "label": " 961G (0.096) 16293G (0.129)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 23,
+        "to": 24,
+        "label": " 1719A (0.111) 5979A (0.12) 16525G (0.131)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "NA20803.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 12,
+    "sampleHomoplasmies": 7,
+    "sampleMeanCoverage": 1361,
+    "hgMajor": "H1e2d",
+    "hgMajorQ": "0.936",
+    "hgMinor": "H5b",
+    "hgMinorQ": "0.899",
+    "homoplasmiesMajor": 6,
+    "homoplasmiesMinor": 6,
+    "heteroplasmiesMajor": 3,
+    "heteroplasmiesMinor": 1,
+    "meanHetlevelMajor": "0.973",
+    "meanHetlevelMinor": "0.033",
+    "distance": 7,
+    "clusterInfo": "0.033 (1);0.97 - 0.975 (3);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "H1"
+      },
+      {
+        "id": 8,
+        "label": "H1e"
+      },
+      {
+        "id": 9,
+        "label": "H1e2"
+      },
+      {
+        "id": 10,
+        "label": "H1e2d"
+      },
+      {
+        "id": 11,
+        "label": "H5\u002736"
+      },
+      {
+        "id": 12,
+        "label": "H5"
+      },
+      {
+        "id": 13,
+        "label": "H5b"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 3010A (0.973)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 5460A (0.962)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 15817G (0.975)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 3548C (0.97)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 6,
+        "to": 11,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 16304C (0.018)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 5471A (0.033)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "NA20846.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 42,
+    "sampleHomoplasmies": 14,
+    "sampleMeanCoverage": 2435,
+    "hgMajor": "M5a2a1a1",
+    "hgMajorQ": "0.994",
+    "hgMinor": "R30b2a",
+    "hgMinorQ": "0.905",
+    "homoplasmiesMajor": 12,
+    "homoplasmiesMinor": 11,
+    "heteroplasmiesMajor": 19,
+    "heteroplasmiesMinor": 8,
+    "meanHetlevelMajor": "0.979",
+    "meanHetlevelMinor": "0.016",
+    "distance": 15,
+    "clusterInfo": "0.013 - 0.02 (8);0.973 - 0.984 (19);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "N"
+      },
+      {
+        "id": 11,
+        "label": "L3"
+      },
+      {
+        "id": 12,
+        "label": "M"
+      },
+      {
+        "id": 13,
+        "label": "M5"
+      },
+      {
+        "id": 14,
+        "label": "M5a\u0027d"
+      },
+      {
+        "id": 15,
+        "label": "M5a"
+      },
+      {
+        "id": 16,
+        "label": "M5a2"
+      },
+      {
+        "id": 17,
+        "label": "M5a2a"
+      },
+      {
+        "id": 18,
+        "label": "M5a2a1"
+      },
+      {
+        "id": 19,
+        "label": "M5a2a1a"
+      },
+      {
+        "id": 20,
+        "label": "M5a2a1a1"
+      },
+      {
+        "id": 21,
+        "label": "R30"
+      },
+      {
+        "id": 22,
+        "label": "R30b"
+      },
+      {
+        "id": 23,
+        "label": "R30b2"
+      },
+      {
+        "id": 24,
+        "label": "R30b2a"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G 7028T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G 11719A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 12705T (0.98) 16223T (0.979)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 8701G (0.978) 9540C (0.984) 10398G (0.978) 10873C (0.98) 15301A (0.978)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 489C (0.98) 10400T (0.978) 14783C (0.98) 15043A (0.979)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 1888A (0.984) 16129A",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 709A (0.982) 3921T (0.979) 14323A (0.98)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 12477C (0.979)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "label": " 4454C (0.976)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 16,
+        "to": 17,
+        "label": " 15262C (0.976)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 17,
+        "to": 18,
+        "label": " 8886A (0.973)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 18,
+        "to": 19,
+        "label": " 16265C (0.983)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "label": " 12372A (0.978)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 9,
+        "to": 21,
+        "label": " 8584A (0.014)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 21,
+        "to": 22,
+        "label": " 373G (0.013)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 22,
+        "to": 23,
+        "label": " 6290T (0.016) 7280T (0.017) 7843G (0.018) 13539G (0.02) 15148A (0.013)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 23,
+        "to": 24,
+        "label": " 14000A (0.016)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "NA20849.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 34,
+    "sampleHomoplasmies": 23,
+    "sampleMeanCoverage": 3612,
+    "hgMajor": "M38a",
+    "hgMajorQ": "0.935",
+    "hgMinor": "M5a2a1a1",
+    "hgMinorQ": "0.965",
+    "homoplasmiesMajor": 22,
+    "homoplasmiesMinor": 22,
+    "heteroplasmiesMajor": 8,
+    "heteroplasmiesMinor": 9,
+    "meanHetlevelMajor": "0.978",
+    "meanHetlevelMinor": "0.019",
+    "distance": 12,
+    "clusterInfo": "0.015 - 0.023 (9);0.972 - 0.981 (8);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "N"
+      },
+      {
+        "id": 11,
+        "label": "L3"
+      },
+      {
+        "id": 12,
+        "label": "M"
+      },
+      {
+        "id": 13,
+        "label": "M4\"67"
+      },
+      {
+        "id": 14,
+        "label": "M18\u002738"
+      },
+      {
+        "id": 15,
+        "label": "M38"
+      },
+      {
+        "id": 16,
+        "label": "M38a"
+      },
+      {
+        "id": 17,
+        "label": "M5"
+      },
+      {
+        "id": 18,
+        "label": "M5a\u0027d"
+      },
+      {
+        "id": 19,
+        "label": "M5a"
+      },
+      {
+        "id": 20,
+        "label": "M5a2"
+      },
+      {
+        "id": 21,
+        "label": "M5a2a"
+      },
+      {
+        "id": 22,
+        "label": "M5a2a1"
+      },
+      {
+        "id": 23,
+        "label": "M5a2a1a"
+      },
+      {
+        "id": 24,
+        "label": "M5a2a1a1"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G 7028T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G 11719A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 12705T 16223T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 8701G 9540C 10398G 10873C 15301A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 489C 10400T 14783C 15043A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 12007A (0.973)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 246C (0.972)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 4099T (0.98) 15314A (0.98) 15487G (0.978)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "label": " 1808G (0.978) 6267A (0.981) 9966A (0.973)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 17,
+        "label": " 1888A (0.019) 16129A (0.018)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 17,
+        "to": 18,
+        "label": " 709A (0.018) 3921T (0.018) 14323A (0.022)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 18,
+        "to": 19,
+        "label": " 12477C (0.019)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "label": " 4454C (0.023)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 20,
+        "to": 21,
+        "label": " 15262C (0.018)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 21,
+        "to": 22,
+        "label": " 8886A (0.023)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 22,
+        "to": 23,
+        "label": " 16265C (0.022)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 23,
+        "to": 24,
+        "label": " 12372A (0.015)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "NA20873.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 47,
+    "sampleHomoplasmies": 13,
+    "sampleMeanCoverage": 3089,
+    "hgMajor": "T1a1",
+    "hgMajorQ": "0.979",
+    "hgMinor": "R5a1a",
+    "hgMinorQ": "0.953",
+    "homoplasmiesMajor": 12,
+    "homoplasmiesMinor": 11,
+    "heteroplasmiesMajor": 16,
+    "heteroplasmiesMinor": 8,
+    "meanHetlevelMajor": "0.965",
+    "meanHetlevelMinor": "0.029",
+    "distance": 12,
+    "clusterInfo": "0.028 - 0.037 (8);0.798 - 0.972 (16);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "R2\u0027JT"
+      },
+      {
+        "id": 11,
+        "label": "JT"
+      },
+      {
+        "id": 12,
+        "label": "T"
+      },
+      {
+        "id": 13,
+        "label": "T1"
+      },
+      {
+        "id": 14,
+        "label": "T1a"
+      },
+      {
+        "id": 15,
+        "label": "T1a+152"
+      },
+      {
+        "id": 16,
+        "label": "T1a1\u00273"
+      },
+      {
+        "id": 17,
+        "label": "T1a1"
+      },
+      {
+        "id": 18,
+        "label": "R5"
+      },
+      {
+        "id": 19,
+        "label": "R5a"
+      },
+      {
+        "id": 20,
+        "label": "R5a1"
+      },
+      {
+        "id": 21,
+        "label": "R5a1a"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G 7028T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G 11719A",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 4216C (0.959)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 11251G (0.967) 15452A (0.972) 16126C (0.968)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 709A (0.973) 1888A (0.966) 4917G (0.965) 8697A (0.964) 10463C (0.963) 13368A (0.961) 14905A (0.965) 15607G (0.966) 15928A (0.969) 16294T (0.966)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 12633A (0.965) 16163G (0.966) 16189C",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 16186T (0.798)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 152C (0.972)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 15,
+        "to": 16,
+        "label": " 195C (0.967)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 16,
+        "to": 17,
+        "label": " 9899C (0.964)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 9,
+        "to": 18,
+        "label": " 8594C (0.03) 10754G (0.037) 14544A (0.033) 16304C (0.03) 16524G (0.028)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 18,
+        "to": 19,
+        "label": " 16266T (0.024)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 19,
+        "to": 20,
+        "label": " 93G (0.029) 200G (0.027) 2833G (0.029)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 20,
+        "to": 21,
+        "label": " 8987C (0.028) 9708C (0.028) 10084C (0.034)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "NA20877.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 32,
+    "sampleHomoplasmies": 5,
+    "sampleMeanCoverage": 1581,
+    "hgMajor": "R2+13500",
+    "hgMajorQ": "0.945",
+    "hgMinor": "H2b",
+    "hgMinorQ": "0.812",
+    "homoplasmiesMajor": 5,
+    "homoplasmiesMinor": 5,
+    "heteroplasmiesMajor": 15,
+    "heteroplasmiesMinor": 2,
+    "meanHetlevelMajor": "0.958",
+    "meanHetlevelMinor": "0.032",
+    "distance": 9,
+    "clusterInfo": "0.03 - 0.034 (2);0.949 - 0.966 (15);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "R2\u0027JT"
+      },
+      {
+        "id": 11,
+        "label": "R2"
+      },
+      {
+        "id": 12,
+        "label": "R2+13500"
+      },
+      {
+        "id": 13,
+        "label": "H2a+152  16311"
+      },
+      {
+        "id": 14,
+        "label": "H2b"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G (0.964)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G (0.953) 7028T (0.959)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T (0.959)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G (0.958) 11719A (0.965)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 4216C (0.966)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 10,
+        "to": 11,
+        "label": " 152C 4769G! (0.97) 7657C (0.951) 8473C (0.949) 9932A (0.96) 10685A (0.951) 12654G (0.958) 14305A (0.963) 16071T (0.958)",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 13500C (0.957)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G (0.03)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 5,
+        "to": 13,
+        "label": " 152C 16311C (0.044)",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 8598C (0.034)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  },
+  {
+    "id": "NA20883.MT.bam",
+    "status": "YES",
+    "sampleHeteroplasmies": 73,
+    "sampleHomoplasmies": 5,
+    "sampleMeanCoverage": 3074,
+    "hgMajor": "R32",
+    "hgMajorQ": "0.787",
+    "hgMinor": "M66",
+    "hgMinorQ": "0.733",
+    "homoplasmiesMajor": 5,
+    "homoplasmiesMinor": 5,
+    "heteroplasmiesMajor": 12,
+    "heteroplasmiesMinor": 16,
+    "meanHetlevelMajor": "0.948",
+    "meanHetlevelMinor": "0.033",
+    "distance": 6,
+    "clusterInfo": "0.028 - 0.049 (16);0.923 - 0.982 (12);",
+    "nodes": [
+      {
+        "id": 0,
+        "label": "rCRS NC_012920"
+      },
+      {
+        "id": 1,
+        "label": "H2a2a1"
+      },
+      {
+        "id": 2,
+        "label": "H2a2a"
+      },
+      {
+        "id": 3,
+        "label": "H2a2"
+      },
+      {
+        "id": 4,
+        "label": "H2a"
+      },
+      {
+        "id": 5,
+        "label": "H2"
+      },
+      {
+        "id": 6,
+        "label": "H"
+      },
+      {
+        "id": 7,
+        "label": "HV"
+      },
+      {
+        "id": 8,
+        "label": "R0"
+      },
+      {
+        "id": 9,
+        "label": "R"
+      },
+      {
+        "id": 10,
+        "label": "R32"
+      },
+      {
+        "id": 11,
+        "label": "N"
+      },
+      {
+        "id": 12,
+        "label": "L3"
+      },
+      {
+        "id": 13,
+        "label": "M"
+      },
+      {
+        "id": 14,
+        "label": "M4\"67"
+      },
+      {
+        "id": 15,
+        "label": "M66"
+      }
+    ],
+    "edges": [
+      {
+        "from": 0,
+        "to": 1,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "label": " 263G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 2,
+        "to": 3,
+        "label": " 8860G 15326G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 3,
+        "to": 4,
+        "label": " 750G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 4,
+        "to": 5,
+        "label": " 4769G",
+        "font": {
+          "color": "blue"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": " 1438G (0.978)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": " 2706G (0.979) 7028T (0.979)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": " 14766T (0.983)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": " 73G (0.982) 11719A (0.982)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 9,
+        "to": 10,
+        "label": " 152C (0.964) 3816G (0.957) 4820A (0.949) 8464T (0.946) 8784G (0.945) 8887G (0.95) 9116C (0.947) 12771A (0.942) 15712G (0.944) 16145A (0.949) 16185T (0.923) 16239T (0.949) 16325C (0.954)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 5,
+        "to": 6,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 6,
+        "to": 7,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 7,
+        "to": 8,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 8,
+        "to": 9,
+        "label": "",
+        "font": {
+          "color": "black"
+        }
+      },
+      {
+        "from": 9,
+        "to": 11,
+        "label": " 12705T (0.04) 16223T (0.031)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 11,
+        "to": 12,
+        "label": " 8701G (0.032) 9540C (0.038) 10398G (0.032) 10873C (0.029) 15301A (0.032)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 12,
+        "to": 13,
+        "label": " 489C (0.049) 10400T (0.032) 14783C (0.033) 15043A (0.032)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 13,
+        "to": 14,
+        "label": " 12007A (0.037)",
+        "font": {
+          "color": "green"
+        }
+      },
+      {
+        "from": 14,
+        "to": 15,
+        "label": " 195C (0.033) 1888A (0.034) 4541A (0.033) 6827C (0.036) 9061T (0.03) 16184T (0.028)",
+        "font": {
+          "color": "green"
+        }
+      }
+    ]
+  }
+],
+				"columns": [{
+						"data": "id"
+					},
+					{
+						"data": "status"
+					},
+					{
+						"data": "distance"
+					},
+					{
+						"data": "meanHetlevelMajor"
+					},
+					{
+						"data": "meanHetlevelMinor"
+					}
+				]
+			});
+
+
+			var tableSummary = $('#summary-table').DataTable({
+				"pageLength": 10,
+				data: [{"Yes":26,"No":0,"Distance":11.0,"25Percentile":7.25,"75Percentile":15.0}],
+				"columns": [{
+						"data": "Yes"
+					},
+					{
+						"data": "No"
+					},
+					{
+						"data": "Distance"
+					},
+					{
+						"data": "25Percentile"
+					},
+					{
+						"data": "75Percentile"
+					}
+				]
+			});
+
+			$('#samples').on('click', function() {
+				$("#samples").addClass('active');
+				$("#summary").removeClass('active');
+				$("#about").removeClass('active');
+				$("#cont-panel").show();
+				$("#summary-panel").hide();
+				$("#about-panel").hide();
+			});
+
+			$('#summary').on('click', function() {
+				$("#samples").removeClass('active');
+				$("#summary").addClass('active');
+				$("#about").removeClass('active');
+				$("#cont-panel").hide();
+				$("#summary-panel").show();
+				$("#about-panel").hide();
+			});
+			$('#about').on('click', function() {
+				$("#samples").removeClass('active');
+				$("#summary").removeClass('active');
+				$("#about").addClass('active');
+				$("#cont-panel").hide();
+				$("#summary-panel").hide();
+				$("#about-panel").show();
+			});
+
+
+			$('#contamination-table tbody').on('click', 'tr', function() {
+
+				if (window.row) {
+					$(window.row).removeClass('bg-secondary text-white');
+				}
+
+				$(this).addClass('bg-secondary text-white');
+				window.row = this;
+
+				var data = table.row(this).data();
+				var details = document.getElementById('detailsSample');
+
+
+details.innerHTML = "<h3>" + data.id +"</h3>";
+				details.innerHTML += "<br> <button type='button' class='btn btn-xs btn-primary details-phylotree'><i class='far fa-eye'></i> Phylogenetic Tree</button>";
+
+				details.innerHTML +=
+					`<br><br> <table class="table table-bordered fixed">
+					<col width="20px" />
+ 				  <col width="30px" />
+  <thead>
+	<tr>
+	<th scope="col">Distance</th>
+		<th scope="col">${data.distance}</th>
+	</tr>
+  <tr>
+      <th scope="col">Coverage</th>
+      <th scope="col">${data.sampleMeanCoverage}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+		<th scope="col">Major Haplogroup</th>
+      <th scope="col">${data.hgMajor}</th>
+    </tr>
+    <tr>
+		<th scope="col">Minor Haplogroup</th>
+      <th scope="col">${data.hgMinor}</th>
+    </tr>
+
+      <tr>
+		<th scope="col">Total Heteroplasmies Sample</th>
+		<th scope="col">${data.sampleHeteroplasmies}</th>
+    </tr>
+    <tr>
+		<th scope="col">Used Heteroplasmies Major</th>
+		<th scope="col">${data.heteroplasmiesMajor}</th>
+    </tr>
+		<tr>
+		<th scope="col">Used Heteroplasmies Minor</th>
+		<th scope="col">${data.heteroplasmiesMinor}</th>
+		</tr>
+		<tr>
+		<th scope="col">Heteroplasmy Clusters</th>
+		<th scope="col">${data.clusterInfo}</th>
+		</tr>
+  </tbody>
+</table>`;
+
+				window.data = data;
+
+			});
+
+		});
+	</script>
+
+</body>
+
+</html>
+
+  </body>
+</html>
+
+  </body>
+</html>
