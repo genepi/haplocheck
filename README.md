@@ -1,7 +1,7 @@
 # Haplocheck
 [![Build Status](https://travis-ci.org/genepi/haplocheck.svg?branch=master)](https://travis-ci.org/genepi/haplocheck)
 
-Haplocheck is a software that leverages the mitochondrial phylogeny to detect contamination in mtDNA sequencing studies. By generating in-silico mixtures and reassessing the 1000 Genomes data, we also show the practicability of our approach for contamination detection in whole genome sequencing studies. We provide haplocheck as a standalone pipeline and as a cloud web service (via https://mitoverse.i-med.ac.at). 
+Haplocheck is a software that leverages the mitochondrial phylogeny to detect contamination in mtDNA sequencing studies and in whole genome sequencing studies. We provide haplocheck as a standalone pipeline for local usage and as a cloud web service (via https://mitoverse.i-med.ac.at). 
 
 ## Run Haplocheck locally
 
