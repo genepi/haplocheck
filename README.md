@@ -15,14 +15,8 @@ Using Cloudgene, the complete workflow can also be executed locally. The final H
 
 Haplocheck is a contamination tool using the mtDNA phylogeny and has been integrated into the [mitoverse](https://mitoverse.i-med.ac.at) mtDNA platform based on [Cloudgene](https://www.cloudgene.io). 
 
-## Input File Formats
-Haplocheck accepts BAM/CRAM files, vcf.gz as an input. 
-
-## Output File Formats
-Haplocheck genereates a text file including summary statistics for each sample and a contamination status. It also provides a graphical report which can shared with collaborators.    
-
-## Documentation
-Please click [here](https://mitoverse.readthedocs.io/en/latest/) to get the latest documentation.
+## Haplocheck Documentation
+Documentation can be found [here](https://mitoverse.readthedocs.io/en/latest).
 
 ## Testdata
 The 1000 Genomes Phase3 file analyzed with mutserve can be found [here](https://github.com/genepi/haplocheck/raw/master/test-data/contamination/1000G/all/1000g-nobaq.vcf.gz). 
