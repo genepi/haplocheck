@@ -25,5 +25,4 @@ The 1000 Genomes Phase3 file analyzed with mutserve can be found [here](https://
 Check out our [blog](http://haplogrep.uibk.ac.at/blog/) regarding mtDNA topics.
 
 ## Contact
-[Sebastian Schoenherr](mailto:sebastian.schoenherr@i-med.ac.at) ([@seppinho](https://twitter.com/seppinho))   
-[Hansi Weissensteiner](mailto:hansi.weissensteiner@i-med.ac.at) ([@haansi](https://twitter.com/whansi))  
+See [here](https://mitoverse.readthedocs.io/en/latest/contact/).
