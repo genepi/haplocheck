@@ -420,7 +420,6 @@ public class ThousandGenomeTest {
 		
 		FileUtil.deleteFile(output);
 
-		System.out.println(found);
 	}
 
 }

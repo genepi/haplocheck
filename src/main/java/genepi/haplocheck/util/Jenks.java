@@ -336,8 +336,6 @@ public class Jenks {
     		jenks.addValue(2.0);
     		jenks.addValue(2.0);
     		jenks.addValue(3.0);
-    		Breaks hm = jenks.computeBreaks();
-    		System.out.println("c " + hm.toString());
     	}
     	
     }

@@ -67,7 +67,6 @@ public class ContaminationDetectionTest {
 		
 		VariantSplitter splitter = new VariantSplitter(); 
 		ArrayList<String> profiles = splitter.split(mutationServerSamples);
-		System.out.println(profiles);
 		
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
 
@@ -86,11 +85,11 @@ public class ContaminationDetectionTest {
 		assertEquals("39", readerContamination.getString("SampleHomoplasmies"));
 		assertEquals("0", readerContamination.getString("SampleHeteroplasmies"));
 		assertEquals("36", readerContamination.getString("HomoplasmiesMajor"));
-		assertEquals(0, readerContamination.getDouble("MeanHetLevelMajor"),0.01);
+		assertEquals(" ", readerContamination.getString("MeanHetLevelMajor"));
 		assertEquals("T2f1a1", readerContamination.getString("HgMajor"));
 		assertEquals(0.919, readerContamination.getDouble("HgQualityMinor"),0.01);
 		
-		FileUtil.deleteFile(out);
+		//FileUtil.deleteFile(out);
 	}	
 
 }

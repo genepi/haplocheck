@@ -138,8 +138,8 @@ public class ContaminationDetection {
 				contamination.setClusterInfo(clusters);
 				contamination.setHeteroplasmiesMajor(majorHeteroplasmies);
 				contamination.setHeteroplasmiesMinor(minorHeteroplasmies);
-				contamination.setMeanHetlevelMajor(formatter.format(meanHeteroplasmyMajor));
-				contamination.setMeanHetlevelMinor(formatter.format(meanHeteroplasmyMinor));
+				contamination.setMeanHetlevelMajor((meanHeteroplasmyMajor>0) ? formatter.format(meanHeteroplasmyMajor) : " ");
+				contamination.setMeanHetlevelMinor((meanHeteroplasmyMinor>0) ? formatter.format(meanHeteroplasmyMinor) : " ");
 				contamination.setDistance(distance);
 
 				ArrayList<TestSample> samples = new ArrayList<TestSample>();
