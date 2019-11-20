@@ -8,8 +8,8 @@ Haplocheck is a software that leverages the mitochondrial phylogeny to detect co
 Using Cloudgene, the complete workflow can also be executed locally. The final HTML report is located at `<out-folder>/report`. Haplocheck requires Java 8 or higher.
 
         curl -s install.cloudgene.io | bash
-        ./cloudgene install https://github.com/genepi/haplocheck/releases/download/v1.0.5/haplocheck.zip
-        ./cloudgene run haplocheck@1.0.5 --files <input-files> --output <out-folder>  
+        ./cloudgene install https://github.com/genepi/haplocheck/releases/download/v1.0.6/haplocheck.zip
+        ./cloudgene run haplocheck@1.0.6 --files <input-files> --output <out-folder>  
 
 ## Run Haplocheck as a cloud service
 
