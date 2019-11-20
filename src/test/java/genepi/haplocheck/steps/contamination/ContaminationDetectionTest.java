@@ -53,5 +53,44 @@ public class ContaminationDetectionTest {
 		
 		FileUtil.deleteFile(out);
 	}	
+	
+	@Test
+	public void testSpaceinInput() throws Exception {
+
+		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
+
+		VcfImporter reader = new VcfImporter();
+
+		HashMap<String, Sample> mutationServerSamples = reader.load(new File("test-data/contamination/test-files/HG00097-with-spaces.vcf"), false);
+		
+		String out = "test-data/contamination/test-files/report.txt";
+		
+		VariantSplitter splitter = new VariantSplitter(); 
+		ArrayList<String> profiles = splitter.split(mutationServerSamples);
+		System.out.println(profiles);
+		
+		HaplogroupClassifier classifier = new HaplogroupClassifier();
+
+		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		
+		ContaminationDetection contamination = new ContaminationDetection();
+
+		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
+	
+		contamination.writeReport(out, list);
+		
+		CsvTableReader readerContamination = new CsvTableReader(out, '\t');
+		readerContamination.next();
+		
+		assertEquals(Status.NO.name(), readerContamination.getString("Contamination"));
+		assertEquals("39", readerContamination.getString("SampleHomoplasmies"));
+		assertEquals("0", readerContamination.getString("SampleHeteroplasmies"));
+		assertEquals("36", readerContamination.getString("HomoplasmiesMajor"));
+		assertEquals(0, readerContamination.getDouble("MeanHetLevelMajor"),0.01);
+		assertEquals("T2f1a1", readerContamination.getString("HgMajor"));
+		assertEquals(0.919, readerContamination.getDouble("HgQualityMinor"),0.01);
+		
+		FileUtil.deleteFile(out);
+	}	
 
 }
