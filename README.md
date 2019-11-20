@@ -3,6 +3,14 @@
 
 Haplocheck is a software that leverages the mitochondrial phylogeny to detect contamination in mtDNA sequencing studies and in whole genome sequencing studies. We provide haplocheck as a standalone pipeline for local usage and as a cloud web service (via https://mitoverse.i-med.ac.at). 
 
+## Getting started
+` mkdir haplocheck-test
+  wget https://github.com/genepi/haplocheck/raw/master/test-data/contamination/1000G/all/1000g-nobaq.vcf.gz
+  curl -s install.cloudgene.io | bash
+  ./cloudgene install https://github.com/genepi/haplocheck/releases/download/v1.0.6/haplocheck.zip
+  ./cloudgene run haplocheck@1.0.6 --files 1000g-nobaq.vcf.gz --output results 
+  firefox results/report/report.html`
+
 ## Run Haplocheck locally
 
 Using Cloudgene, the complete workflow can also be executed locally. The final HTML report is located at `<out-folder>/report`. Haplocheck requires Java 8 or higher.
@@ -17,9 +25,6 @@ Haplocheck is a contamination tool using the mtDNA phylogeny and has been integr
 
 ## Haplocheck Documentation
 Documentation can be found [here](https://mitoverse.readthedocs.io/en/latest).
-
-## Testdata
-The 1000 Genomes Phase3 file analyzed with mutserve can be found [here](https://github.com/genepi/haplocheck/raw/master/test-data/contamination/1000G/all/1000g-nobaq.vcf.gz). 
 
 ## Blog
 Check out our [blog](http://haplogrep.uibk.ac.at/blog/) regarding mtDNA topics.
