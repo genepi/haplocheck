@@ -79,7 +79,10 @@ public class ContaminationDetection {
 				int sampleHomoplasmies = mutserveSample.getAmountHomoplasmies();
 				int sampleHeteroplasmies = mutserveSample.getAmountHeteroplasmies();
 
-				int meanCoverageSample = (int) mutserveSample.getSumCoverage() / mutserveSample.getAmountVariants();
+				int meanCoverageSample = -1;
+				if(mutserveSample.getAmountVariants() != 0){
+				meanCoverageSample = (int) mutserveSample.getSumCoverage() / mutserveSample.getAmountVariants();
+				}
 
 				contamination.setHgMajor(haplogrepMajor.getTopResult().getHaplogroup().toString());
 				contamination.setHgMinor(haplogrepMinor.getTopResult().getHaplogroup().toString());

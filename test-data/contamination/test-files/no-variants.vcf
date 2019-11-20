@@ -1,0 +1,23 @@
+##fileformat=VCFv4.1									
+##reference=rCRS									
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">								
+##INFO=<ID=AC,Number=.,Type=Integer,Description="Allele count in genotypes">									
+##INFO=<ID=AN,Number=1,Type=Integer,Description="Total number of alleles in called genotypes">									
+##reference=file:rCRS.fa									
+##contig=<ID=MT,length=16569,md5=5d155a500975d0115cbea18770554f48>									
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	HG00097
+MT	3	.	T	C	.	PASS	"AC=1;AN=1073"	GT	0
+MT	10	.	T	C	.	PASS	"AC=2;AN=1074"	GT	0
+MT	16	.	A	T	.	PASS	"AC=1;AN=1074"	GT	0
+MT	18	.	C	T	.	PASS	"AC=1;AN=1074"	GT	0
+MT	26	.	C	T	.	PASS	"AC=1;AN=1074"	GT	0
+MT	35	.	G	A	.	PASS	"AC=1;AN=1074"	GT	0
+MT	40	.	T	C	.	PASS	"AC=1;AN=1074"	GT	0
+MT	41	.	C	T	.	PASS	"AC=2;AN=1074"	GT	0
+MT	44	.	C	CC	.	PASS	"AC=1;AN=1074"	GT	0
+MT	47	.	G	A	.	PASS	"AC=1;AN=1074"	GT	0
+MT	55	.	T	C,A	.	PASS	"AC=1,2;AN=1074"	GT	0
+MT	57	.	T	C	.	PASS	"AC=1;AN=1074"	GT	0
+MT	58	.	T	A	.	PASS	"AC=1;AN=1074"	GT	0
+MT	61	.	C	T	.	PASS	"AC=1;AN=1074"	GT	0
+MT	62	.	G	A	.	PASS	"AC=1;AN=1074"	GT	0
