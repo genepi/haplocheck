@@ -80,8 +80,8 @@ public class ContaminationDetection {
 				int sampleHeteroplasmies = mutserveSample.getAmountHeteroplasmies();
 
 				int meanCoverageSample = -1;
-				if(mutserveSample.getAmountVariants() != 0){
-				meanCoverageSample = (int) mutserveSample.getSumCoverage() / mutserveSample.getAmountVariants();
+				if (mutserveSample.getAmountVariants() != 0) {
+					meanCoverageSample = (int) mutserveSample.getSumCoverage() / mutserveSample.getAmountVariants();
 				}
 
 				contamination.setHgMajor(haplogrepMajor.getTopResult().getHaplogroup().toString());
@@ -138,8 +138,10 @@ public class ContaminationDetection {
 				contamination.setClusterInfo(clusters);
 				contamination.setHeteroplasmiesMajor(majorHeteroplasmies);
 				contamination.setHeteroplasmiesMinor(minorHeteroplasmies);
-				contamination.setMeanHetlevelMajor((meanHeteroplasmyMajor>0) ? formatter.format(meanHeteroplasmyMajor) : " ");
-				contamination.setMeanHetlevelMinor((meanHeteroplasmyMinor>0) ? formatter.format(meanHeteroplasmyMinor) : " ");
+				contamination.setMeanHetlevelMajor(
+						(meanHeteroplasmyMajor > 0) ? formatter.format(meanHeteroplasmyMajor) : " ");
+				contamination.setMeanHetlevelMinor(
+						(meanHeteroplasmyMinor > 0) ? formatter.format(meanHeteroplasmyMinor) : " ");
 				contamination.setDistance(distance);
 
 				ArrayList<TestSample> samples = new ArrayList<TestSample>();
@@ -203,7 +205,7 @@ public class ContaminationDetection {
 				if (pos == null) {
 					continue;
 				}
-				
+
 				if (currentPoly.isBackMutation()) {
 					continue;
 				}
@@ -350,24 +352,20 @@ public class ContaminationDetection {
 			}
 		}
 
-		if (distanceList.size() > 0) {
-			return calculateAverage(distanceList);
-		} else {
-			return 0.0;
-		}
+		return calculateAverage(distanceList);
 
 	}
-	
-	private double calculateAverage(List <Double> marks) {
-		  Double sum = 0.0;
-		  if(!marks.isEmpty()) {
-		    for (Double mark : marks) {
-		        sum += mark;
-		    }
-		    return sum.doubleValue() / marks.size();
-		  }
-		  return sum;
+
+	private double calculateAverage(List<Double> marks) {
+		Double sum = 0.0;
+		if (!marks.isEmpty()) {
+			for (Double mark : marks) {
+				sum += mark;
+			}
+			return sum.doubleValue() / marks.size();
 		}
+		return sum;
+	}
 
 	public int getSettingAmountHigh() {
 		return heteroplasmyDistance;
@@ -426,8 +424,10 @@ public class ContaminationDetection {
 		CsvTableWriter contaminationWriter = new CsvTableWriter(output, '\t');
 
 		String[] columnsWrite = { "Sample", "Contamination Status", "Overall Homoplasmies", "Overall Heteroplasmies",
-				"Sample Coverage", "Major Haplogroup", "Major Haplogroup Quality", "Minor Haplogroup", "Minor Haplogroup Quality", "Amount Major Homoplasmies",
-				"Amount Minor Homoplasmies", "Amount Major Heteroplasmies", "Amount Minor Heteroplasmies", "Major Heteroplasmy Level", "Minor Heteroplasmy Level", "Distance", "Clusters" };
+				"Sample Coverage", "Major Haplogroup", "Major Haplogroup Quality", "Minor Haplogroup",
+				"Minor Haplogroup Quality", "Amount Major Homoplasmies", "Amount Minor Homoplasmies",
+				"Amount Major Heteroplasmies", "Amount Minor Heteroplasmies", "Major Heteroplasmy Level",
+				"Minor Heteroplasmy Level", "Distance", "Clusters" };
 		contaminationWriter.setColumns(columnsWrite);
 
 		for (ContaminationObject entry : list) {
