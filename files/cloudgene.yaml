@@ -1,6 +1,6 @@
-name: haplocheck
+name: Contamination Detection using Haplocheck
 description: Within-species contamination leveraging the mtDNA phylogeny.
-version: 1.0.6
+version: 1.0.7
  
 workflow:
 
