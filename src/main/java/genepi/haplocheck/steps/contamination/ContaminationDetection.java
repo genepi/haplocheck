@@ -351,12 +351,23 @@ public class ContaminationDetection {
 		}
 
 		if (distanceList.size() > 0) {
-			return com.google.common.math.Quantiles.median().compute(distanceList);
+			return calculateAverage(distanceList);
 		} else {
 			return 0.0;
 		}
 
 	}
+	
+	private double calculateAverage(List <Double> marks) {
+		  Double sum = 0.0;
+		  if(!marks.isEmpty()) {
+		    for (Double mark : marks) {
+		        sum += mark;
+		    }
+		    return sum.doubleValue() / marks.size();
+		  }
+		  return sum;
+		}
 
 	public int getSettingAmountHigh() {
 		return heteroplasmyDistance;
@@ -414,10 +425,9 @@ public class ContaminationDetection {
 
 		CsvTableWriter contaminationWriter = new CsvTableWriter(output, '\t');
 
-		String[] columnsWrite = { "SampleID", "Contamination", "SampleHomoplasmies", "SampleHeteroplasmies",
-				"SampleMeanCoverage", "HgMajor", "HgQualityMajor", "HgMinor", "HgQualityMinor", "HomoplasmiesMajor",
-				"HomoplasmiesMinor", "HeteroplasmiesMajor", "HeteroplasmiesMinor", "MeanHetLevelMajor",
-				"MeanHetLevelMinor", "HG_Distance", "Clusters" };
+		String[] columnsWrite = { "Sample", "Contamination Status", "Overall Homoplasmies", "Overall Heteroplasmies",
+				"Sample Coverage", "Major Haplogroup", "Major Haplogroup Quality", "Minor Haplogroup", "Minor Haplogroup Quality", "Amount Major Homoplasmies",
+				"Amount Minor Homoplasmies", "Amount Major Heteroplasmies", "Amount Minor Heteroplasmies", "Major Heteroplasmy Level", "Minor Heteroplasmy Level", "Distance", "Clusters" };
 		contaminationWriter.setColumns(columnsWrite);
 
 		for (ContaminationObject entry : list) {

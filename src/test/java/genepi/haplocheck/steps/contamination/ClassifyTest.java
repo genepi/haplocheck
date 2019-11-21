@@ -56,13 +56,13 @@ public class ClassifyTest {
 		CsvTableReader readerContamination = new CsvTableReader(out, '\t');
 		readerContamination.next();
 		
-		assertEquals(Status.NO.name(), readerContamination.getString("Contamination"));
-		assertEquals("39", readerContamination.getString("SampleHomoplasmies"));
-		assertEquals("0", readerContamination.getString("SampleHeteroplasmies"));
-		assertEquals("36", readerContamination.getString("HomoplasmiesMajor"));
-		assertEquals(" ", readerContamination.getString("MeanHetLevelMajor"));
-		assertEquals("T2f1a1", readerContamination.getString("HgMajor"));
-		assertEquals(0.919, readerContamination.getDouble("HgQualityMinor"),0.01);
+		assertEquals(Status.NO.name(), readerContamination.getString("Contamination Status"));
+		assertEquals("39", readerContamination.getString("Overall Homoplasmies"));
+		assertEquals("0", readerContamination.getString("Overall Heteroplasmies"));
+		assertEquals("36", readerContamination.getString("Amount Major Homoplasmies"));
+		assertEquals(" ", readerContamination.getString("Major Heteroplasmy Level"));
+		assertEquals("T2f1a1", readerContamination.getString("Major Haplogroup"));
+		assertEquals(0.919, readerContamination.getDouble("Minor Haplogroup Quality"),0.01);
 		
 		FileUtil.deleteFile(out);
 
@@ -147,16 +147,16 @@ public class ClassifyTest {
 		// get first line
 		readerContamination.next();
 
-		assertEquals(Status.YES.name(), readerContamination.getString("Contamination"));
-		assertEquals("6", readerContamination.getString("HomoplasmiesMajor"));
-		assertEquals("7", readerContamination.getString("SampleHomoplasmies"));
-		assertEquals("0.987", readerContamination.getString("MeanHetLevelMajor"));
-		assertEquals("6", readerContamination.getString("HomoplasmiesMinor"));
-		assertEquals(0.011, readerContamination.getDouble("MeanHetLevelMinor"),0.001);
-		assertEquals("10", readerContamination.getString("HeteroplasmiesMinor"));
-		assertEquals("18", readerContamination.getString("SampleHeteroplasmies"));
-		assertEquals("H1", readerContamination.getString("HgMajor"));
-		assertEquals("U5a2e", readerContamination.getString("HgMinor"));
+		assertEquals(Status.YES.name(), readerContamination.getString("Contamination Status"));
+		assertEquals("6", readerContamination.getString("Amount Major Homoplasmies"));
+		assertEquals("7", readerContamination.getString("Overall Homoplasmies"));
+		assertEquals("0.987", readerContamination.getString("Major Heteroplasmy Level"));
+		assertEquals("6", readerContamination.getString("Amount Minor Homoplasmies"));
+		assertEquals(0.011, readerContamination.getDouble("Minor Heteroplasmy Level"),0.001);
+		assertEquals("10", readerContamination.getString("Amount Minor Heteroplasmies"));
+		assertEquals("18", readerContamination.getString("Overall Heteroplasmies"));
+		assertEquals("H1", readerContamination.getString("Major Haplogroup"));
+		assertEquals("U5a2e", readerContamination.getString("Minor Haplogroup"));
 
 		FileUtil.deleteFile(out);
 	}

@@ -61,7 +61,7 @@ public class PolarisTest {
 
 		int count = 0;
 		while (readerOut.next()) {
-			if (readerOut.getString("Contamination").equals(Status.YES.name())) {
+			if (readerOut.getString("Contamination Status").equals(Status.YES.name())) {
 				count++;
 
 			}
@@ -110,7 +110,7 @@ public class PolarisTest {
 
 		int count = 0;
 		while (readerOut.next()) {
-			if (readerOut.getString("Contamination").equals(Status.YES.name())) {
+			if (readerOut.getString("Contamination Status").equals(Status.YES.name())) {
 				count++;
 
 			}

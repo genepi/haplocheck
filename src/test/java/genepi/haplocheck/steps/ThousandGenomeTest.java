@@ -61,7 +61,7 @@ public class ThousandGenomeTest {
 		int countHigh = 0;
 		while (readerOut.next()) {
 
-			if (readerOut.getString("Contamination").equals(Status.YES.name())) {
+			if (readerOut.getString("Contamination Status").equals(Status.YES.name())) {
 				countHigh++;
 			}
 		}
@@ -108,7 +108,7 @@ public class ThousandGenomeTest {
 		int countHigh = 0;
 		while (readerOut.next()) {
 
-			if (readerOut.getString("Contamination").equals(Status.YES.name())) {
+			if (readerOut.getString("Contamination Status").equals(Status.YES.name())) {
 				countHigh++;
 			}
 		}
@@ -154,7 +154,7 @@ public class ThousandGenomeTest {
 
 		int count = 0;
 		while (readerOut.next()) {
-			if (readerOut.getString("Contamination").equals(Status.YES.name())) {
+			if (readerOut.getString("Contamination Status").equals(Status.YES.name())) {
 				count++;
 
 			}
@@ -203,7 +203,7 @@ public class ThousandGenomeTest {
 
 		int count = 0;
 		while (readerOut.next()) {
-			if (readerOut.getString("Contamination").equals(Status.YES.name())) {
+			if (readerOut.getString("Contamination Status").equals(Status.YES.name())) {
 				count++;
 
 			}
@@ -250,7 +250,7 @@ public class ThousandGenomeTest {
 		CsvTableReader readerOut = new CsvTableReader(output, '\t');
 		int count = 0;
 		while (readerOut.next()) {
-			if (readerOut.getString("Contamination").equals(Status.YES.name())) {
+			if (readerOut.getString("Contamination Status").equals(Status.YES.name())) {
 				count++;
 
 			}
@@ -298,11 +298,11 @@ public class ThousandGenomeTest {
 		int countHigh = 0;
 		int countLow = 0;
 		while (readerOut.next()) {
-			if (readerOut.getString("Contamination").equals(Status.YES.name())) {
+			if (readerOut.getString("Contamination Status").equals(Status.YES.name())) {
 				countHigh++;
 
 			}
-			if (readerOut.getString("Contamination").equals(Status.YES.name())) {
+			if (readerOut.getString("Contamination Status").equals(Status.YES.name())) {
 				countLow++;
 
 			}
@@ -348,7 +348,7 @@ public class ThousandGenomeTest {
 		CsvTableReader readerOut = new CsvTableReader(output, '\t');
 		int count = 0;
 		while (readerOut.next()) {
-			if (readerOut.getString("Contamination").equals(Status.YES.name())) {
+			if (readerOut.getString("Contamination Status").equals(Status.YES.name())) {
 				count++;
 
 			}
@@ -404,8 +404,8 @@ public class ThousandGenomeTest {
 
 		int found = 0;
 		while (readerResult.next()) {
-			String sample = readerResult.getString("SampleID").split("\\.")[0];
-			String status = readerResult.getString("Contamination");
+			String sample = readerResult.getString("Sample").split("\\.")[0];
+			String status = readerResult.getString("Contamination Status");
 
 			if (status.equals(Status.YES.name()) || status.equals(Status.YES.name())) {
 				if (contSamples.contains(sample)) {
