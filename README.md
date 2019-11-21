@@ -4,6 +4,7 @@
 Haplocheck is a software that leverages the mitochondrial phylogeny to detect contamination in sequencing studies. We provide haplocheck as a standalone pipeline for local usage and as a [cloud web service](https://mitoverse.i-med.ac.at). 
 
 ## Getting started
+To calculate the contamination status of all 1000 Genomes Phase3 samples, execute the following command:
 
     mkdir haplocheck 
     cd haplocheck
