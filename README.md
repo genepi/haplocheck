@@ -1,5 +1,6 @@
 # Haplocheck
 [![Build Status](https://travis-ci.org/genepi/haplocheck.svg?branch=master)](https://travis-ci.org/genepi/haplocheck)
+[![GitHub release](https://img.shields.io/github/release/genepi/haplocheck.svg)](https://GitHub.com/genepi/haplocheck/releases/)
 
 Haplocheck is a software that leverages the mitochondrial phylogeny to detect contamination in sequencing studies. We provide haplocheck as a standalone pipeline for local usage and as a [cloud web service](https://mitoverse.i-med.ac.at). 
 
