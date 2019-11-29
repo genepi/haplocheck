@@ -15,7 +15,7 @@ To calculate the contamination status of all 1000 Genomes Phase3 samples, execut
     firefox results/report/report.html
 
 ## Documentation
-Documentation can be found [here](https://mitoverse.readthedocs.io/en/latest). It also includes a section how to [interpret the final result files](https://mitoverse.readthedocs.io/en/latest/interpret/).
+Documentation can be found [here](https://mitoverse.readthedocs.io/en/latest). It also includes a section how to [interpret the final result files](https://mitoverse.readthedocs.io/en/latest/interpret/) and [frequently asked questions](https://mitoverse.readthedocs.io/en/latest/faq).
 
 ## mtDNA Blog
 Check out our [blog](http://haplogrep.uibk.ac.at/blog/) regarding mtDNA topics.
