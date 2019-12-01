@@ -1,7 +1,7 @@
 name: Contamination Detection using Haplocheck
 id: haplocheck
 description: Within-species contamination leveraging the mtDNA phylogeny. <br> To learn more about haplocheck, please have a look at <a href="https://mitoverse.readthedocs.io/en/latest/">https://mitoverse.readthedocs.io/en/latest/</a>.
-version: 1.0.8
+version: 1.0.9
  
 workflow:
 
