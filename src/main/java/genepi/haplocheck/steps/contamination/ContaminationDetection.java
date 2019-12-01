@@ -425,8 +425,8 @@ public class ContaminationDetection {
 
 		String[] columnsWrite = { "Sample", "Contamination Status", "Overall Homoplasmies", "Overall Heteroplasmies",
 				"Sample Coverage", "Major Haplogroup", "Major Haplogroup Quality", "Minor Haplogroup",
-				"Minor Haplogroup Quality", "Amount Major Homoplasmies", "Amount Minor Homoplasmies",
-				"Amount Major Heteroplasmies", "Amount Minor Heteroplasmies", "Major Heteroplasmy Level",
+				"Minor Haplogroup Quality", "Major Homoplasmies Count", "Minor Homoplasmies Count",
+				"Major Heteroplasmies Count", "Minor Heteroplasmies Count", "Major Heteroplasmy Level",
 				"Minor Heteroplasmy Level", "Distance", "Clusters" };
 		contaminationWriter.setColumns(columnsWrite);
 

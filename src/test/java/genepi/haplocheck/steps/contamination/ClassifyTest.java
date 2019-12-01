@@ -59,8 +59,8 @@ public class ClassifyTest {
 		assertEquals(Status.NO.name(), readerContamination.getString("Contamination Status"));
 		assertEquals("39", readerContamination.getString("Overall Homoplasmies"));
 		assertEquals("0", readerContamination.getString("Overall Heteroplasmies"));
-		assertEquals("36", readerContamination.getString("Amount Major Homoplasmies"));
-		assertEquals(" ", readerContamination.getString("Major Heteroplasmy Level"));
+		assertEquals("36", readerContamination.getString("Major Homoplasmies Count"));
+		assertEquals("n/a", readerContamination.getString("Major Heteroplasmy Level"));
 		assertEquals("T2f1a1", readerContamination.getString("Major Haplogroup"));
 		assertEquals(0.919, readerContamination.getDouble("Minor Haplogroup Quality"),0.01);
 		
@@ -148,12 +148,12 @@ public class ClassifyTest {
 		readerContamination.next();
 
 		assertEquals(Status.YES.name(), readerContamination.getString("Contamination Status"));
-		assertEquals("6", readerContamination.getString("Amount Major Homoplasmies"));
+		assertEquals("6", readerContamination.getString("Major Homoplasmies Count"));
 		assertEquals("7", readerContamination.getString("Overall Homoplasmies"));
 		assertEquals("0.987", readerContamination.getString("Major Heteroplasmy Level"));
-		assertEquals("6", readerContamination.getString("Amount Minor Homoplasmies"));
+		assertEquals("6", readerContamination.getString("Minor Homoplasmies Count"));
 		assertEquals(0.011, readerContamination.getDouble("Minor Heteroplasmy Level"),0.001);
-		assertEquals("10", readerContamination.getString("Amount Minor Heteroplasmies"));
+		assertEquals("10", readerContamination.getString("Minor Heteroplasmies Count"));
 		assertEquals("18", readerContamination.getString("Overall Heteroplasmies"));
 		assertEquals("H1", readerContamination.getString("Major Haplogroup"));
 		assertEquals("U5a2e", readerContamination.getString("Minor Haplogroup"));
