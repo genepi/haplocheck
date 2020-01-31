@@ -142,9 +142,9 @@ public class ContaminationDetection {
 				contamination.setHeteroplasmiesMinor(minorHeteroplasmies);
 				contamination.setOverallLevel(overallLevel);
 				contamination.setMeanHetlevelMajor(
-						(meanHeteroplasmyMajor > 0) ? formatter.format(meanHeteroplasmyMajor) : " ");
+						(meanHeteroplasmyMajor > 0) ? formatter.format(meanHeteroplasmyMajor) : "n/a");
 				contamination.setMeanHetlevelMinor(
-						(meanHeteroplasmyMinor > 0) ? formatter.format(meanHeteroplasmyMinor) : " ");
+						(meanHeteroplasmyMinor > 0) ? formatter.format(meanHeteroplasmyMinor) : "n/a");
 				contamination.setDistance(distance);
 
 				ArrayList<TestSample> samples = new ArrayList<TestSample>();
@@ -451,6 +451,7 @@ public class ContaminationDetection {
 				"Minor Heteroplasmy Level", "Major Haplogroup", "Major Haplogroup Quality", "Minor Haplogroup",
 				"Minor Haplogroup Quality", "Amount Major Homoplasmies", "Amount Minor Homoplasmies",
 				"Amount Major Heteroplasmies", "Amount Minor Heteroplasmies", "Clusters" };
+
 		contaminationWriter.setColumns(columnsWrite);
 
 		NumberFormat formatter = new DecimalFormat("#0.000");
