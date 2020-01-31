@@ -76,7 +76,7 @@ public class ContaminationStep extends WorkflowStep {
 
 			context.updateTask("Classify Haplogroups...", WorkflowContext.RUNNING);
 			HaplogroupClassifier classifier = new HaplogroupClassifier();
-			SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+			SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
 			ContaminationDetection contamination = new ContaminationDetection();
 			context.updateTask("Detect Contamination...", WorkflowContext.RUNNING);

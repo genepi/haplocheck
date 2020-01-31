@@ -51,7 +51,7 @@ public class PolarisTest {
 		ContaminationDetection contamination = new ContaminationDetection();
 
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
-		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
@@ -100,7 +100,7 @@ public class PolarisTest {
 		ContaminationDetection contamination = new ContaminationDetection();
 
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
-		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 

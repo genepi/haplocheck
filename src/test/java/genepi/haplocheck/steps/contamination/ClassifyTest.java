@@ -41,7 +41,7 @@ public class ClassifyTest {
 		
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
 
-		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 		
 		ContaminationDetection contamination = new ContaminationDetection();
 
@@ -86,7 +86,7 @@ public class ClassifyTest {
 		
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
 
-		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 		
 		ContaminationDetection contamination = new ContaminationDetection();
 
@@ -130,7 +130,7 @@ public class ClassifyTest {
 
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
 
-		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
 		assertEquals("H1", haplogrepSamples.getTestSamples().get(0).getTopResult().getHaplogroup().toString());
 

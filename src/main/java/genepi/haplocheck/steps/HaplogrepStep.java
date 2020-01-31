@@ -58,7 +58,7 @@ public class HaplogrepStep extends WorkflowStep {
 			
 			ArrayList<String> lines = ExportUtils.vcfTohsd(mutationServerSamples);
 			
-			SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, lines);
+			SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, lines);
 			
 			ExportUtils.createReport(haplogrepSamples.getTestSamples(), output, true);
 

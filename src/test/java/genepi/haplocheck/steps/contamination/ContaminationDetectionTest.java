@@ -37,7 +37,7 @@ public class ContaminationDetectionTest {
 		
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
 
-		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 		
 		ContaminationDetection contamination = new ContaminationDetection();
 
@@ -70,7 +70,7 @@ public class ContaminationDetectionTest {
 		
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
 
-		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 		
 		ContaminationDetection contamination = new ContaminationDetection();
 

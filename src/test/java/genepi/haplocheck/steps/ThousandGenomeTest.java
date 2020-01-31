@@ -49,7 +49,7 @@ public class ThousandGenomeTest {
 		ContaminationDetection contamination = new ContaminationDetection();
 
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
-		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
 		//ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), "/home/seb/Desktop/contaminated.hsd");
 
@@ -96,7 +96,7 @@ public class ThousandGenomeTest {
 		ContaminationDetection contamination = new ContaminationDetection();
 
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
-		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
 		//ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), "/home/seb/Desktop/contaminated.hsd");
 
@@ -114,7 +114,7 @@ public class ThousandGenomeTest {
 		}
 
 		assertEquals(119, countHigh);
-		FileUtil.deleteFile(output);
+		//FileUtil.deleteFile(output);
 	}
 	
 	@Test
@@ -144,7 +144,7 @@ public class ThousandGenomeTest {
 		ContaminationDetection contamination = new ContaminationDetection();
 
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
-		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
@@ -193,7 +193,7 @@ public class ThousandGenomeTest {
 		ContaminationDetection contamination = new ContaminationDetection();
 
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
-		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
@@ -239,7 +239,7 @@ public class ThousandGenomeTest {
 		}
 
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
-		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
 		ContaminationDetection contamination = new ContaminationDetection();
 
@@ -288,7 +288,7 @@ public class ThousandGenomeTest {
 		}
 
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
-		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
@@ -339,7 +339,7 @@ public class ThousandGenomeTest {
 		ContaminationDetection contamination = new ContaminationDetection();
 
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
-		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
@@ -388,7 +388,7 @@ public class ThousandGenomeTest {
 		ContaminationDetection contamination = new ContaminationDetection();
 
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
-		SampleFile haplogrepSamples = classifier.calculateHaplogrops(phylotree, profiles);
+		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 

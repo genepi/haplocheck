@@ -12,7 +12,7 @@ import search.ranking.RankingMethod;
 
 public class HaplogroupClassifier {
 
-	public SampleFile calculateHaplogrops(Phylotree phylotree, ArrayList<String> profiles) {
+	public SampleFile calculateHaplogroups(Phylotree phylotree, ArrayList<String> profiles) {
 
 		return calculateHaplogrops(phylotree, profiles, "kulczynski");
 	}
