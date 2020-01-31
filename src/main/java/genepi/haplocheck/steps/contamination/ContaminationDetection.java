@@ -449,8 +449,8 @@ public class ContaminationDetection {
 		String[] columnsWrite = { "Sample", "Contamination Status", "Contamination Level", "Distance", "Sample Coverage", "Overall Homoplasmies", 
 				"Overall Heteroplasmies", "Major Heteroplasmy Level",
 				"Minor Heteroplasmy Level", "Major Haplogroup", "Major Haplogroup Quality", "Minor Haplogroup",
-				"Minor Haplogroup Quality", "Amount Major Homoplasmies", "Amount Minor Homoplasmies",
-				"Amount Major Heteroplasmies", "Amount Minor Heteroplasmies", "Clusters" };
+				"Minor Haplogroup Quality", "Major Homoplasmies Count", "Minor Homoplasmies Count",
+				"Major Heteroplasmies Count", "Minor Heteroplasmies Count", "Clusters" };
 
 		contaminationWriter.setColumns(columnsWrite);
 
@@ -470,10 +470,10 @@ public class ContaminationDetection {
 			contaminationWriter.setString("Major Haplogroup Quality", entry.getHgMajorQ());
 			contaminationWriter.setString("Minor Haplogroup", entry.getHgMinor());
 			contaminationWriter.setString("Minor Haplogroup Quality", entry.getHgMinorQ());
-			contaminationWriter.setInteger("Amount Major Homoplasmies", entry.getHomoplasmiesMajor());
-			contaminationWriter.setInteger("Amount Minor Homoplasmies", entry.getHomoplasmiesMinor());
-			contaminationWriter.setInteger("Amount Major Heteroplasmies", entry.getHeteroplasmiesMajor());
-			contaminationWriter.setInteger("Amount Minor Heteroplasmies", entry.getHeteroplasmiesMinor());
+			contaminationWriter.setInteger("Major Homoplasmies Count", entry.getHomoplasmiesMajor());
+			contaminationWriter.setInteger("Minor Homoplasmies Count", entry.getHomoplasmiesMinor());
+			contaminationWriter.setInteger("Major Heteroplasmies Count", entry.getHeteroplasmiesMajor());
+			contaminationWriter.setInteger("Minor Heteroplasmies Count", entry.getHeteroplasmiesMinor());
 			contaminationWriter.setString("Clusters" , entry.getClusterInfo());
 			contaminationWriter.next();
 		}
