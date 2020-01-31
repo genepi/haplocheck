@@ -67,7 +67,7 @@ public class ThousandGenomeTest {
 		}
 
 		assertEquals(119, countHigh);
-		//FileUtil.deleteFile(output);
+		FileUtil.deleteFile(output);
 	}
 	
 	@Test
@@ -114,7 +114,7 @@ public class ThousandGenomeTest {
 		}
 
 		assertEquals(119, countHigh);
-		//FileUtil.deleteFile(output);
+		FileUtil.deleteFile(output);
 	}
 	
 	@Test
@@ -162,7 +162,7 @@ public class ThousandGenomeTest {
 
 		assertEquals(11, count);
 
-	//	FileUtil.deleteFile(output);
+		FileUtil.deleteFile(output);
 
 	}
 
@@ -211,7 +211,7 @@ public class ThousandGenomeTest {
 
 		assertEquals(18, count);
 
-	//	FileUtil.deleteFile(output);
+		FileUtil.deleteFile(output);
 
 	}
 
@@ -258,7 +258,7 @@ public class ThousandGenomeTest {
 
 		assertEquals(4, count);
 
-		//FileUtil.deleteFile(output);
+		FileUtil.deleteFile(output);
 
 	}
 
