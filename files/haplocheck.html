@@ -91,9 +91,8 @@
 								<tr>
 									<th>ID</th>
 									<th>Contamination</th>
-									<th>Distance</th>
-									<th>Major Level (%) </th>
-									<th>Minor Level (%)</th>
+									<th>Contamination Level (%) </th>
+							    <th>Coverage</th>
 								</tr>
 							</thead>
 						</table>
@@ -121,9 +120,11 @@
 								<tr>
 									<th>Contaminated</th>
 									<th>Not Contaminated</th>
-									<th>Median (HG Distance)</th>
-									<th>25th percentile (HG Distance)</th>
-									<th>75th percentile (HG Distance)</th>
+									<th>Coverage Median</th>
+									<th>Coverage Q1</th>
+									<th>Coverage Q3</th>
+									<th>Coverage Outliers Low</th>
+									<th>Coverage Outliers High</th>
 								</tr>
 							</thead>
 						</table>
@@ -213,12 +214,12 @@
 				"scrollCollapse": true,
 				buttons: ['csv'],
 				"columnDefs": [{
-						"targets": [3],
+						"targets": [2],
 						"visible": true,
 						"searchable": false
 					},
 					{
-						"targets": [4],
+						"targets": [3],
 						"visible": true,
 						"searchable": false
 					}
@@ -231,13 +232,10 @@
 						"data": "status"
 					},
 					{
-						"data": "distance"
+						"data": "overallLevel"
 					},
 					{
-						"data": "meanHetlevelMajor"
-					},
-					{
-						"data": "meanHetlevelMinor"
+						"data": "sampleMeanCoverage"
 					}
 				]
 			});
@@ -253,13 +251,19 @@
 						"data": "No"
 					},
 					{
-						"data": "Distance"
+						"data": "Coverage"
 					},
 					{
-						"data": "25Percentile"
+						"data": "Q1"
 					},
 					{
-						"data": "75Percentile"
+						"data": "Q3"
+					},
+					{
+						"data": "OutliersDown"
+					},
+					{
+						"data": "OutliersUp"
 					}
 				]
 			});
@@ -313,13 +317,18 @@ details.innerHTML = "<h3>" + data.id +"</h3>";
  				  <col width="30px" />
   <thead>
 	<tr>
+	<th scope="col">Contamination Level</th>
+		<th scope="col">${data.overallLevel}</th>
+	</tr>
+	<tr>
+			<th scope="col">Coverage</th>
+			<th scope="col">${data.sampleMeanCoverage}</th>
+		</tr>
+	<tr>
 	<th scope="col">Distance</th>
 		<th scope="col">${data.distance}</th>
 	</tr>
-  <tr>
-      <th scope="col">Coverage</th>
-      <th scope="col">${data.sampleMeanCoverage}</th>
-    </tr>
+
   </thead>
   <tbody>
     <tr>

@@ -104,13 +104,13 @@ public class ContaminationStep extends WorkflowStep {
 	private void writeSummary(String outSummary, ArrayList<ContaminationObject> contaminationList) throws IOException {
 		int countYes = 0;
 		int countNo = 0;
-		ArrayList<Integer> distanceList = new ArrayList<Integer>();
+		ArrayList<Integer> coverageList = new ArrayList<Integer>();
 
 		for (ContaminationObject cont : contaminationList) {
 
 			if (cont.getStatus() == Status.YES) {
 				countYes++;
-				distanceList.add(cont.getDistance());
+				coverageList.add(cont.getSampleMeanCoverage());
 			} else if (cont.getStatus() == Status.NO) {
 				countNo++;
 			}
@@ -119,17 +119,22 @@ public class ContaminationStep extends WorkflowStep {
 		JsonObject result = new JsonObject();
 		result.add("Yes", new JsonPrimitive(countYes));
 		result.add("No", new JsonPrimitive(countNo));
-		result.add("Distance", new JsonPrimitive(0.0));
-		result.add("25Percentile", new JsonPrimitive(0.0));
-		result.add("75Percentile", new JsonPrimitive(0.0));
+		result.add("Coverage", new JsonPrimitive(0.0));
+		result.add("Q1", new JsonPrimitive(0.0));
+		result.add("Q3", new JsonPrimitive(0.0));
+		result.add("OutliersDown", new JsonPrimitive(0.0));
+		result.add("OutliersUp", new JsonPrimitive(0.0));
 
-		if (distanceList.size() > 0) {
-			double distanceMedian = com.google.common.math.Quantiles.median().compute(distanceList);
-			double percentile25 = Quantiles.percentiles().index(25).compute(distanceList);
-			double percentile75 = Quantiles.percentiles().index(75).compute(distanceList);
-			result.add("Distance", new JsonPrimitive(distanceMedian));
-			result.add("25Percentile", new JsonPrimitive(percentile25));
-			result.add("75Percentile", new JsonPrimitive(percentile75));
+		if (coverageList.size() > 0) {
+			double coverageMedian = com.google.common.math.Quantiles.median().compute(coverageList);
+			double percentile25 = Quantiles.percentiles().index(25).compute(coverageList);
+			double percentile75 = Quantiles.percentiles().index(75).compute(coverageList);
+			double IQR = percentile75 - percentile25;
+			result.add("Coverage", new JsonPrimitive(coverageMedian));
+			result.add("Q1", new JsonPrimitive(percentile25));
+			result.add("Q3", new JsonPrimitive(percentile75));
+			result.add("OutliersDown", new JsonPrimitive(Math.max(0,percentile25-(1.5*IQR))));
+			result.add("OutliersUp", new JsonPrimitive(percentile75+(1.5*IQR)));
 		}
 
 		FileWriter wr = new FileWriter(outSummary);

@@ -93,9 +93,9 @@ public class ContaminationDetection {
 				// find common ancestor
 				Haplogroup commonAncestor = getCommonAncestor(contamination, phylotree);
 
-				double meanHeteroplasmyMajor = calcMeanHeteroplasmy(haplogrepMajor, mutserveSample, phylotree,
+				double meanHeteroplasmyMajor = calcMedianHeteroplasmy(haplogrepMajor, mutserveSample, phylotree,
 						commonAncestor, true);
-				double meanHeteroplasmyMinor = calcMeanHeteroplasmy(haplogrepMinor, mutserveSample, phylotree,
+				double meanHeteroplasmyMinor = calcMedianHeteroplasmy(haplogrepMinor, mutserveSample, phylotree,
 						commonAncestor, false);
 				
 				double overallLevel = calcOverallLevel(meanHeteroplasmyMajor, meanHeteroplasmyMinor);
@@ -140,7 +140,7 @@ public class ContaminationDetection {
 				contamination.setClusterInfo(clusters);
 				contamination.setHeteroplasmiesMajor(majorHeteroplasmies);
 				contamination.setHeteroplasmiesMinor(minorHeteroplasmies);
-				contamination.setOverallLevel(overallLevel);
+				contamination.setOverallLevel(formatter.format(overallLevel));
 				contamination.setMeanHetlevelMajor(
 						(meanHeteroplasmyMajor > 0) ? formatter.format(meanHeteroplasmyMajor) : "n/a");
 				contamination.setMeanHetlevelMinor(
@@ -313,7 +313,7 @@ public class ContaminationDetection {
 		
 	}
 	
-	private double calcMeanHeteroplasmy(TestSample haplogrepSample, Sample mutserveSample, Phylotree phylotree,
+	private double calcMedianHeteroplasmy(TestSample haplogrepSample, Sample mutserveSample, Phylotree phylotree,
 			Haplogroup commonAncestor, boolean major) {
 
 		ArrayList<Double> distanceList = new ArrayList<Double>();
@@ -378,16 +378,6 @@ public class ContaminationDetection {
 		
 		return sum;
 		
-	}
-	private double calculateAverage(List<Double> marks) {
-		Double sum = 0.0;
-		if (!marks.isEmpty()) {
-			for (Double mark : marks) {
-				sum += mark;
-			}
-			return sum.doubleValue() / marks.size();
-		}
-		return sum;
 	}
 
 	public int getSettingAmountHigh() {
@@ -459,7 +449,7 @@ public class ContaminationDetection {
 		for (ContaminationObject entry : list) {
 			contaminationWriter.setString("Sample", entry.getId());
 			contaminationWriter.setString("Contamination Status", entry.getStatus().name());
-			contaminationWriter.setString("Contamination Level", formatter.format(entry.getOverallLevel()));
+			contaminationWriter.setString("Contamination Level", entry.getOverallLevel());
 			contaminationWriter.setInteger("Distance", entry.getDistance());
 			contaminationWriter.setInteger("Sample Coverage", entry.getSampleMeanCoverage());
 			contaminationWriter.setInteger("Overall Homoplasmies", entry.getSampleHomoplasmies());

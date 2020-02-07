@@ -19,7 +19,7 @@ public class ContaminationObject {
 	private int homoplasmiesMinor;
 	private int heteroplasmiesMajor;
 	private int heteroplasmiesMinor;
-	private double overallLevel;
+	private String overallLevel;
 	private String meanHetlevelMajor;
 	private String meanHetlevelMinor;
 	private int distance;
@@ -142,10 +142,10 @@ public class ContaminationObject {
 	public void setClusterInfo(String clusterInfo) {
 		this.clusterInfo = clusterInfo;
 	}
-	public double getOverallLevel() {
+	public String getOverallLevel() {
 		return overallLevel;
 	}
-	public void setOverallLevel(double overallLevel) {
+	public void setOverallLevel(String overallLevel) {
 		this.overallLevel = overallLevel;
 	}
 }
