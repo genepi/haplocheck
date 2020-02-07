@@ -58,11 +58,18 @@ public class ContaminationDetection {
 		int count = 0;
 
 		ArrayList<Integer> coverageList = new ArrayList<Integer>();
-		for (Sample cont : mutationSamples.values()) {
-			coverageList.add((int) cont.getSumCoverage() / cont.getAmountVariants());
+		for (Sample sample : mutationSamples.values()) {
+			if (sample.getAmountVariants() != 0) {
+				coverageList.add((int) sample.getSumCoverage() / sample.getAmountVariants());
+			}
 			count++;
 		}
-		double percentile25 = Quantiles.percentiles().index(25).compute(coverageList);
+
+		double percentile25 = 0.0;
+
+		if (coverageList.size() > 0) {
+			percentile25 = Quantiles.percentiles().index(25).compute(coverageList);
+		}
 
 		try {
 
@@ -93,8 +100,8 @@ public class ContaminationDetection {
 				if (mutserveSample.getAmountVariants() != 0) {
 					meanCoverageSample = (int) mutserveSample.getSumCoverage() / mutserveSample.getAmountVariants();
 				}
-				
-				//calculate if WGS proxy
+
+				// calculate if WGS proxy
 				boolean proxy = meanCoverageSample >= percentile25 ? true : false;
 
 				contamination.setHgMajor(haplogrepMajor.getTopResult().getHaplogroup().toString());
@@ -126,7 +133,7 @@ public class ContaminationDetection {
 				Breaks jenkBreaks = jenks.computeBreaks();
 
 				String clusters = jenkBreaks.printClusters();
-				
+
 				if (!contamination.getHgMajor().equals(contamination.getHgMinor())) {
 
 					distance = calcDistance(contamination, phylotree);
@@ -459,7 +466,7 @@ public class ContaminationDetection {
 		for (ContaminationObject entry : list) {
 			contaminationWriter.setString("Sample", entry.getId());
 			contaminationWriter.setString("Contamination Status", entry.getStatus().name());
-			contaminationWriter.setString("Reliable WGS Proxy", entry.isReliableProxy()+"");
+			contaminationWriter.setString("Reliable WGS Proxy", entry.isReliableProxy() + "");
 			contaminationWriter.setString("Contamination Level", entry.getOverallLevel());
 			contaminationWriter.setInteger("Distance", entry.getDistance());
 			contaminationWriter.setInteger("Sample Coverage", entry.getSampleMeanCoverage());
