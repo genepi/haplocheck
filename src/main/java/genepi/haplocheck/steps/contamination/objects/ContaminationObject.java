@@ -26,6 +26,7 @@ public class ContaminationObject {
 	private String clusterInfo;
 	private ArrayList<Node> nodes;
 	private ArrayList<Edge> edges;
+	private boolean reliable;
 	
 	public String getId() {
 		return id;
@@ -147,5 +148,11 @@ public class ContaminationObject {
 	}
 	public void setOverallLevel(String overallLevel) {
 		this.overallLevel = overallLevel;
+	}
+	public boolean isReliable() {
+		return reliable;
+	}
+	public void setReliable(boolean reliable) {
+		this.reliable = reliable;
 	}
 }

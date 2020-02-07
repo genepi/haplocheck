@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import com.google.common.math.Quantiles;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -97,7 +98,7 @@ public class ContaminationDetection {
 						commonAncestor, true);
 				double meanHeteroplasmyMinor = calcMedianHeteroplasmy(haplogrepMinor, mutserveSample, phylotree,
 						commonAncestor, false);
-				
+
 				double overallLevel = calcOverallLevel(meanHeteroplasmyMajor, meanHeteroplasmyMinor);
 
 				int majorHeteroplasmies = countOverlappingHeteroplasmies(haplogrepMajor, mutserveSample, phylotree,
@@ -140,7 +141,7 @@ public class ContaminationDetection {
 				contamination.setClusterInfo(clusters);
 				contamination.setHeteroplasmiesMajor(majorHeteroplasmies);
 				contamination.setHeteroplasmiesMinor(minorHeteroplasmies);
-				contamination.setOverallLevel(formatter.format(overallLevel));
+				contamination.setOverallLevel((overallLevel > 0) ? formatter.format(overallLevel) : "n/a");
 				contamination.setMeanHetlevelMajor(
 						(meanHeteroplasmyMajor > 0) ? formatter.format(meanHeteroplasmyMajor) : "n/a");
 				contamination.setMeanHetlevelMinor(
@@ -302,17 +303,16 @@ public class ContaminationDetection {
 		return count;
 	}
 
-	
 	private double calcOverallLevel(double major, double minor) {
-		
+
 		if (major > 0) {
-			return 1-major;
+			return 1 - major;
 		} else {
 			return minor;
 		}
-		
+
 	}
-	
+
 	private double calcMedianHeteroplasmy(TestSample haplogrepSample, Sample mutserveSample, Phylotree phylotree,
 			Haplogroup commonAncestor, boolean major) {
 
@@ -374,10 +374,10 @@ public class ContaminationDetection {
 		Double sum = 0.0;
 		if (distanceList.size() > 0) {
 			return com.google.common.math.Quantiles.median().compute(distanceList);
-		} 
-		
+		}
+
 		return sum;
-		
+
 	}
 
 	public int getSettingAmountHigh() {
@@ -436,19 +436,27 @@ public class ContaminationDetection {
 
 		CsvTableWriter contaminationWriter = new CsvTableWriter(output, '\t');
 
-		String[] columnsWrite = { "Sample", "Contamination Status", "Contamination Level", "Distance", "Sample Coverage", "Overall Homoplasmies", 
-				"Overall Heteroplasmies", "Major Heteroplasmy Level",
+		String[] columnsWrite = { "Sample", "Contamination Status", "Reliable WGS Estimator", "Contamination Level", "Distance",
+				"Sample Coverage", "Overall Homoplasmies", "Overall Heteroplasmies", "Major Heteroplasmy Level",
 				"Minor Heteroplasmy Level", "Major Haplogroup", "Major Haplogroup Quality", "Minor Haplogroup",
 				"Minor Haplogroup Quality", "Major Homoplasmies Count", "Minor Homoplasmies Count",
 				"Major Heteroplasmies Count", "Minor Heteroplasmies Count", "Clusters" };
 
 		contaminationWriter.setColumns(columnsWrite);
 
-		NumberFormat formatter = new DecimalFormat("#0.000");
-		
+		ArrayList<Integer> coverageList = new ArrayList<Integer>();
+
+		for (ContaminationObject cont : list) {
+			coverageList.add(cont.getSampleMeanCoverage());
+		}
+
+		double percentile25 = Quantiles.percentiles().index(25).compute(coverageList);
+
 		for (ContaminationObject entry : list) {
 			contaminationWriter.setString("Sample", entry.getId());
 			contaminationWriter.setString("Contamination Status", entry.getStatus().name());
+			contaminationWriter.setString("Reliable WGS Estimator",
+					entry.getSampleMeanCoverage() >= percentile25 ? "true" : " false");
 			contaminationWriter.setString("Contamination Level", entry.getOverallLevel());
 			contaminationWriter.setInteger("Distance", entry.getDistance());
 			contaminationWriter.setInteger("Sample Coverage", entry.getSampleMeanCoverage());
@@ -464,7 +472,7 @@ public class ContaminationDetection {
 			contaminationWriter.setInteger("Minor Homoplasmies Count", entry.getHomoplasmiesMinor());
 			contaminationWriter.setInteger("Major Heteroplasmies Count", entry.getHeteroplasmiesMajor());
 			contaminationWriter.setInteger("Minor Heteroplasmies Count", entry.getHeteroplasmiesMinor());
-			contaminationWriter.setString("Clusters" , entry.getClusterInfo());
+			contaminationWriter.setString("Clusters", entry.getClusterInfo());
 			contaminationWriter.next();
 		}
 

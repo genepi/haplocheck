@@ -83,11 +83,11 @@ public class ContaminationStep extends WorkflowStep {
 			ArrayList<ContaminationObject> result = contamination.detect(mutationServerSamples,
 					haplogrepSamples.getTestSamples());
 
+			writeSummary(outputSummary, result);
+			
 			contamination.writeReport(outputReport, result);
 
 			contamination.writeReportAsJson(outputJson, result);
-
-			writeSummary(outputSummary, result);
 
 			ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), outputHsd);
 
@@ -110,36 +110,32 @@ public class ContaminationStep extends WorkflowStep {
 
 			if (cont.getStatus() == Status.YES) {
 				countYes++;
-				coverageList.add(cont.getSampleMeanCoverage());
 			} else if (cont.getStatus() == Status.NO) {
 				countNo++;
 			}
+
+			coverageList.add(cont.getSampleMeanCoverage());
 		}
 
 		JsonObject result = new JsonObject();
 		result.add("Yes", new JsonPrimitive(countYes));
 		result.add("No", new JsonPrimitive(countNo));
-		result.add("Coverage", new JsonPrimitive(0.0));
-		result.add("Q1", new JsonPrimitive(0.0));
-		result.add("Q3", new JsonPrimitive(0.0));
-		result.add("OutliersDown", new JsonPrimitive(0.0));
-		result.add("OutliersUp", new JsonPrimitive(0.0));
-
-		if (coverageList.size() > 0) {
-			double coverageMedian = com.google.common.math.Quantiles.median().compute(coverageList);
-			double percentile25 = Quantiles.percentiles().index(25).compute(coverageList);
-			double percentile75 = Quantiles.percentiles().index(75).compute(coverageList);
-			double IQR = percentile75 - percentile25;
-			result.add("Coverage", new JsonPrimitive(coverageMedian));
-			result.add("Q1", new JsonPrimitive(percentile25));
-			result.add("Q3", new JsonPrimitive(percentile75));
-			result.add("OutliersDown", new JsonPrimitive(Math.max(0,percentile25-(1.5*IQR))));
-			result.add("OutliersUp", new JsonPrimitive(percentile75+(1.5*IQR)));
-		}
+		double coverageMedian = com.google.common.math.Quantiles.median().compute(coverageList);
+		double percentile25 = Quantiles.percentiles().index(25).compute(coverageList);
+		double percentile75 = Quantiles.percentiles().index(75).compute(coverageList);
+		double IQR = percentile75 - percentile25;
+		result.add("Coverage", new JsonPrimitive(coverageMedian));
+		result.add("Q1", new JsonPrimitive(percentile25));
+		result.add("Q3", new JsonPrimitive(percentile75));
+		result.add("LowerLimit", new JsonPrimitive(Math.max(0, percentile25 - (1.5 * IQR))));
+		result.add("UpperLimit", new JsonPrimitive(percentile75 + (1.5 * IQR)));
 
 		FileWriter wr = new FileWriter(outSummary);
 		wr.write(result.toString());
 		wr.close();
+		
 	}
+	
+	
 
 }
