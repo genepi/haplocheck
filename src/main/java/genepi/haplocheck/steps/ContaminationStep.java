@@ -83,11 +83,9 @@ public class ContaminationStep extends WorkflowStep {
 			ArrayList<ContaminationObject> result = contamination.detect(mutationServerSamples,
 					haplogrepSamples.getTestSamples());
 
-			writeSummary(outputSummary, result);
-			
 			contamination.writeReport(outputReport, result);
-
 			contamination.writeReportAsJson(outputJson, result);
+			writeSummary(outputSummary, result);
 
 			ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), outputHsd);
 
@@ -127,8 +125,6 @@ public class ContaminationStep extends WorkflowStep {
 		result.add("Coverage", new JsonPrimitive(coverageMedian));
 		result.add("Q1", new JsonPrimitive(percentile25));
 		result.add("Q3", new JsonPrimitive(percentile75));
-		result.add("LowerLimit", new JsonPrimitive(Math.max(0, percentile25 - (1.5 * IQR))));
-		result.add("UpperLimit", new JsonPrimitive(percentile75 + (1.5 * IQR)));
 
 		FileWriter wr = new FileWriter(outSummary);
 		wr.write(result.toString());

@@ -55,6 +55,15 @@ public class ContaminationDetection {
 
 		NumberFormat formatter = new DecimalFormat("#0.000");
 
+		int count = 0;
+
+		ArrayList<Integer> coverageList = new ArrayList<Integer>();
+		for (Sample cont : mutationSamples.values()) {
+			coverageList.add((int) cont.getSumCoverage() / cont.getAmountVariants());
+			count++;
+		}
+		double percentile25 = Quantiles.percentiles().index(25).compute(coverageList);
+
 		try {
 
 			for (int i = 0; i < haplogrepSamples.size(); i += 2) {
@@ -84,6 +93,9 @@ public class ContaminationDetection {
 				if (mutserveSample.getAmountVariants() != 0) {
 					meanCoverageSample = (int) mutserveSample.getSumCoverage() / mutserveSample.getAmountVariants();
 				}
+				
+				//calculate if WGS proxy
+				boolean proxy = meanCoverageSample >= percentile25 ? true : false;
 
 				contamination.setHgMajor(haplogrepMajor.getTopResult().getHaplogroup().toString());
 				contamination.setHgMinor(haplogrepMinor.getTopResult().getHaplogroup().toString());
@@ -114,7 +126,7 @@ public class ContaminationDetection {
 				Breaks jenkBreaks = jenks.computeBreaks();
 
 				String clusters = jenkBreaks.printClusters();
-
+				
 				if (!contamination.getHgMajor().equals(contamination.getHgMinor())) {
 
 					distance = calcDistance(contamination, phylotree);
@@ -152,10 +164,10 @@ public class ContaminationDetection {
 				samples.add(haplogrepMajor);
 				samples.add(haplogrepMinor);
 				Tree tree = getJsonTree(mutserveSample, samples);
+				contamination.setReliableProxy(proxy);
 				contamination.setEdges(tree.getEdges());
 				contamination.setNodes(tree.getNodes());
 				contaminationList.add(contamination);
-
 			}
 
 		} catch (Exception e) {
@@ -436,27 +448,18 @@ public class ContaminationDetection {
 
 		CsvTableWriter contaminationWriter = new CsvTableWriter(output, '\t');
 
-		String[] columnsWrite = { "Sample", "Contamination Status", "Reliable WGS Estimator", "Contamination Level", "Distance",
-				"Sample Coverage", "Overall Homoplasmies", "Overall Heteroplasmies", "Major Heteroplasmy Level",
-				"Minor Heteroplasmy Level", "Major Haplogroup", "Major Haplogroup Quality", "Minor Haplogroup",
-				"Minor Haplogroup Quality", "Major Homoplasmies Count", "Minor Homoplasmies Count",
+		String[] columnsWrite = { "Sample", "Contamination Status", "Reliable WGS Proxy", "Contamination Level",
+				"Distance", "Sample Coverage", "Overall Homoplasmies", "Overall Heteroplasmies",
+				"Major Heteroplasmy Level", "Minor Heteroplasmy Level", "Major Haplogroup", "Major Haplogroup Quality",
+				"Minor Haplogroup", "Minor Haplogroup Quality", "Major Homoplasmies Count", "Minor Homoplasmies Count",
 				"Major Heteroplasmies Count", "Minor Heteroplasmies Count", "Clusters" };
 
 		contaminationWriter.setColumns(columnsWrite);
 
-		ArrayList<Integer> coverageList = new ArrayList<Integer>();
-
-		for (ContaminationObject cont : list) {
-			coverageList.add(cont.getSampleMeanCoverage());
-		}
-
-		double percentile25 = Quantiles.percentiles().index(25).compute(coverageList);
-
 		for (ContaminationObject entry : list) {
 			contaminationWriter.setString("Sample", entry.getId());
 			contaminationWriter.setString("Contamination Status", entry.getStatus().name());
-			contaminationWriter.setString("Reliable WGS Estimator",
-					entry.getSampleMeanCoverage() >= percentile25 ? "true" : " false");
+			contaminationWriter.setString("Reliable WGS Proxy", entry.isReliableProxy()+"");
 			contaminationWriter.setString("Contamination Level", entry.getOverallLevel());
 			contaminationWriter.setInteger("Distance", entry.getDistance());
 			contaminationWriter.setInteger("Sample Coverage", entry.getSampleMeanCoverage());
