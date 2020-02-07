@@ -91,6 +91,7 @@
 								<tr>
 									<th>ID</th>
 									<th>Contamination</th>
+									<th>Reliable WGS Proxy</th>
 									<th>Contamination Level</th>
 							    <th>Coverage</th>
 								</tr>
@@ -123,8 +124,6 @@
 									<th>Coverage Median</th>
 									<th>Coverage Q1</th>
 									<th>Coverage Q3</th>
-									<th>Coverage Outliers Low</th>
-									<th>Coverage Outliers High</th>
 								</tr>
 							</thead>
 						</table>
@@ -211,9 +210,17 @@
 				"pageLength": 10,
 				"pagingType": "simple",
 				"scrollY": "330px",
+				"order": [[ 1, "desc" ]],
 				"scrollCollapse": true,
 				buttons: ['csv'],
-				"columnDefs": [{
+				"columnDefs": [
+					{
+          "targets": [1],
+          "orderData": [ 1, 2, 3 ],
+          "visible": true,
+          "searchable": false
+          },
+					{
 						"targets": [2],
 						"visible": true,
 						"searchable": false
@@ -230,6 +237,9 @@
 					},
 					{
 						"data": "status"
+					},
+					{
+						"data": "proxy"
 					},
 					{
 						"data": "overallLevel"
@@ -258,12 +268,6 @@
 					},
 					{
 						"data": "Q3"
-					},
-					{
-						"data": "LowerLimit"
-					},
-					{
-						"data": "UpperLimit"
 					}
 				]
 			});
@@ -319,6 +323,10 @@ details.innerHTML = "<h3>" + data.id +"</h3>";
 	<tr>
 	<th scope="col">Contamination Level</th>
 		<th scope="col">${data.overallLevel}</th>
+	</tr>
+	<tr>
+	<th scope="col">Reliable WGS Proxy</th>
+		<th scope="col">${data.proxy}</th>
 	</tr>
 	<tr>
 			<th scope="col">Coverage</th>
