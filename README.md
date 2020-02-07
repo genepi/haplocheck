@@ -5,7 +5,7 @@
 Haplocheck is a software package that leverages the mitochondrial phylogeny to detect contamination in sequencing studies. Haplocheck can even be used as a quick and efficient proxy for whole-genome contamination detection (using mtDNA only).  
 
 ## Getting started
-To calculate the contamination status of all 1000 Genomes Phase3 samples, execute the following command.  
+To calculate the contamination status of all 1000 Genomes Phase3 samples (n = 2,504), execute the following command.  
 
     mkdir haplocheck 
     cd haplocheck
@@ -14,6 +14,9 @@ To calculate the contamination status of all 1000 Genomes Phase3 samples, execut
     ./cloudgene install https://github.com/genepi/haplocheck/releases/download/v1.0.11/haplocheck.zip 
     ./cloudgene run haplocheck@1.0.11 --files 1000g-nobaq.vcf.gz --output results  
     firefox results/report/report.html
+
+## verifyBamID Comparison
+The [HTML Report](https://github.com/genepi/haplocheck/blob/master/test-data/contamination/1000G/all/report.html) includes 119 samples with a level > 0. Using the same filter as verifyBamID (contamination level > 3 %, WGS proxy = true), only 3 samples showing a higher level than 3 % (HG01668: 4.1%; NA20877:4.8%). The levels between Haplocheck and verifyBamID correlate with a Pearson of 70 %.
 
 ## Use Haplocheck
 We provide haplocheck as a standalone pipeline and as a [cloud web service](https://mitoverse.i-med.ac.at). 
