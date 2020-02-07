@@ -15,9 +15,6 @@ To calculate the contamination status of all 1000 Genomes Phase3 samples (n = 2,
     ./cloudgene run haplocheck@1.0.11 --files 1000g-nobaq.vcf.gz --output results  
     firefox results/report/report.html
 
-## verifyBamID Comparison
-The [HTML Report](https://github.com/genepi/haplocheck/blob/master/test-data/contamination/1000G/all/report.html) detects 119 contaminated samples based on mtDNA only. Using the same filter as verifyBamID (contamination level > 3 %), only 2 samples showing a higher level than 3 % (HG01668: 4.1%; NA20877:4.8%). The levels between Haplocheck and verifyBamID correlate with a Pearson of 70 %.
-
 ## Use Haplocheck
 We provide haplocheck as a standalone pipeline and as a [cloud web service](https://mitoverse.i-med.ac.at). 
 
