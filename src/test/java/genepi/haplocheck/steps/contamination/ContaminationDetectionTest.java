@@ -43,7 +43,7 @@ public class ContaminationDetectionTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 	
-		contamination.writeReport(out, list);
+		contamination.writeTextualReport(out, list);
 		
 		CsvTableReader readerContamination = new CsvTableReader(out, '\t');
 		readerContamination.next();
@@ -76,7 +76,7 @@ public class ContaminationDetectionTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 	
-		contamination.writeReport(out, list);
+		contamination.writeTextualReport(out, list);
 		
 		CsvTableReader readerContamination = new CsvTableReader(out, '\t');
 		readerContamination.next();
@@ -85,7 +85,7 @@ public class ContaminationDetectionTest {
 		assertEquals("39", readerContamination.getString("Overall Homoplasmies"));
 		assertEquals("0", readerContamination.getString("Overall Heteroplasmies"));
 		assertEquals("36", readerContamination.getString("Major Homoplasmies Count"));
-		assertEquals("n/a", readerContamination.getString("Major Heteroplasmy Level"));
+		assertEquals("0.000", readerContamination.getString("Major Heteroplasmy Level"));
 		assertEquals("T2f1a1", readerContamination.getString("Major Haplogroup"));
 		assertEquals(0.919, readerContamination.getDouble("Minor Haplogroup Quality"),0.01);
 		

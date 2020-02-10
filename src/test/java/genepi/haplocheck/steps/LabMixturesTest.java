@@ -48,7 +48,7 @@ public class LabMixturesTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 
-		contamination.writeReport(output, list);
+		contamination.writeTextualReport(output, list);
 
 		CsvTableReader readerOut = new CsvTableReader(output, '\t');
 

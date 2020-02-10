@@ -32,7 +32,7 @@ workflow:
     - name: Create Report
       type: html_widget
       template: haplocheck.html
-      output: ${report}.html
+      output: ${contamination-report}.html
       assets: assets
       cont-data: ${contamination-json}.json
       sum-data: ${summary}.json
@@ -65,18 +65,34 @@ workflow:
       visible: true
       value: 20  
 
+    - id: dnaProxy
+      description: WGS Proxy
+      details: Haplocheck calculates contamination based on mtDNA data only. Check this box if you want to mark levels that can be used as a good proxy for their nDNA contamination level. 
+      type: checkbox
+      value: no
+      values:
+        true: yes
+        false: no
+      visible: true
+
   outputs:  
    
-    - id: haplogroups
-      description: Haplogroups
+
+    - id: report
+      description: Contamination HTML Report
       type: local-file
-      download: false
-      
+      download: true  
+
     - id: contamination
-      description: Contamination Table
+      description: Contamination File
+      type: local-file
+      download: true 
+
+    - id: haplogroups
+      description: Final Haplogroups (using complete input profile)
       type: local-file
       download: true
-    
+      
     - id: contamination-json
       description: Contamination JSON
       type: local-file
@@ -85,18 +101,13 @@ workflow:
     - id: haplogrep-input
       description: Haplogrep Input File
       type: local-file
-      download: true
+      download: false
       
     - id: output
       description: BAM Output Filename
       type: local-file
       download: true    
       
-    - id: report
-      description: Report
-      type: local-file
-      download: true   
-
     - id: summary
       description: Contamination Summary
       type: local-file

@@ -44,8 +44,14 @@ public class ContaminationDetection {
 	private int haplogroupDistance = 2;
 	private double haplogroupQ = 0.5;
 
+	// by default dont calculate proxy
 	public ArrayList<ContaminationObject> detect(HashMap<String, Sample> mutationSamples,
 			ArrayList<TestSample> haplogrepSamples) {
+		return detect(mutationSamples, haplogrepSamples, "false");
+	}
+
+	public ArrayList<ContaminationObject> detect(HashMap<String, Sample> mutationSamples,
+			ArrayList<TestSample> haplogrepSamples, String dnaProxy) {
 
 		ArrayList<ContaminationObject> contaminationList = new ArrayList<ContaminationObject>();
 
@@ -101,8 +107,12 @@ public class ContaminationDetection {
 					meanCoverageSample = (int) mutserveSample.getSumCoverage() / mutserveSample.getAmountVariants();
 				}
 
-				// calculate if WGS proxy
-				boolean proxy = meanCoverageSample >= percentile25 ? true : false;
+				// calculate if reliable WGS proxy
+				String proxy = "-";
+
+				if (dnaProxy != null && count > 10) {
+					proxy = meanCoverageSample >= percentile25 ? "YES" : "NO";
+				}
 
 				contamination.setHgMajor(haplogrepMajor.getTopResult().getHaplogroup().toString());
 				contamination.setHgMinor(haplogrepMinor.getTopResult().getHaplogroup().toString());
@@ -161,7 +171,7 @@ public class ContaminationDetection {
 				contamination.setHeteroplasmiesMajor(majorHeteroplasmies);
 				contamination.setHeteroplasmiesMinor(minorHeteroplasmies);
 				contamination.setOverallLevel(
-						(overallLevel > 0 && status == Status.YES) ? formatter.format(overallLevel) : "n/a");
+						status == Status.YES ? formatter.format(overallLevel) : "n/a");
 				contamination.setMeanHetlevelMajor(formatter.format(meanHeteroplasmyMajor));
 				contamination.setMeanHetlevelMinor(formatter.format(meanHeteroplasmyMinor));
 				contamination.setDistance(distance);
@@ -450,7 +460,7 @@ public class ContaminationDetection {
 		wr.close();
 	}
 
-	public void writeReport(String output, ArrayList<ContaminationObject> list) {
+	public void writeTextualReport(String output, ArrayList<ContaminationObject> list) {
 
 		CsvTableWriter contaminationWriter = new CsvTableWriter(output, '\t');
 

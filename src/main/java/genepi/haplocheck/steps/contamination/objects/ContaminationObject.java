@@ -26,7 +26,7 @@ public class ContaminationObject {
 	private String clusterInfo;
 	private ArrayList<Node> nodes;
 	private ArrayList<Edge> edges;
-	private boolean proxy;
+	private String proxy;
 	
 	public String getId() {
 		return id;
@@ -149,10 +149,10 @@ public class ContaminationObject {
 	public void setOverallLevel(String overallLevel) {
 		this.overallLevel = overallLevel;
 	}
-	public boolean isReliableProxy() {
+	public String isReliableProxy() {
 		return proxy;
 	}
-	public void setReliableProxy(boolean proxy) {
+	public void setReliableProxy(String proxy) {
 		this.proxy = proxy;
 	}
 }
