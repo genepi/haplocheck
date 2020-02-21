@@ -32,7 +32,7 @@ workflow:
     - name: Create Report
       type: html_widget
       template: haplocheck.html
-      output: ${contamination-report}.html
+      output: ${report}.html
       assets: assets
       cont-data: ${contamination-json}.json
       sum-data: ${summary}.json
