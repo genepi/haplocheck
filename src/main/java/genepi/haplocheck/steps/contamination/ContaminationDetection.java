@@ -71,8 +71,8 @@ public class ContaminationDetection {
 			count++;
 		}
 
+		//exclude 
 		double percentile25 = 0.0;
-
 		if (coverageList.size() > 0) {
 			percentile25 = Quantiles.percentiles().index(25).compute(coverageList);
 		}
@@ -107,7 +107,7 @@ public class ContaminationDetection {
 					meanCoverageSample = (int) mutserveSample.getSumCoverage() / mutserveSample.getAmountVariants();
 				}
 
-				// calculate if reliable WGS proxy
+				// calculate if reliable WGS proxy for studies with more than 10 samples
 				String proxy = "-";
 
 				if (dnaProxy != null && count > 10) {
