@@ -13,7 +13,7 @@ workflow:
 
     - name: Variant Calling using mutserve
       jar: mutserve-1.3.0.jar
-      params: analyse-local --input $files --noBaq --reference $archive --mapQ $mapQ --baseQ $baseQ --deletions --output $files/out.vcf.gz
+      params: analyse-local --input $files --level $level --noBaq --reference $archive --mapQ $mapQ --baseQ $baseQ --deletions --output $files/out.vcf.gz
       runtime: java
       
     - name: Haplogroup Classification
@@ -52,6 +52,12 @@ workflow:
       type: text
       visible: false
       value: rCRS.fasta
+
+    - id: level
+      description: Level
+      type: number
+      visible: true 
+      value: 0.01  
       
     - id: baseQ
       description: Minimal Base Quality
