@@ -37,7 +37,7 @@ import vcf.Variant;
 public class ContaminationDetection {
 
 	public enum Status {
-		YES, NO;
+		YES, NO, NA;
 	}
 
 	private int heteroplasmyDistance = 3;
@@ -157,6 +157,10 @@ public class ContaminationDetection {
 					}
 				} else {
 					status = Status.NO;
+				}
+				
+				if(sampleHeteroplasmies  == 0) {
+					status = Status.NA;
 				}
 
 				contamination.setStatus(status);
