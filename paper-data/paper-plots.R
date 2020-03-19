@@ -2,7 +2,7 @@ library("ggplot2")
 library("tidyverse")
 library("ggpubr")
 
-setwd("/data2/eclipse/mtdna/haplocheck/paper-data/");
+setwd("/home/seb/git/haplocheck/paper-data");
 file = "simulated-data/output/simulation_3_All_500k_kulczynski.txt";
   simAll = read.table(file, header = TRUE, sep=",");
 simAllFilter = filter(simAll,simAll$HaplogrepFilter == 0.5  & simAll$Setup <= 6 & simAll$Group<=8);
@@ -62,3 +62,20 @@ p + xlab('Contamination Category (Haplocheck)') +   ylab('Free Mix Level (Verify
 
   res <- t.test(free_contam ~ Contamination, data = verifybam, var.equal = TRUE)
 res
+
+## Calculate 1000G CopyNumber
+file ="1000g/cn.csv";
+cn = read.table(file, header = TRUE, sep=",")
+
+cnFilter = filter(cn,cn$Tissue!="");
+
+res <- t.test(Copy.Number ~ Tissue, data = cnFilter, var.equal = FALSE)
+res
+p = ggplot(cnFilter, aes(x=Tissue, y=Copy.Number,color= factor(Tissue))) + 
+  geom_boxplot()  + scale_colour_brewer(palette = "Set1")
+
+cnFilterBlood = filter(cn,cn$Tissue=="Blood");
+cnFilterLCL = filter(cn,cn$Tissue=="LCL");
+summary(cnFilterBlood$Copy.Number);
+summary(cnFilterLCL$Copy.Number);
+
