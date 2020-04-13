@@ -12,7 +12,7 @@ To calculate the contamination status of all 1000 Genomes Phase3 samples (n = 2,
     mkdir haplocheck 
     cd haplocheck
     curl -s install.cloudgene.io | bash 
-    ./cloudgene install https://github.com/genepi/haplocheck/releases/download/v1.0.11/haplocheck.zip 
+    ./cloudgene install https://github.com/genepi/haplocheck/releases/download/v1.1.0/haplocheck.zip 
 
 ### Run 
 ```sh
