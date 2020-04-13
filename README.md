@@ -20,7 +20,7 @@ To calculate the contamination status of all 1000 Genomes Phase3 samples (n = 2,
 wget https://github.com/genepi/haplocheck/raw/master/test-data/contamination/1000G/all/1000g-nobaq.vcf.gz 
     
 #Run haplocheck
-./cloudgene run haplocheck@1.0.11 --files 1000g-nobaq.vcf.gz --output results  
+./cloudgene run haplocheck@1.1.0 --files 1000g-nobaq.vcf.gz --output results  
     
 #Open results in Browser
 firefox results/report/report.html
