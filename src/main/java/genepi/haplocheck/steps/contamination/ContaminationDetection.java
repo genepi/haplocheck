@@ -71,7 +71,7 @@ public class ContaminationDetection {
 			count++;
 		}
 
-		//exclude 
+		// exclude
 		double percentile25 = 0.0;
 		if (coverageList.size() > 0) {
 			percentile25 = Quantiles.percentiles().index(25).compute(coverageList);
@@ -158,8 +158,8 @@ public class ContaminationDetection {
 				} else {
 					status = Status.NO;
 				}
-				
-				if(sampleHeteroplasmies  == 0) {
+
+				if (sampleHeteroplasmies == 0) {
 					status = Status.NA;
 				}
 
@@ -174,8 +174,7 @@ public class ContaminationDetection {
 				contamination.setClusterInfo(clusters);
 				contamination.setHeteroplasmiesMajor(majorHeteroplasmies);
 				contamination.setHeteroplasmiesMinor(minorHeteroplasmies);
-				contamination.setOverallLevel(
-						status == Status.YES ? formatter.format(overallLevel) : "n/a");
+				contamination.setOverallLevel(status == Status.YES ? formatter.format(overallLevel) : "n/a");
 				contamination.setMeanHetlevelMajor(formatter.format(meanHeteroplasmyMajor));
 				contamination.setMeanHetlevelMinor(formatter.format(meanHeteroplasmyMinor));
 				contamination.setDistance(distance);
@@ -204,7 +203,13 @@ public class ContaminationDetection {
 
 		Haplogroup hgMinor = new Haplogroup(centry.getHgMinor());
 
-		return phylotree.getDistanceBetweenHaplogroups(hgMajor, hgMinor);
+		try {
+			return phylotree.getDistanceBetweenHaplogroups(hgMajor, hgMinor);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
 	}
 
 	private int countHomoplasmies(Sample currentSample, ArrayList<Polymorphism> foundHaplogrep) {
