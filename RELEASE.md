@@ -23,6 +23,7 @@ We track our current version in
 - `pom.xml`
 - `files/cloudgene.yaml`
 - `files/haplocheck.html`
+- `Version in README.md`
 
 Set the new version without the `v` prefix.
 
