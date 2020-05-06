@@ -13,7 +13,7 @@ public class App extends Toolbox {
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, SecurityException,
 			NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
 
-		App main = new App("contamination.jar", args);
+		App main = new App("haplocheck.jar", args);
 		main.start();
 	}
 }

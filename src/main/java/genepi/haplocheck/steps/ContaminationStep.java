@@ -53,7 +53,6 @@ public class ContaminationStep extends WorkflowStep {
 			String outputSummary = context.getConfig("summary");
 			String outputJson = context.getConfig("outputCont");
 			String outputHsd = context.getConfig("outputHsd");
-			String dnaProxy = context.get("dnaProxy");
 			
 			Collection<File> out = Utils.getVcfFiles(input);
 
@@ -83,7 +82,7 @@ public class ContaminationStep extends WorkflowStep {
 			context.updateTask("Detect Contamination...", WorkflowContext.RUNNING);
 			
 			ArrayList<ContaminationObject> result = contamination.detect(mutationServerSamples,
-					haplogrepSamples.getTestSamples(), dnaProxy);
+					haplogrepSamples.getTestSamples());
 
 		
 			contamination.writeTextualReport(outputReport, result);

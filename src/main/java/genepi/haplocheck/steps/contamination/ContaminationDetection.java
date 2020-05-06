@@ -44,14 +44,8 @@ public class ContaminationDetection {
 	private int haplogroupDistance = 2;
 	private double haplogroupQ = 0.5;
 
-	// by default dont calculate proxy
 	public ArrayList<ContaminationObject> detect(HashMap<String, Sample> mutationSamples,
 			ArrayList<TestSample> haplogrepSamples) {
-		return detect(mutationSamples, haplogrepSamples, "false");
-	}
-
-	public ArrayList<ContaminationObject> detect(HashMap<String, Sample> mutationSamples,
-			ArrayList<TestSample> haplogrepSamples, String dnaProxy) {
 
 		ArrayList<ContaminationObject> contaminationList = new ArrayList<ContaminationObject>();
 
@@ -105,13 +99,6 @@ public class ContaminationDetection {
 				int meanCoverageSample = -1;
 				if (mutserveSample.getAmountVariants() != 0) {
 					meanCoverageSample = (int) mutserveSample.getSumCoverage() / mutserveSample.getAmountVariants();
-				}
-
-				// calculate if reliable WGS proxy for studies with more than 10 samples
-				String proxy = "-";
-
-				if (dnaProxy != null && count > 10) {
-					proxy = meanCoverageSample >= percentile25 ? "YES" : "NO";
 				}
 
 				contamination.setHgMajor(haplogrepMajor.getTopResult().getHaplogroup().toString());
@@ -183,7 +170,6 @@ public class ContaminationDetection {
 				samples.add(haplogrepMajor);
 				samples.add(haplogrepMinor);
 				Tree tree = getJsonTree(mutserveSample, samples);
-				contamination.setReliableProxy(proxy);
 				contamination.setEdges(tree.getEdges());
 				contamination.setNodes(tree.getNodes());
 				contaminationList.add(contamination);
@@ -473,7 +459,7 @@ public class ContaminationDetection {
 
 		CsvTableWriter contaminationWriter = new CsvTableWriter(output, '\t');
 
-		String[] columnsWrite = { "Sample", "Contamination Status", "Reliable WGS Proxy", "Contamination Level",
+		String[] columnsWrite = { "Sample", "Contamination Status", "Contamination Level",
 				"Distance", "Sample Coverage", "Overall Homoplasmies", "Overall Heteroplasmies",
 				"Major Heteroplasmy Level", "Minor Heteroplasmy Level", "Major Haplogroup", "Major Haplogroup Quality",
 				"Minor Haplogroup", "Minor Haplogroup Quality", "Major Homoplasmies Count", "Minor Homoplasmies Count",
@@ -484,7 +470,6 @@ public class ContaminationDetection {
 		for (ContaminationObject entry : list) {
 			contaminationWriter.setString("Sample", entry.getId());
 			contaminationWriter.setString("Contamination Status", entry.getStatus().name());
-			contaminationWriter.setString("Reliable WGS Proxy", entry.isReliableProxy() + "");
 			contaminationWriter.setString("Contamination Level", entry.getOverallLevel());
 			contaminationWriter.setInteger("Distance", entry.getDistance());
 			contaminationWriter.setInteger("Sample Coverage", entry.getSampleMeanCoverage());
