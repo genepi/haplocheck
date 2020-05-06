@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/genepi/haplocheck.svg?branch=master)](https://travis-ci.org/genepi/haplocheck)
 [![GitHub release](https://img.shields.io/github/release/genepi/haplocheck.svg)](https://GitHub.com/genepi/haplocheck/releases/)
 
-Haplocheck is a software package that leverages the mitochondrial phylogeny to detect contamination in whole-genome and targeted mtDNA sequencing studies. Haplocheck can also be used as a quick and an efficient proxy for determining the whole-genome contamination level (using mtDNA only).  
+Haplocheck is a software package that uses the mitochondrial phylogeny to detect contamination in mtDNA sequencing studies and whole-genome sequencing studies. 
 
 ## Getting started
 To calculate the contamination status of all 1000 Genomes Phase3 samples (n = 2,504), execute the following command.  
