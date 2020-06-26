@@ -1,7 +1,7 @@
 # simulateNGSMix
 
 ## Getting started
-simulateNGSMix is a bash-script taking 2 fasta files as input, together with a NGS Sequencing Device name and emits mixed bam files, ready to be evaluated with haplocheck
+simulateNGSMix is a bash-script that creates in-silico mixtures of 2 samples. As an input, 2 FASTA files together with a NGS sequencing device name is required and emits mixed BAM files that are ready to be evaluated with haplocheck. 
 
 ## Prerequisites 
 
@@ -33,7 +33,7 @@ sh simulateNGSMix data/Lab011.fasta data/Lab002.fasta MSv3
 #Run mutserve by adapting parameters on your own, e.g. here level to 0.004 in order to go down the 0.5% mixtures
 java -jar -Xmx8G mutserve-1.3.1.jar analyse-local --input data --alignQ 30 --mapQ 30 --level 0.004 --noBaq --reference ref/chrM.fasta --output simulatedNGSMix.vcf
 
-#Run haplocheck on all bam files in folder data
+#Run haplocheck on all BAM files from folder data
 ./cloudgene run haplocheck@1.1.2 --files data --output Result.vcf  
 ```
 
