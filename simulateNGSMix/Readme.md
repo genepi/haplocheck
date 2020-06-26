@@ -10,7 +10,7 @@ The bash script relies on 3 different tools:
 2. Samtools: http://samtools.github.io/
 3. BWA MEM: https://github.com/lh3/bwa
 
-Adapt reference file in bash script:
+Adapt reference file in bash script, if other than provided:
 
     PATHBWAINDEX="/ref/chrM.fasta"
 
