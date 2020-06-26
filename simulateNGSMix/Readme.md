@@ -13,13 +13,9 @@ The bash script relies on 3 different tools:
 3. BWA MEM: https://github.com/lh3/bwa
 
 ### Optional 
-Adapt reference file in bash script, if other than provided:
-
-    ```PATHBWAINDEX="/ref/chrM.fasta"```
+Adapt reference file in bash script, if other than provided:    ```PATHBWAINDEX="/ref/chrM.fasta"```
     
-Adapt output folder, default folder called: out
-
-    ```OUTPUTFOLDER="out"```    
+Adapt output folder, default folder called: out    ```OUTPUTFOLDER="out"```    
     
 
 ## Run 
