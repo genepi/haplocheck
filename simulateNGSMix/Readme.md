@@ -6,18 +6,20 @@ simulateNGSMix is a bash-script taking 2 fasta files as input, together with a N
 ## Prerequisites 
 
 The bash script relies on 3 different tools:
+
 1. ART NGS Read simulator: https://www.niehs.nih.gov/research/resources/software/biostatistics/art/index.cfm
+(Ubuntu: ```sudo apt-get install art-nextgen-simulation-tools```)
 2. Samtools: http://samtools.github.io/
 3. BWA MEM: https://github.com/lh3/bwa
 
 ### Optional 
 Adapt reference file in bash script, if other than provided:
 
-    PATHBWAINDEX="/ref/chrM.fasta"
+    ```PATHBWAINDEX="/ref/chrM.fasta"```
     
 Adapt output folder, default folder called: out
 
-    OUTPUTFOLDER="out"    
+    ```OUTPUTFOLDER="out"```    
     
 
 ## Run 
