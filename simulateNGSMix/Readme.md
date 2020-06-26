@@ -1,16 +1,16 @@
 # simulateNGSMix
 
 ## Getting started
-simulateNGSMix is a bash-script that creates in-silico mixtures of 2 samples. As an input, 2 FASTA files together with a NGS sequencing device name is required and emits mixed BAM files that are ready to be evaluated with haplocheck. 
+simulateNGSMix is a bash-script that creates in-silico mixtures of 2 input samples. As an input, 2 FASTA files together with a NGS sequencing device name is required. It produces mixed BAM files of the 2 input samples that are ready to be evaluated with haplocheck. 
 
 ## Prerequisites 
 
 The bash script relies on 3 different tools:
 
-1. ART NGS Read simulator: https://www.niehs.nih.gov/research/resources/software/biostatistics/art/index.cfm
-(Ubuntu: ```sudo apt-get install art-nextgen-simulation-tools```)
-2. Samtools: http://samtools.github.io/
-3. BWA MEM: https://github.com/lh3/bwa
+1. [ART NGS Read simulator](https://www.niehs.nih.gov/research/resources/software/biostatistics/art/index.cfm)
+     (Ubuntu: ```sudo apt-get install art-nextgen-simulation-tools```)
+2. [Samtools](http://samtools.github.io)
+3. [BWA MEM](https://github.com/lh3/bwa)
 
 ### Optional 
 Adapt reference file in bash script, if other than provided:    ```PATHBWAINDEX="/ref/chrM.fasta"```
