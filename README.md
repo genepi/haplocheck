@@ -29,6 +29,10 @@ firefox results/report/report.html
 ## Documentation
 Documentation can be found [here](https://mitoverse.readthedocs.io/en/latest). 
 
+## Data Simulation
+
+The script on how to create in-silico mixtures of two input samples can be found [here](https://github.com/genepi/haplocheck/blob/master/simulateNGSMix/Readme.md). 
+
 ## mtDNA Blog
 Check out our [blog](http://haplogrep.i-med.ac.at/blog/) regarding mtDNA topics.
 
