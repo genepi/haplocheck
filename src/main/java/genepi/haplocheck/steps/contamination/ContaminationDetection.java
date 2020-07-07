@@ -40,7 +40,7 @@ public class ContaminationDetection {
 		YES, NO, NA;
 	}
 
-	private int heteroplasmyDistance = 3;
+	private int heteroplasmyDistance = 2;
 	private int haplogroupDistance = 2;
 	private double haplogroupQ = 0.5;
 
