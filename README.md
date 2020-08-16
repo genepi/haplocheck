@@ -3,7 +3,7 @@
 [![GitHub release](https://img.shields.io/github/release/genepi/haplocheck.svg)](https://GitHub.com/genepi/haplocheck/releases/)
 
 ## Getting started
-Haplocheck is a software that uses the mitochondrial phylogeny to detect contamination in mtDNA sequencing studies and whole-genome sequencing studies. You can use our [cloud web service](http://mitoverse.i-med.ac.at) or install it locally. 
+Haplocheck is a software that uses the mitochondrial phylogeny to detect contamination in mtDNA sequencing studies and whole-genome sequencing studies. You can use our [cloud web service](http://mitoverse.i-med.ac.at) or install it locally. Haplocheck uses [mutserve](https://github.com/seppinho/mutserve) for variant calling and [haplogrep](https://github.com/seppinho/haplogrep-cmd) for haplogroup classification. 
 
 ## Download and Install 
 
