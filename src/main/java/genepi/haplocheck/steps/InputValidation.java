@@ -10,6 +10,8 @@ import genepi.hadoop.importer.ImporterFactory;
 import genepi.haplocheck.steps.vcf.VcfFile;
 import genepi.haplocheck.steps.vcf.VcfFileUtil;
 import genepi.io.FileUtil;
+import htsjdk.samtools.BAMIndex;
+import htsjdk.samtools.SamInputResource;
 import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.ValidationStringency;
@@ -107,8 +109,13 @@ public class InputValidation extends WorkflowStep {
 
 					try {
 						reader = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.STRICT)
-								.open(new File(file));
-						reader.close();
+								.open(SamInputResource.of(new File(file)));
+						if (!new File(file + ".bai").exists()) {
+							context.endTask(
+									"No index files found. Please provide both the *.bam and the *.bai index files.",
+									WorkflowContext.ERROR);
+							return false;
+						}
 						count++;
 					} catch (Exception e) {
 						context.endTask("Please check CRAM/BAM file: " + e.getMessage(), WorkflowContext.ERROR);
