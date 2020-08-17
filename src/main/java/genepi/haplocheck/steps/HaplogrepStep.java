@@ -50,6 +50,11 @@ public class HaplogrepStep extends WorkflowStep {
 
 			context.updateTask("Load file...", WorkflowContext.RUNNING);
 			
+			if (file.length() == 0) {
+				context.endTask("VCF file is empty.", WorkflowContext.ERROR);
+				return false;	
+			}
+			
 			HashMap<String, Sample> mutationServerSamples = reader.load(file, false);
 
 			context.updateTask("Classify Haplogroups...", WorkflowContext.RUNNING);
