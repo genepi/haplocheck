@@ -22,14 +22,14 @@ import phylotree.PhylotreeManager;
 import vcf.Sample;
 
 public class ThousandGenomeTest {
-	
+
 	@Test
-	public void testBaq1000G() throws Exception {
+	public void testBaq1000GLow() throws Exception {
 
 		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
 		String folder = "test-data/contamination/1000G/all/";
 		String variantFile = folder + "1000g_baq.vcf.gz";
-		String output = folder + "1000g-report.txt";
+		String output = folder + "1000g-report-baq.txt";
 
 		VcfImporter reader2 = new VcfImporter();
 		HashMap<String, Sample> mutationServerSamples = reader2.load(new File(variantFile), false);
@@ -51,9 +51,11 @@ public class ThousandGenomeTest {
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
 		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
-		//ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), "/home/seb/Desktop/contaminated.hsd");
+		// ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(),
+		// "/home/seb/Desktop/contaminated.hsd");
 
-		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
+		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples,
+				haplogrepSamples.getTestSamples());
 
 		contamination.writeTextualReport(output, list);
 
@@ -66,17 +68,65 @@ public class ThousandGenomeTest {
 			}
 		}
 
-		assertEquals(119, countHigh);
-		//FileUtil.deleteFile(output);
+		assertEquals(126, countHigh);
+		// FileUtil.deleteFile(output);
 	}
-	
+
+	@Test
+	public void testNoBaq1000GDeep() throws Exception {
+
+		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
+		String folder = "test-data/contamination/1000G/all/";
+		String variantFile = folder + "1000g-deep.vcf.gz";
+		String output = folder + "1000g-report-deep-nobaq.txt";
+		VcfImporter reader2 = new VcfImporter();
+		HashMap<String, Sample> mutationServerSamples = reader2.load(new File(variantFile), false);
+
+		VariantSplitter splitter = new VariantSplitter();
+
+		ArrayList<String> profiles = splitter.split(mutationServerSamples);
+
+		HashSet<String> set = new HashSet<String>();
+
+		String[] splits = profiles.get(0).split("\t");
+
+		for (int i = 3; i < splits.length; i++) {
+			set.add(splits[i]);
+		}
+
+		ContaminationDetection contamination = new ContaminationDetection();
+
+		HaplogroupClassifier classifier = new HaplogroupClassifier();
+		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
+
+		// ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(),
+		// "/home/seb/Desktop/contaminated.hsd");
+
+		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples,
+				haplogrepSamples.getTestSamples());
+
+		contamination.writeTextualReport(output, list);
+
+		CsvTableReader readerOut = new CsvTableReader(output, '\t');
+		int countHigh = 0;
+		while (readerOut.next()) {
+
+			if (readerOut.getString("Contamination Status").equals(Status.YES.name())) {
+				countHigh++;
+			}
+		}
+
+		assertEquals(7, countHigh);
+		// FileUtil.deleteFile(output);
+	}
+
 	@Test
 	public void testNoBaq1000G() throws Exception {
 
 		Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
 		String folder = "test-data/contamination/1000G/all/";
 		String variantFile = folder + "1000g-nobaq.vcf.gz";
-		String output = folder + "1000g-report.txt";
+		String output = folder + "1000g-report-nobaq.txt";
 
 		VcfImporter reader2 = new VcfImporter();
 		HashMap<String, Sample> mutationServerSamples = reader2.load(new File(variantFile), false);
@@ -98,9 +148,11 @@ public class ThousandGenomeTest {
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
 		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
-		//ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), "/home/seb/Desktop/contaminated.hsd");
+		// ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(),
+		// "/home/seb/Desktop/contaminated.hsd");
 
-		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
+		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples,
+				haplogrepSamples.getTestSamples());
 
 		contamination.writeTextualReport(output, list);
 
@@ -113,10 +165,10 @@ public class ThousandGenomeTest {
 			}
 		}
 
-		assertEquals(119, countHigh);
-		//FileUtil.deleteFile(output);
+		assertEquals(127, countHigh);
+		// FileUtil.deleteFile(output);
 	}
-	
+
 	@Test
 	public void testExcluded1000G() throws Exception {
 
@@ -146,7 +198,8 @@ public class ThousandGenomeTest {
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
 		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
-		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
+		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples,
+				haplogrepSamples.getTestSamples());
 
 		contamination.writeTextualReport(output, list);
 
@@ -162,7 +215,7 @@ public class ThousandGenomeTest {
 
 		assertEquals(11, count);
 
-		FileUtil.deleteFile(output);
+		// FileUtil.deleteFile(output);
 
 	}
 
@@ -195,7 +248,8 @@ public class ThousandGenomeTest {
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
 		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
-		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
+		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples,
+				haplogrepSamples.getTestSamples());
 
 		contamination.writeTextualReport(output, list);
 
@@ -243,7 +297,8 @@ public class ThousandGenomeTest {
 
 		ContaminationDetection contamination = new ContaminationDetection();
 
-		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
+		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples,
+				haplogrepSamples.getTestSamples());
 
 		contamination.writeTextualReport(output, list);
 
@@ -290,7 +345,8 @@ public class ThousandGenomeTest {
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
 		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
-		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
+		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples,
+				haplogrepSamples.getTestSamples());
 
 		contamination.writeTextualReport(output, list);
 
@@ -341,7 +397,8 @@ public class ThousandGenomeTest {
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
 		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
-		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
+		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples,
+				haplogrepSamples.getTestSamples());
 
 		contamination.writeTextualReport(output, list);
 
@@ -359,8 +416,6 @@ public class ThousandGenomeTest {
 		FileUtil.deleteFile(output);
 
 	}
-
-	
 
 	@Test
 	public void testBaq1000GYeContaminated() throws Exception {
@@ -390,7 +445,8 @@ public class ThousandGenomeTest {
 		HaplogroupClassifier classifier = new HaplogroupClassifier();
 		SampleFile haplogrepSamples = classifier.calculateHaplogroups(phylotree, profiles);
 
-		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
+		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples,
+				haplogrepSamples.getTestSamples());
 
 		contamination.writeTextualReport(output, list);
 
@@ -417,7 +473,7 @@ public class ThousandGenomeTest {
 
 		readerYe.close();
 		readerResult.close();
-		
+
 		FileUtil.deleteFile(output);
 
 	}

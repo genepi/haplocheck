@@ -2,7 +2,7 @@ library("ggplot2")
 library("tidyverse")
 library("ggpubr")
 
-setwd("/home/seb/git/haplocheck/paper-data");
+setwd("/data2/eclipse/mtdna/haplocheck/paper-data");
 file = "simulated-data/output/simulation_3_All_500k_kulczynski.txt";
   simAll = read.table(file, header = TRUE, sep=",");
 simAllFilter = filter(simAll,simAll$HaplogrepFilter == 0.5  & simAll$Setup <= 6 & simAll$Group<=8);
