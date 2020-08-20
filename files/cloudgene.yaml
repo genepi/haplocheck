@@ -13,7 +13,7 @@ workflow:
 
     - name: Variant Calling using mutserve (v2.0.0-rc4)
       jar: mutserve.jar
-      params: --level $level --reference $archive --mapQ $mapQ --baseQ $baseQ --deletions --output $files/out.vcf.gz --no-ansi $files
+      params: call --level $level --reference $archive --mapQ $mapQ --baseQ $baseQ --deletions --output $files/out.vcf.gz --no-ansi $files
       runtime: java
       stdout: true
       
