@@ -1,7 +1,7 @@
 name: Haplocheck
 id: haplocheck
 description: A fast method to detect sample contamination in mtDNA and WGS data. <br> To learn more about haplocheck, please have a look at <a href="https://mitoverse.readthedocs.io/en/latest/">https://mitoverse.readthedocs.io/en/latest/</a>.
-version: 1.2.0
+version: 1.2.1
 workflow:
 
   setups:
@@ -11,7 +11,7 @@ workflow:
       
   steps:
 
-    - name: Variant Calling using mutserve
+    - name: Variant Calling using mutserve (v2.0.0-rc4)
       jar: mutserve.jar
       params: --level $level --reference $archive --mapQ $mapQ --baseQ $baseQ --deletions --output $files/out.vcf.gz --no-ansi $files
       runtime: java
