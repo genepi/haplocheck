@@ -110,9 +110,8 @@ public class InputValidation extends WorkflowStep {
 					try {
 						reader = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.STRICT)
 								.open(SamInputResource.of(new File(file)));
-						if (!new File(file + ".bai").exists()) {
-							context.endTask(
-									"No index files found. Please provide both the *.bam and the *.bai index files.",
+						if (!new File(file + ".bai").exists() && !new File(file + ".crai").exists()) {
+							context.endTask("No index files found for " + new File(file).getName(),
 									WorkflowContext.ERROR);
 							return false;
 						}
