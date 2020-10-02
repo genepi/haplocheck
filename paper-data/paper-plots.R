@@ -71,7 +71,7 @@ cnFilter = filter(cn,cn$Tissue!="");
 
 res <- t.test(Copy.Number ~ Tissue, data = cnFilter, var.equal = FALSE)
 res
-p = ggplot(cnFilter, aes(x=Tissue, y=Copy.Number,color= factor(Tissue))) + 
+p = ggplot(cnFilter, aes(x=Tissue, y=Copy.Number,color= factor(Tissue)))  +bar
   geom_boxplot()  + scale_colour_brewer(palette = "Set1")
 
 cnFilterBlood = filter(cn,cn$Tissue=="Blood");
@@ -79,3 +79,10 @@ cnFilterLCL = filter(cn,cn$Tissue=="LCL");
 summary(cnFilterBlood$Copy.Number);
 summary(cnFilterLCL$Copy.Number);
 
+## Calculate 1000G CopyNumber
+file ="/home/seb/Desktop/1000g-report-deep-nobaq.txt";
+file2 ="/home/seb/Desktop/1000g-report-nobaq.txt";
+cn = read.table(file, header = TRUE, sep="\t")
+cn2 = read.table(file2, header = TRUE, sep="\t")
+barplot(cn$SampleCoverage);
+barlot(cn2$SampleCoverage);

@@ -4,6 +4,11 @@ description: A fast method to detect sample contamination in mtDNA and WGS data.
 version: 1.2.2
 workflow:
 
+  setups:
+    - name: Validate Input
+      jar: haplocheck.jar
+      classname: genepi.haplocheck.steps.InputValidation
+      
   steps:
 
 #if( $format == "bam" || $format == "cram")
