@@ -15,7 +15,7 @@ Haplocheck accepts BAM/CRAM files **OR** VCF files (generated with [mutserve](ht
 
 ## Run Haplocheck Workflow 
 
-### Calculate contamination status of 1000 Genomes VCF file (n = 2,504):  
+### VCF input (1000 Genomes VCF file):  
 ```sh
 #Download 1000G Phase3 Data
 wget https://github.com/genepi/haplocheck/raw/master/test-data/contamination/1000G/all/1000g-nobaq.vcf.gz 
@@ -26,18 +26,24 @@ wget https://github.com/genepi/haplocheck/raw/master/test-data/contamination/100
 #Open results in Browser
 firefox results/report/report.html
 ```
-### Calculate contamination status of a BAM file:  
+### BAM input
 ```sh
 #Create folder
 mkdir bam-input
 cd bam-input
 
-#Download BAM file
-wget https://github.com/seppinho/mutserve/blob/master/test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam
-wget https://github.com/seppinho/mutserve/blob/master/test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam.bai   
+#Download 1st BAM file
+wget https://github.com/seppinho/mutserve/raw/master/test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam 
+wget https://github.com/seppinho/mutserve/raw/master/test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam.bai
 
-#Run haplocheck
-./cloudgene run haplocheck@1.2.2 --files bam-input --format bam --output results  
+#Download 2nd BAM file
+wget https://github.com/seppinho/mutserve/raw/master/test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123_2.bam
+wget https://github.com/seppinho/mutserve/raw/master/test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123_2.bam.bai
+
+cd ..
+
+#Run haplocheck with 2 threads
+./cloudgene run haplocheck@1.2.2 --files bam-input --format bam --output results  --threads 2
     
 #Open results in Browser
 firefox results/report/report.html
