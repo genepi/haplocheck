@@ -15,7 +15,7 @@ Haplocheck accepts BAM/CRAM files **OR** VCF files (generated with [mutserve](ht
 
 ## Run Haplocheck Workflow 
 
-### VCF input (1000 Genomes VCF file):  
+### VCF input (1000 Genomes Phase3 VCF file; n=2,504):  
 ```sh
 #Download 1000G Phase3 Data
 wget https://github.com/genepi/haplocheck/raw/master/test-data/contamination/1000G/all/1000g-nobaq.vcf.gz 
@@ -26,7 +26,7 @@ wget https://github.com/genepi/haplocheck/raw/master/test-data/contamination/100
 #Open results in Browser
 firefox results/report/report.html
 ```
-### BAM input
+### BAM input (2x HG00096 sample from the 1000 Genomes Phase3 project)
 ```sh
 #Create folder
 mkdir bam-input
