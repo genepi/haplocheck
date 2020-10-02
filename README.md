@@ -9,8 +9,8 @@ Haplocheck accepts BAM/CRAM files **OR** VCF files (generated with [mutserve](ht
 
 ## Install Haplocheck Workflow 
 
-    curl -s install.cloudgene.io | bash 
-    ./cloudgene install https://github.com/genepi/haplocheck/releases/download/v1.2.1/haplocheck.zip 
+    curl -s install.cloudgene.io | bash -s 2.3.3
+    ./cloudgene install https://github.com/genepi/haplocheck/releases/download/v1.2.2/haplocheck.zip 
 
 
 ## Run Haplocheck Workflow 
@@ -20,7 +20,7 @@ Calculate contamination status of 1000 Genomes Phase3 samples (n = 2,504):
 wget https://github.com/genepi/haplocheck/raw/master/test-data/contamination/1000G/all/1000g-nobaq.vcf.gz 
     
 #Run haplocheck
-./cloudgene run haplocheck --files 1000g-nobaq.vcf.gz --output results  
+./cloudgene run haplocheck@1.2.2 --files 1000g-nobaq.vcf.gz --output results  
     
 #Open results in Browser
 firefox results/report/report.html
