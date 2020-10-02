@@ -4,19 +4,15 @@ description: A fast method to detect sample contamination in mtDNA and WGS data.
 version: 1.2.1
 workflow:
 
-  setups:
-    - name: Validate Input
-      jar: haplocheck.jar
-      classname: genepi.haplocheck.steps.InputValidation
-      
   steps:
 
-    - name: Variant Calling using mutserve (v2.0.0-rc4)
+#if( $format == "bam" || $format == "cram")
+    - name: Variant Calling using mutserve (v2.0.0-rc7)
       jar: mutserve.jar
-      params: call --level $level --reference $archive --mapQ $mapQ --baseQ $baseQ --deletions --output $files/out.vcf.gz --no-ansi $files
+      params: call --level $level --reference $archive --mapQ $mapQ --baseQ $baseQ --deletions --output $files/out.vcf.gz --no-ansi $files --threads $threads
       runtime: java
       stdout: true
-      
+#end      
     - name: Haplogroup Classification
       jar: haplocheck.jar
       classname: genepi.haplocheck.steps.HaplogrepStep
@@ -54,12 +50,22 @@ workflow:
       visible: false
       value: rCRS.fasta
 
+    - id: format
+      description: Input Format
+      type: list
+      required: true
+      values:
+        bam: BAM
+        cram: CRAM
+        vcf: VCF
+        
     - id: level
       description: Level
       type: number
       visible: true 
       value: 0.01  
-      
+
+            
     - id: baseQ
       description: Minimal Base Quality
       type: number
@@ -71,6 +77,13 @@ workflow:
       type: number
       visible: true
       value: 20  
+
+    - id: threads
+      description: Threads for Variant Calling
+      type: number
+      visible: true
+      value: 1  
+      
 
   outputs:  
    
