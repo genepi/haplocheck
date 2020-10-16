@@ -1,6 +1,8 @@
 library("ggplot2")
 library("tidyverse")
 library("ggpubr")
+library(Hmisc)
+library(ggpubr)
 
 setwd("/data2/eclipse/mtdna/haplocheck/paper-data");
 file = "simulated-data/output/simulation_3_All_500k_kulczynski.txt";
@@ -80,9 +82,23 @@ summary(cnFilterBlood$Copy.Number);
 summary(cnFilterLCL$Copy.Number);
 
 ## Calculate 1000G CopyNumber
-file ="/home/seb/Desktop/1000g-report-deep-nobaq.txt";
-file2 ="/home/seb/Desktop/1000g-report-nobaq.txt";
-cn = read.table(file, header = TRUE, sep="\t")
-cn2 = read.table(file2, header = TRUE, sep="\t")
-barplot(cn$SampleCoverage);
-barlot(cn2$SampleCoverage);
+f1 ="/data2/eclipse/mtdna/haplocheck/test-data/contamination/1000G/all/1000g-report-deep-nobaq.txt";
+f2 ="/data2/eclipse/mtdna/haplocheck/test-data/contamination/1000G/all/1000g-report-nobaq.txt";
+deep = read.table(f1, header = TRUE, sep="\t")
+low = read.table(f2, header = TRUE, sep="\t")
+summary(deep$Sample.Coverage);
+summary(low$Sample.Coverage);
+Hmisc::describe(deep$Sample.Coverage)
+Hmisc::describe(low$Sample.Coverage)
+ggqqplot(deep$Sample.Coverage)
+ggqqplot(low$Sample.Coverage)
+shapiro.test(low$Sample.Coverage)
+shapiro.test(deep$Sample.Coverage)
+
+ggdensity(low$Sample.Coverage, 
+          main = "Density plot of 1000G low-coverage",
+          xlab = "Coverage");
+
+ggdensity(deep$Sample.Coverage, 
+          main = "Density plot of 1000G high-coverage",
+          xlab = "Coverage")
