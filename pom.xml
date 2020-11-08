@@ -65,6 +65,7 @@
 									<include>org.jdom:jdom:*:*</include>
 									<include>com.google.code.gson:gson:*:*</include>
 									<include>info.picocli:picocli:*:*</include>
+									<include>cloudgene:cloudgene-java-sdk:*:*</include>
 								</includes>
 							</artifactSet>
 
@@ -143,6 +144,12 @@
 			<groupId>info.picocli</groupId>
 			<artifactId>picocli</artifactId>
 			<version>4.5.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>cloudgene</groupId>
+			<artifactId>cloudgene-java-sdk</artifactId>
+			<version>1.0.2</version>
 		</dependency>
 
 	</dependencies>
