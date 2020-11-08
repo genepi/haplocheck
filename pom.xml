@@ -64,6 +64,7 @@
 									<include>com.github.samtools:htsjdk:*:*</include>
 									<include>org.jdom:jdom:*:*</include>
 									<include>com.google.code.gson:gson:*:*</include>
+									<include>info.picocli:picocli:*:*</include>
 								</includes>
 							</artifactSet>
 
@@ -119,8 +120,8 @@
 			<artifactId>genepi-hadoop</artifactId>
 			<version>mr1-1.4.1</version>
 		</dependency>
-		
-			<dependency>
+
+		<dependency>
 			<groupId>cloudgene</groupId>
 			<artifactId>cloudgene-java-sdk</artifactId>
 			<version>1.0.2</version>
@@ -136,6 +137,12 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>29.0-jre</version>
+		</dependency>
+
+		<dependency>
+			<groupId>info.picocli</groupId>
+			<artifactId>picocli</artifactId>
+			<version>4.5.0</version>
 		</dependency>
 
 	</dependencies>
