@@ -87,7 +87,8 @@ public class ContaminationDetection {
 						.getFoundPolys();
 
 				ContaminationObject contamination = new ContaminationObject();
-				contamination.setId(haplogrepMajor.getSampleID().split("_maj")[0]);
+				String id = haplogrepMajor.getSampleID().split("_maj")[0].replaceAll("\\s+","");
+				contamination.setId(id);
 				double hgQualityMajor = haplogrepMajor.getTopResult().getDistance();
 				double hgQualityMinor = haplogrepMinor.getTopResult().getDistance();
 
