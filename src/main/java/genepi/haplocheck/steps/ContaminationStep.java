@@ -45,7 +45,6 @@ public class ContaminationStep extends WorkflowStep {
 			String input = context.get("files");
 			String output = context.getConfig("output");
 			String outputReport = context.getConfig("outputReport");
-			String outputHsd = context.getConfig("outputHsd");
 
 			Collection<File> out = Utils.getVcfFiles(input);
 
@@ -76,12 +75,11 @@ public class ContaminationStep extends WorkflowStep {
 
 			ArrayList<ContaminationObject> result = contamination.detect(mutationServerSamples,
 					haplogrepSamples.getTestSamples());
-			
 
-			ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), outputHsd);
+			// ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), "");
 
 			context.updateTask("Write Contamination Report...", WorkflowContext.RUNNING);
-			
+
 			contamination.writeTextualReport(output, result);
 			ReportGenerator generator = new ReportGenerator();
 			generator.setContamination(getJson(result));

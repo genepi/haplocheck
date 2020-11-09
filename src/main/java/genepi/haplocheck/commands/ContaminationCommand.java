@@ -1,5 +1,6 @@
 package genepi.haplocheck.commands;
 
+import java.io.File;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.io.FilenameUtils;
@@ -14,10 +15,10 @@ import picocli.CommandLine.Parameters;
 @Command(name = App.APP, version = App.VERSION)
 public class ContaminationCommand implements Callable<Integer> {
 
-	@Parameters(description = "VCF folder")
+	@Parameters(description = "VCF File")
 	private String vcf;
 
-	@Option(names = { "--out" }, description = "Output filename", required = true)
+	@Option(names = { "--out" }, description = "Output report", required = true)
 	private String out;
 
 	public Integer call() throws Exception {
@@ -25,10 +26,16 @@ public class ContaminationCommand implements Callable<Integer> {
 		WorkflowTestContext context = new WorkflowTestContext();
 		String path = FilenameUtils.getFullPath(out);
 		String name = FilenameUtils.getBaseName(out);
+		
+		if (!new File(vcf).exists()) {
+			System.out.println("File not found. Exit");
+			System.exit(1);
+		}
+
 		context.setInput("files", vcf);
 		context.setConfig("output", out);
 		context.setConfig("outputHsd", path + name + ".hsd");
-		context.setConfig("outputReport", path + name+ ".html");
+		context.setConfig("outputReport", path + name + ".html");
 		ContaminationStep contStep = new ContaminationStep();
 		contStep.setup(context);
 		contStep.run(context);

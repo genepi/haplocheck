@@ -87,7 +87,6 @@ public class ContaminationTest {
 		// directory. change!
 		context.setInput("files", folder);
 		context.setConfig("output", file.getAbsolutePath() + "/out.txt");
-		context.setConfig("outputHsd", file.getAbsolutePath() + "/out.hsd");
 		context.setConfig("outputReport", file.getAbsolutePath() + "/out.html");
 		return context;
 
