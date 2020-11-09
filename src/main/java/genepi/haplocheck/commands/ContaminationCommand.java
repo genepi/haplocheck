@@ -2,6 +2,8 @@ package genepi.haplocheck.commands;
 
 import java.util.concurrent.Callable;
 
+import org.apache.commons.io.FilenameUtils;
+
 import genepi.haplocheck.App;
 import genepi.haplocheck.steps.ContaminationStep;
 import genepi.haplocheck.util.WorkflowTestContext;
@@ -21,27 +23,23 @@ public class ContaminationCommand implements Callable<Integer> {
 	public Integer call() throws Exception {
 
 		WorkflowTestContext context = new WorkflowTestContext();
-
-		//currently a directory required, since I store the VCF file in the input directory. change!
+		String path = FilenameUtils.getFullPath(out);
+		String name = FilenameUtils.getBaseName(out);
 		context.setInput("files", vcf);
 		context.setConfig("output", out);
-		context.setConfig("summary", out +".summary");
-		context.setConfig("outputCont", out +".cont");
-		context.setConfig("outputHsd", out+".hsd");
-
+		context.setConfig("outputHsd", path + name + ".hsd");
+		context.setConfig("outputReport", path + name+ ".html");
 		ContaminationStep contStep = new ContaminationStep();
 		contStep.setup(context);
 		contStep.run(context);
-		System.out.println("Done");
-
 		return 0;
 
 	}
-	
+
 	public void setVcf(String vcf) {
 		this.vcf = vcf;
 	}
-	
+
 	public void setOut(String out) {
 		this.out = out;
 	}
