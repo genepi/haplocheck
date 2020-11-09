@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import com.google.common.math.Quantiles;
 import com.google.gson.Gson;
@@ -14,10 +13,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import core.Haplogroup;
-import core.Polymorphism;
 import core.SampleFile;
-import core.TestSample;
 import cloudgene.sdk.internal.WorkflowContext;
 import cloudgene.sdk.internal.WorkflowStep;
 import genepi.haplocheck.steps.contamination.ContaminationDetection;
@@ -25,13 +21,11 @@ import genepi.haplocheck.steps.contamination.ContaminationDetection.Status;
 import genepi.haplocheck.steps.contamination.HaplogroupClassifier;
 import genepi.haplocheck.steps.contamination.VariantSplitter;
 import genepi.haplocheck.steps.contamination.objects.ContaminationObject;
+import genepi.haplocheck.steps.report.ReportGenerator;
 import genepi.haplocheck.util.Utils;
-import genepi.io.table.writer.CsvTableWriter;
 import importer.VcfImporter;
 import phylotree.Phylotree;
 import phylotree.PhylotreeManager;
-import search.SearchResultTreeNode;
-import search.ranking.results.RankedResult;
 import util.ExportUtils;
 import vcf.Sample;
 
@@ -49,11 +43,10 @@ public class ContaminationStep extends WorkflowStep {
 			Phylotree phylotree = PhylotreeManager.getInstance().getPhylotree("phylotree17.xml", "weights17.txt");
 
 			String input = context.get("files");
-			String outputReport = context.getConfig("output");
-			String outputSummary = context.getConfig("summary");
-			String outputJson = context.getConfig("outputCont");
+			String output = context.getConfig("output");
+			String outputReport = context.getConfig("outputReport");
 			String outputHsd = context.getConfig("outputHsd");
-			
+
 			Collection<File> out = Utils.getVcfFiles(input);
 
 			if (out.size() > 1) {
@@ -80,16 +73,20 @@ public class ContaminationStep extends WorkflowStep {
 
 			ContaminationDetection contamination = new ContaminationDetection();
 			context.updateTask("Detect Contamination...", WorkflowContext.RUNNING);
-			
+
 			ArrayList<ContaminationObject> result = contamination.detect(mutationServerSamples,
 					haplogrepSamples.getTestSamples());
-
-		
-			contamination.writeTextualReport(outputReport, result);
-			contamination.writeReportAsJson(outputJson, result);
-			writeSummary(outputSummary, result);
+			
 
 			ExportUtils.createHsdInput(haplogrepSamples.getTestSamples(), outputHsd);
+
+			context.updateTask("Write Contamination Report...", WorkflowContext.RUNNING);
+			
+			contamination.writeTextualReport(output, result);
+			ReportGenerator generator = new ReportGenerator();
+			generator.setContamination(getJson(result));
+			generator.setSummary(getSummary(result));
+			generator.generate(outputReport);
 
 			context.endTask("Execution successful.", WorkflowContext.OK);
 			return true;
@@ -101,7 +98,12 @@ public class ContaminationStep extends WorkflowStep {
 		}
 	}
 
-	private void writeSummary(String outSummary, ArrayList<ContaminationObject> contaminationList) throws IOException {
+	public String getJson(ArrayList<ContaminationObject> contaminationList) throws IOException {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(contaminationList);
+	}
+
+	private String getSummary(ArrayList<ContaminationObject> contaminationList) throws IOException {
 		int countYes = 0;
 		int countNo = 0;
 		ArrayList<Integer> coverageList = new ArrayList<Integer>();
@@ -127,12 +129,8 @@ public class ContaminationStep extends WorkflowStep {
 		result.add("Q1", new JsonPrimitive(percentile25));
 		result.add("Q3", new JsonPrimitive(percentile75));
 
-		FileWriter wr = new FileWriter(outSummary);
-		wr.write(result.toString());
-		wr.close();
-		
+		return result.toString();
+
 	}
-	
-	
 
 }

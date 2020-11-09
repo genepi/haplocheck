@@ -3,6 +3,7 @@ package genepi.haplocheck.steps.report;
 import java.io.File;
 import java.io.IOException;
 
+import genepi.haplocheck.App;
 import genepi.io.FileUtil;
 import lukfor.reports.HtmlReport;
 
@@ -39,10 +40,9 @@ public class ReportGenerator {
 		
 		HtmlReport report = new HtmlReport(TEMPLATE_DIRECTORY);
 		report.setMainFilename(REPORT_TEMPLATE);
-
-		report.set("sum_data", FileUtil.readFileAsString(summary));
-		report.set("cont_data", FileUtil.readFileAsString(contamination));
-		
+		report.set("sum_data", summary);
+		report.set("cont_data", contamination);
+		report.set("version", App.VERSION);
 		
 		report.generate(new File(output));
 		

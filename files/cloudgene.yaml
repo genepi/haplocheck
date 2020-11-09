@@ -27,9 +27,8 @@ workflow:
       jar: haplocheck.jar
       classname: genepi.haplocheck.steps.ContaminationStep
       output: ${contamination}.txt
-      outputCont: ${contamination-json}.json
       outputHsd: ${haplogrep-input}.txt
-      summary: ${summary}.json
+      outputReport: ${report}.html
       
     - name: Create Report
       type: html_widget
@@ -107,11 +106,6 @@ workflow:
       description: Final Haplogroups (using complete input profile)
       type: local-file
       download: true
-      
-    - id: contamination-json
-      description: Contamination JSON
-      type: local-file
-      download: false
     
     - id: haplogrep-input
       description: Haplogrep Input File
@@ -123,7 +117,3 @@ workflow:
       type: local-file
       download: true    
       
-    - id: summary
-      description: Contamination Summary
-      type: local-file
-      download: false    

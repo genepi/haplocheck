@@ -447,15 +447,6 @@ public class ContaminationDetection {
 		return stringBuilder.toString();
 	}
 
-	public void writeReportAsJson(String outputJson, ArrayList<ContaminationObject> contaminationList)
-			throws IOException {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		String json = gson.toJson(contaminationList);
-		FileWriter wr = new FileWriter(outputJson);
-		wr.write(json);
-		wr.close();
-	}
-
 	public void writeTextualReport(String output, ArrayList<ContaminationObject> list) {
 
 		CsvTableWriter contaminationWriter = new CsvTableWriter(output, '\t');
