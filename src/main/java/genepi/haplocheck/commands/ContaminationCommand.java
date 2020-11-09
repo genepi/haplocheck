@@ -1,13 +1,11 @@
 package genepi.haplocheck.commands;
 
-import java.util.List;
 import java.util.concurrent.Callable;
 
 import genepi.haplocheck.App;
 import genepi.haplocheck.steps.ContaminationStep;
 import genepi.haplocheck.util.WorkflowTestContext;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Help.Visibility;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
@@ -15,10 +13,10 @@ import picocli.CommandLine.Parameters;
 public class ContaminationCommand implements Callable<Integer> {
 
 	@Parameters(description = "VCF folder")
-	String vcf;
+	private String vcf;
 
 	@Option(names = { "--out" }, description = "Output filename", required = true)
-	String out;
+	private String out;
 
 	public Integer call() throws Exception {
 
@@ -38,5 +36,13 @@ public class ContaminationCommand implements Callable<Integer> {
 
 		return 0;
 
+	}
+	
+	public void setVcf(String vcf) {
+		this.vcf = vcf;
+	}
+	
+	public void setOut(String out) {
+		this.out = out;
 	}
 }
