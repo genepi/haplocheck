@@ -20,9 +20,17 @@ import search.ranking.results.RankedResult;
 
 public class Utils {
 
-	public static Collection<File> getVcfFiles(String directoryName) {
-		File directory = new File(directoryName);
-		return FileUtils.listFiles(directory, new WildcardFileFilter(Arrays.asList("*.vcf.gz", "*.vcf")), null);
+	public static Collection<File> getVcfFiles(String name) {
+
+		File file = new File(name);
+
+		if (file.isDirectory()) {
+			return FileUtils.listFiles(file, new WildcardFileFilter(Arrays.asList("*.vcf.gz", "*.vcf")), null);
+		} else {
+			ArrayList<File> list = new ArrayList<File>();
+			list.add(file);
+			return list;
+		}
 	}
 
 	public static void createFakeReport(List<TestSample> sampleCollection, File out) throws IOException {
