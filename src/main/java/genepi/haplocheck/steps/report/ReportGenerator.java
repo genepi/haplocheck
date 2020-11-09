@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import genepi.io.FileUtil;
-import lukfor.magic.reports.HtmlReport;
+import lukfor.reports.HtmlReport;
 
 public class ReportGenerator {
 
