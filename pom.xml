@@ -21,6 +21,11 @@
 			<name>bintray</name>
 			<url>https://dl.bintray.com/genepi/maven</url>
 		</repository>
+		<repository>
+			<id>bintray-lukfor-maven</id>
+			<name>bintray-lukfor</name>
+			<url>https://dl.bintray.com/lukfor/maven</url>
+		</repository>
 	</repositories>
 
 	<build>
@@ -145,11 +150,17 @@
 			<artifactId>picocli</artifactId>
 			<version>4.5.0</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>cloudgene</groupId>
 			<artifactId>cloudgene-java-sdk</artifactId>
 			<version>1.0.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.lukfor</groupId>
+			<artifactId>magic-reports</artifactId>
+			<version>0.0.1</version>
 		</dependency>
 
 	</dependencies>
