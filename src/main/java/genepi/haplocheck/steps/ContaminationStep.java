@@ -45,6 +45,8 @@ public class ContaminationStep extends WorkflowStep {
 			String input = context.get("files");
 			String output = context.getConfig("output");
 			String outputReport = context.getConfig("outputReport");
+			String outputRaw = context.getConfig("outputRaw");
+			String raw = context.getConfig("raw");
 
 			Collection<File> out = Utils.getVcfFiles(input);
 
@@ -81,6 +83,11 @@ public class ContaminationStep extends WorkflowStep {
 			context.updateTask("Write Contamination Report...", WorkflowContext.RUNNING);
 
 			contamination.writeTextualReport(output, result);
+
+			if (raw != null && Boolean.valueOf(raw)) {
+				contamination.writeTextualRawReport(outputRaw, result);
+			}
+
 			ReportGenerator generator = new ReportGenerator();
 			generator.setContamination(getJson(result));
 			generator.setSummary(getSummary(result));

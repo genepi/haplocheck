@@ -71,6 +71,10 @@ public class ContaminationTest {
 		}
 
 		assertEquals(11, countHigh);
+		
+		
+		File readRaw = new File("test-data/tmp/out.raw.txt");
+		assertTrue(readRaw.exists());
 	
 	}
 
@@ -88,6 +92,9 @@ public class ContaminationTest {
 		context.setInput("files", folder);
 		context.setConfig("output", file.getAbsolutePath() + "/out.txt");
 		context.setConfig("outputReport", file.getAbsolutePath() + "/out.html");
+		context.setConfig("outputRaw", file.getAbsolutePath() + "/out.raw.txt");
+		boolean raw = true;
+		context.setConfig("raw", String.valueOf(raw));
 		return context;
 
 	}
