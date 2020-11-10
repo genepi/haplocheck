@@ -4,10 +4,13 @@
 
 Haplocheck detects contamination in mtDNA AND WGS sequencing studies by analyzing only the mitchondrial DNA. You can use our [cloud web service](http://mitoverse.i-med.ac.at) or install it locally. 
 
-## Getting started
-Haplocheck accepts BAM/CRAM files **OR** VCF files (generated with [mutserve](https://github.com/seppinho/mutserve)). 
 
-## Install Haplocheck Workflow 
+## Run Haplocheck Standalone (VCF only)
+
+     wget https://github.com/genepi/haplocheck/releases/download/v1.3.0/haplocheck.jar
+     java -jar haplogcheck.jar
+
+## Install Haplocheck Workflow (for BAM support with mutserve)
 
     curl -s install.cloudgene.io | bash -s 2.3.3
     ./cloudgene install https://github.com/genepi/haplocheck/releases/download/v1.2.2/haplocheck.zip 
