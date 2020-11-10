@@ -87,7 +87,8 @@ public class ContaminationDetection {
 						.getFoundPolys();
 
 				ContaminationObject contamination = new ContaminationObject();
-				contamination.setId(haplogrepMajor.getSampleID().split("_maj")[0]);
+				String id = haplogrepMajor.getSampleID().split("_maj")[0].replaceAll("\\s+", "");
+				contamination.setId(id);
 				double hgQualityMajor = haplogrepMajor.getTopResult().getDistance();
 				double hgQualityMinor = haplogrepMinor.getTopResult().getDistance();
 
@@ -446,23 +447,37 @@ public class ContaminationDetection {
 		return stringBuilder.toString();
 	}
 
-	public void writeReportAsJson(String outputJson, ArrayList<ContaminationObject> contaminationList)
-			throws IOException {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		String json = gson.toJson(contaminationList);
-		FileWriter wr = new FileWriter(outputJson);
-		wr.write(json);
-		wr.close();
-	}
-
 	public void writeTextualReport(String output, ArrayList<ContaminationObject> list) {
 
 		CsvTableWriter contaminationWriter = new CsvTableWriter(output, '\t');
 
-		String[] columnsWrite = { "Sample", "Contamination Status", "Contamination Level",
-				"Distance", "Sample Coverage", "Overall Homoplasmies", "Overall Heteroplasmies",
-				"Major Heteroplasmy Level", "Minor Heteroplasmy Level", "Major Haplogroup", "Major Haplogroup Quality",
-				"Minor Haplogroup", "Minor Haplogroup Quality", "Major Homoplasmies Count", "Minor Homoplasmies Count",
+		String[] columnsWrite = { "Sample", "Contamination Status", "Contamination Level", "Distance",
+				"Sample Coverage" };
+
+		contaminationWriter.setColumns(columnsWrite);
+
+		for (ContaminationObject entry : list) {
+			contaminationWriter.setString("Sample", entry.getId());
+			contaminationWriter.setString("Contamination Status", entry.getStatus().name());
+			contaminationWriter.setString("Contamination Level", entry.getOverallLevel());
+			contaminationWriter.setInteger("Distance", entry.getDistance());
+			contaminationWriter.setInteger("Sample Coverage", entry.getSampleMeanCoverage());
+
+			contaminationWriter.next();
+		}
+
+		contaminationWriter.close();
+		System.out.println("Text report written to " + output +".");
+	}
+
+	public void writeTextualRawReport(String output, ArrayList<ContaminationObject> list) {
+
+		CsvTableWriter contaminationWriter = new CsvTableWriter(output, '\t');
+
+		String[] columnsWrite = { "Sample", "Contamination Status", "Contamination Level", "Distance",
+				"Sample Coverage", "Overall Homoplasmies", "Overall Heteroplasmies", "Major Heteroplasmy Level",
+				"Minor Heteroplasmy Level", "Major Haplogroup", "Major Haplogroup Quality", "Minor Haplogroup",
+				"Minor Haplogroup Quality", "Major Homoplasmies Count", "Minor Homoplasmies Count",
 				"Major Heteroplasmies Count", "Minor Heteroplasmies Count", "Clusters" };
 
 		contaminationWriter.setColumns(columnsWrite);
@@ -489,6 +504,7 @@ public class ContaminationDetection {
 			contaminationWriter.next();
 		}
 
+		System.out.println("Raw report written to " + output +".");
 		contaminationWriter.close();
 	}
 

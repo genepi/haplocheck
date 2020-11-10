@@ -9,10 +9,7 @@ import java.util.HashSet;
 import org.junit.Test;
 
 import core.SampleFile;
-import genepi.haplocheck.steps.contamination.ContaminationDetection;
 import genepi.haplocheck.steps.contamination.ContaminationDetection.Status;
-import genepi.haplocheck.steps.contamination.HaplogroupClassifier;
-import genepi.haplocheck.steps.contamination.VariantSplitter;
 import genepi.haplocheck.steps.contamination.objects.ContaminationObject;
 import genepi.io.FileUtil;
 import genepi.io.table.reader.CsvTableReader;
@@ -33,7 +30,6 @@ public class ClassifyTest {
 		HashMap<String, Sample> mutationServerSamples = reader.load(new File("test-data/contamination/1000g-sample/HG00097.vcf"), false);
 		
 		String out = "test-data/contamination/1000g-sample/1000g-sample-report.txt";
-		String outJson = "test-data/contamination/1000g-sample/1000g-sample-report.json";
 		
 		VariantSplitter splitter = new VariantSplitter();
 
@@ -47,10 +43,6 @@ public class ClassifyTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 	
-		contamination.writeTextualReport(out, list);
-		
-		contamination.writeReportAsJson(outJson, list);
-		
 		assertEquals("T2f1a1", haplogrepSamples.getTestSamples().get(0).getTopResult().getHaplogroup().toString());
 		
 		CsvTableReader readerContamination = new CsvTableReader(out, '\t');
@@ -78,7 +70,6 @@ public class ClassifyTest {
 		HashMap<String, Sample> mutationServerSamples = reader.load(new File("test-data/contamination/lab-mixture/mixtures.vcf.gz"), false);
 		
 		String out = "test-data/contamination/lab-mixture/report.txt";
-		String outJson = "test-data/contamination/lab-mixture/report.json";
 		
 		VariantSplitter splitter = new VariantSplitter();
 
@@ -93,8 +84,6 @@ public class ClassifyTest {
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 	
 		contamination.writeTextualReport(out, list);
-		
-		contamination.writeReportAsJson(outJson, list);
 		
 		//FileUtil.deleteFile(out);
 

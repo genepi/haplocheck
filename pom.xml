@@ -21,6 +21,11 @@
 			<name>bintray</name>
 			<url>https://dl.bintray.com/genepi/maven</url>
 		</repository>
+		<repository>
+			<id>bintray-lukfor-maven</id>
+			<name>bintray-lukfor</name>
+			<url>https://dl.bintray.com/lukfor/maven</url>
+		</repository>
 	</repositories>
 
 	<build>
@@ -64,6 +69,16 @@
 									<include>com.github.samtools:htsjdk:*:*</include>
 									<include>org.jdom:jdom:*:*</include>
 									<include>com.google.code.gson:gson:*:*</include>
+									<include>info.picocli:picocli:*:*</include>
+									<include>cloudgene:cloudgene-java-sdk:*:*</include>
+									<include>commons-io:commons-io:*:*</include>
+									<include>commons-logging:commons-logging:*:*</include>
+									<include>org.json:json:*:*</include>
+									<include>log4j:log4j:*:*</include>
+									<include>com.google.guava:guava:*:*</include>
+									<include>net.sf.opencsv:opencsv:*:*</include>
+									<include>com.github.lukfor:magic-reports:*</include>
+									<include>io.marioslab.basis:template:*</include>
 								</includes>
 							</artifactSet>
 
@@ -119,8 +134,8 @@
 			<artifactId>genepi-hadoop</artifactId>
 			<version>mr1-1.4.1</version>
 		</dependency>
-		
-			<dependency>
+
+		<dependency>
 			<groupId>cloudgene</groupId>
 			<artifactId>cloudgene-java-sdk</artifactId>
 			<version>1.0.2</version>
@@ -136,6 +151,24 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>29.0-jre</version>
+		</dependency>
+
+		<dependency>
+			<groupId>info.picocli</groupId>
+			<artifactId>picocli</artifactId>
+			<version>4.5.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>cloudgene</groupId>
+			<artifactId>cloudgene-java-sdk</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.lukfor</groupId>
+			<artifactId>magic-reports</artifactId>
+			<version>0.0.1</version>
 		</dependency>
 
 	</dependencies>

@@ -1,19 +1,36 @@
 package genepi.haplocheck;
 
-import java.lang.reflect.InvocationTargetException;
+import genepi.haplocheck.commands.ContaminationCommand;
+import picocli.CommandLine;
 
-import genepi.base.Toolbox;
+public class App {
 
-public class App extends Toolbox {
+	public static final String APP = "haplocheck";
 
-	public App(String command, String[] args) {
-		super(command, args);
+	public static final String VERSION = "1.2.2";
+
+	public static final String URL = "https://github.com/genepi/haplocheck";
+
+	public static final String COPYRIGHT = "(c) 2020 Sebastian Schoenherr, Hansi Weissensteiner, Lukas Forer";
+
+	public static String[] ARGS = new String[0];
+
+	public static void main(String[] args) {
+
+		System.out.println();
+		System.out.println(APP + " " + VERSION);
+		if (URL != null && !URL.isEmpty()) {
+			System.out.println(URL);
+		}
+		if (COPYRIGHT != null && !COPYRIGHT.isEmpty()) {
+			System.out.println(COPYRIGHT);
+		}
+		System.out.println();
+
+		ARGS = args;
+
+		new CommandLine(new ContaminationCommand()).execute(args);
+
 	}
 
-	public static void main(String[] args) throws InstantiationException, IllegalAccessException, SecurityException,
-			NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
-
-		App main = new App("haplocheck.jar", args);
-		main.start();
-	}
 }
