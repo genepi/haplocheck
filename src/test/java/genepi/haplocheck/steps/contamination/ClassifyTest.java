@@ -45,6 +45,7 @@ public class ClassifyTest {
 	
 		assertEquals("T2f1a1", haplogrepSamples.getTestSamples().get(0).getTopResult().getHaplogroup().toString());
 		
+		contamination.writeTextualRawReport(out, list);
 		CsvTableReader readerContamination = new CsvTableReader(out, '\t');
 		readerContamination.next();
 		
@@ -83,7 +84,7 @@ public class ClassifyTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 	
-		contamination.writeTextualReport(out, list);
+		contamination.writeTextualRawReport(out, list);
 		
 		//FileUtil.deleteFile(out);
 
@@ -129,7 +130,7 @@ public class ClassifyTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 		
-		contamination.writeTextualReport(out, list);
+		contamination.writeTextualRawReport(out, list);
 
 
 		CsvTableReader readerContamination = new CsvTableReader(out, '\t');

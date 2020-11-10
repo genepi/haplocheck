@@ -43,7 +43,7 @@ public class ContaminationDetectionTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 	
-		contamination.writeTextualReport(out, list);
+		contamination.writeTextualRawReport(out, list);
 		
 		CsvTableReader readerContamination = new CsvTableReader(out, '\t');
 		readerContamination.next();
@@ -76,7 +76,7 @@ public class ContaminationDetectionTest {
 
 		ArrayList<ContaminationObject> list = contamination.detect(mutationServerSamples, haplogrepSamples.getTestSamples());
 	
-		contamination.writeTextualReport(out, list);
+		contamination.writeTextualRawReport(out, list);
 		
 		CsvTableReader readerContamination = new CsvTableReader(out, '\t');
 		readerContamination.next();
