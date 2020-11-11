@@ -1,0 +1,15 @@
+#contamination-table tr {
+  cursor: pointer;
+}
+
+.modal-lg {
+  max-width: 90%;
+}
+
+#mynetwork2 {
+  height: 500px;
+}
+
+.bootbox .modal-header {
+  display: block;
+}

@@ -1,12 +1,5 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-<!DOCTYPE html>
-<html>
 
 <head>
 	<meta charset="utf-8">
@@ -22,57 +15,40 @@
 	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.js"></script>
+	<script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
-
-
-
-	<style type="text/css">
-		#contamination-table tr {
-			cursor: pointer;
-		}
-
-		.modal-lg {
-			max-width: 90%;
-		}
-
-		#mynetwork2 {
-			height: 500px;
-		}
-
-		.bootbox .modal-header {
-			display: block;
-		}
-	</style>
-
+	{{include_style("haplocheck.css")}}
+	{{include_script("haplocheck.js")}}
 </head>
 
 <body>
 	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Haplocheck Report (v1.3.1)</a>
+		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Haplocheck Report ({{version}})</a>
 	</nav>
 
 	<div class="container-fluid">
 		<div class="row">
+
 			<nav class="col-md-2 d-none d-md-block bg-light sidebar">
 				<div class="sidebar-sticky">
 					<ul class="nav flex-column">
 						<li class="nav-item">
 							<a class="nav-link active" id="samples" style="cursor: pointer">
-								 <span data-feather="layers"></span>
-								 Samples <span class="sr-only">(current)</span>
-							 </a>
+								<span data-feather="layers"></span>
+								Samples <span class="sr-only">(current)</span>
+							</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" id="summary" style="cursor: pointer">
-								 <span data-feather="bar-chart-2"></span>
-								 Summary
-							 </a>
+								<span data-feather="bar-chart-2"></span>
+								Summary
+							</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" id="about" style="cursor: pointer">
-								 <span data-feather="info"></span>
-								 About
-							 </a>
+								<span data-feather="info"></span>
+								About
+							</a>
 						</li>
 					</ul>
 				</div>
@@ -80,295 +56,23 @@
 
 			<main role="main" class="rcol-md-9 ml-sm-auto col-lg-10 px-4" id="main">
 
-				<div id="cont-panel">
-					<br>
-					<div class="table-responsive">
-						<h3> Samples </h3>
-					<p class="text-justify"> This table includes all samples analyzed. Please <b>click on a row </b> to open the details and load the phylogenetic tree.</p>
-
-						<table id="contamination-table" class="display table table-striped table-bordered table-hover" style="width:100%">
-							<thead>
-								<tr>
-									<th>ID</th>
-									<th>Contamination</th>
-									<th>Contamination Level</th>
-							    <th>Coverage</th>
-								</tr>
-							</thead>
-						</table>
-
-					</div>
-
-					<div class="my-4 w-100">
-						<hr>
-						<div id="detailsSample" style="width:100%; height:100px;">
-							<i>Please click on a sample to get more details</i>
-						</div>
-
-
-					</div>
-
+				<div id="samples-panel">
+					{{include "components/samples.html"}}
 				</div>
 
 				<div id="summary-panel" style="display:none;">
-					<br>
-					<div class="table-responsive">
-						<h3> Summary </h3>
-
-						<table id="summary-table" class="display table table-striped table-bordered table-hover" style="width:100%">
-							<thead>
-								<tr>
-									<th>Contaminated</th>
-									<th>Not Contaminated</th>
-									<th>Coverage Median</th>
-									<th>Coverage Q1</th>
-									<th>Coverage Q3</th>
-								</tr>
-							</thead>
-						</table>
-					</div>
+					{{include "components/summary.html"}}
 				</div>
 
 				<div id="about-panel" style="display:none;">
-					<br>
-					<h3> About </h3>
-		This report has been created with <a href="https://mitoverse.i-med.ac.at/index.html#!">mitoverse</a>. <br> Please contact <a href="mailto:sebastian.schoenherr@i-med.ac.at">Sebastian</a> in case of any problems or have a look at the <a href="https://mitoverse.readthedocs.io">documentation</a>.</p>
-			</div>
+					{{include "components/about.html"}}
+				</div>
 
 			</main>
+
 		</div>
 	</div>
 
-
-	<!-- Icons -->
-	<script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
-	<script>
-		feather.replace()
-	</script>
-
-	<script>
-		$(document).on("click", ".details-phylotree", function(e) {
-			var data = window.data;
-			var dialog = bootbox.dialog({
-				title: "Phylogenetic Tree for <b>" + data.id + "</b>",
-				message: '<div id="mynetwork2"></div>',
-				show: false
-			});
-
-			dialog.find("div.modal-dialog").addClass("modal-lg");
-
-			dialog.on('shown.bs.modal', function() {
-
-
-				// create a network
-				var networkContainer = document.getElementById('mynetwork2');
-				var data = window.data;
-
-				var dataNetwork = {
-					nodes: data.nodes,
-					edges: data.edges
-				};
-				var options = {
-					layout: {
-						hierarchical: {
-							direction: "LR",
-							sortMethod: "directed",
-							parentCentralization: true
-						}
-					},
-					edges: {
-						shadow: true,
-						length: 100,
-						arrows: {
-							to: {
-								enabled: true
-							}
-						},
-						font: {
-							align: 'top',
-							size: 15
-						},
-						widthConstraint: {
-							maximum: 50
-						}
-					}
-				};
-
-				var network = new vis.Network(networkContainer, dataNetwork, options);
-			});
-
-			dialog.modal('show');
-
-
-		});
-	</script>
-
-	<script>
-		$(document).ready(function() {
-			var table = $('#contamination-table').DataTable({
-				"pageLength": 10,
-				"pagingType": "simple",
-				"scrollY": "330px",
-				"order": [[ 1, "desc" ]],
-				"scrollCollapse": true,
-				buttons: ['csv'],
-				"columnDefs": [
-					{
-          "targets": [1],
-          "orderData": [ 1, 2, 3 ],
-          "visible": true,
-          "searchable": false
-          },
-					{
-						"targets": [2],
-						"visible": true,
-						"searchable": false
-					},
-					{
-						"targets": [3],
-						"visible": true,
-						"searchable": false
-					}
-				],
-				data: {{cont_data}},
-				"columns": [{
-						"data": "id"
-					},
-					{
-						"data": "status"
-					},
-					{
-						"data": "overallLevel"
-					},
-					{
-						"data": "sampleMeanCoverage"
-					}
-				]
-			});
-
-
-			var tableSummary = $('#summary-table').DataTable({
-				"pageLength": 10,
-				data: [{{sum_data}}],
-				"columns": [{
-						"data": "Yes"
-					},
-					{
-						"data": "No"
-					},
-					{
-						"data": "Coverage"
-					},
-					{
-						"data": "Q1"
-					},
-					{
-						"data": "Q3"
-					}
-				]
-			});
-
-			$('#samples').on('click', function() {
-				$("#samples").addClass('active');
-				$("#summary").removeClass('active');
-				$("#about").removeClass('active');
-				$("#cont-panel").show();
-				$("#summary-panel").hide();
-				$("#about-panel").hide();
-			});
-
-			$('#summary').on('click', function() {
-				$("#samples").removeClass('active');
-				$("#summary").addClass('active');
-				$("#about").removeClass('active');
-				$("#cont-panel").hide();
-				$("#summary-panel").show();
-				$("#about-panel").hide();
-			});
-			$('#about').on('click', function() {
-				$("#samples").removeClass('active');
-				$("#summary").removeClass('active');
-				$("#about").addClass('active');
-				$("#cont-panel").hide();
-				$("#summary-panel").hide();
-				$("#about-panel").show();
-			});
-
-
-			$('#contamination-table tbody').on('click', 'tr', function() {
-
-				if (window.row) {
-					$(window.row).removeClass('bg-secondary text-white');
-				}
-
-				$(this).addClass('bg-secondary text-white');
-				window.row = this;
-
-				var data = table.row(this).data();
-				var details = document.getElementById('detailsSample');
-
-
-details.innerHTML = "<h3>" + data.id +"</h3>";
-				details.innerHTML += "<br> <button type='button' class='btn btn-xs btn-primary details-phylotree'><i class='far fa-eye'></i> Phylogenetic Tree</button>";
-
-				details.innerHTML +=
-					`<br><br> <table class="table table-bordered fixed">
-					<col width="20px" />
- 				  <col width="30px" />
-  <thead>
-	<tr>
-	<th scope="col">Contamination Level</th>
-		<th scope="col">${data.overallLevel}</th>
-	</tr>
-	<tr>
-			<th scope="col">Coverage</th>
-			<th scope="col">${data.sampleMeanCoverage}</th>
-		</tr>
-	<tr>
-	<th scope="col">Distance</th>
-		<th scope="col">${data.distance}</th>
-	</tr>
-
-  </thead>
-  <tbody>
-    <tr>
-		<th scope="col">Major Haplogroup</th>
-      <th scope="col">${data.hgMajor}</th>
-    </tr>
-    <tr>
-		<th scope="col">Minor Haplogroup</th>
-      <th scope="col">${data.hgMinor}</th>
-    </tr>
-
-      <tr>
-		<th scope="col">Total Heteroplasmies Sample</th>
-		<th scope="col">${data.sampleHeteroplasmies}</th>
-    </tr>
-    <tr>
-		<th scope="col">Used Heteroplasmies Major</th>
-		<th scope="col">${data.heteroplasmiesMajor}</th>
-    </tr>
-		<tr>
-		<th scope="col">Used Heteroplasmies Minor</th>
-		<th scope="col">${data.heteroplasmiesMinor}</th>
-		</tr>
-		<tr>
-		<th scope="col">Heteroplasmy Clusters</th>
-		<th scope="col">${data.clusterInfo}</th>
-		</tr>
-  </tbody>
-</table>`;
-
-				window.data = data;
-
-			});
-
-		});
-	</script>
-
 </body>
 
-</html>
-
-  </body>
 </html>

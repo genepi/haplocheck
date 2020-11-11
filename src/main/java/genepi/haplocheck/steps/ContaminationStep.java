@@ -90,8 +90,7 @@ public class ContaminationStep extends WorkflowStep {
 			}
 
 			ReportGenerator generator = new ReportGenerator();
-			generator.setContamination(getJson(result));
-			generator.setSummary(getSummary(result));
+			generator.setContaminationList(result);
 			generator.generate(outputReport);
 
 			context.endTask("Execution successful.", WorkflowContext.OK);
@@ -104,40 +103,4 @@ public class ContaminationStep extends WorkflowStep {
 			return false;
 		}
 	}
-
-	public String getJson(ArrayList<ContaminationObject> contaminationList) throws IOException {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(contaminationList);
-	}
-
-	private String getSummary(ArrayList<ContaminationObject> contaminationList) throws IOException {
-		int countYes = 0;
-		int countNo = 0;
-		ArrayList<Integer> coverageList = new ArrayList<Integer>();
-
-		for (ContaminationObject cont : contaminationList) {
-
-			if (cont.getStatus() == Status.YES) {
-				countYes++;
-			} else if (cont.getStatus() == Status.NO) {
-				countNo++;
-			}
-			coverageList.add(cont.getSampleMeanCoverage());
-		}
-
-		JsonObject result = new JsonObject();
-		result.add("Yes", new JsonPrimitive(countYes));
-		result.add("No", new JsonPrimitive(countNo));
-		double coverageMedian = com.google.common.math.Quantiles.median().compute(coverageList);
-		double percentile25 = Quantiles.percentiles().index(25).compute(coverageList);
-		double percentile75 = Quantiles.percentiles().index(75).compute(coverageList);
-		double IQR = percentile75 - percentile25;
-		result.add("Coverage", new JsonPrimitive(coverageMedian));
-		result.add("Q1", new JsonPrimitive(percentile25));
-		result.add("Q3", new JsonPrimitive(percentile75));
-
-		return result.toString();
-
-	}
-
 }

@@ -1,0 +1,52 @@
+<h3>${data.id}</h3>
+<br>
+<button type='button' class='btn btn-xs btn-primary details-phylotree'>
+  <i class='far fa-eye'></i> Phylogenetic Tree
+</button>
+<br><br>
+<table class="table table-bordered fixed">
+  <col width="20px" />
+  <col width="30px" />
+  <thead>
+    <tr>
+      <th scope="col">Contamination Level</th>
+      <th scope="col">${data.overallLevel}</th>
+    </tr>
+    <tr>
+      <th scope="col">Coverage</th>
+      <th scope="col">${data.sampleMeanCoverage}</th>
+    </tr>
+    <tr>
+      <th scope="col">Distance</th>
+      <th scope="col">${data.distance}</th>
+    </tr>
+
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="col">Major Haplogroup</th>
+      <th scope="col">${data.hgMajor}</th>
+    </tr>
+    <tr>
+      <th scope="col">Minor Haplogroup</th>
+      <th scope="col">${data.hgMinor}</th>
+    </tr>
+
+    <tr>
+      <th scope="col">Total Heteroplasmies Sample</th>
+      <th scope="col">${data.sampleHeteroplasmies}</th>
+    </tr>
+    <tr>
+      <th scope="col">Used Heteroplasmies Major</th>
+      <th scope="col">${data.heteroplasmiesMajor}</th>
+    </tr>
+    <tr>
+      <th scope="col">Used Heteroplasmies Minor</th>
+      <th scope="col">${data.heteroplasmiesMinor}</th>
+    </tr>
+    <tr>
+      <th scope="col">Heteroplasmy Clusters</th>
+      <th scope="col">${data.clusterInfo}</th>
+    </tr>
+  </tbody>
+</table>
