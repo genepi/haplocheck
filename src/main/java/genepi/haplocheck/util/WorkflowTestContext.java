@@ -26,8 +26,6 @@ public class WorkflowTestContext extends WorkflowContext {
 
 	private Map<String, String> config = new HashMap<String, String>();
 
-	private StringBuffer memory = new StringBuffer();
-
 	private boolean verbose = false;
 
 	public WorkflowTestContext(Map<String, String> inputs, Map<String, String> outputs) {
@@ -182,25 +180,25 @@ public class WorkflowTestContext extends WorkflowContext {
 
 	@Override
 	public void message(String message, int type) {
-		printAndKeep("[MESSAGE] [" + getDescription(type) + "] " + message);
+		printAndKeep(getDescription(type) + " " + message);
 
 	}
 
 	@Override
 	public void beginTask(String name) {
-		printAndKeep("[BEGIN TASK] " + name);
+		printAndKeep(name);
 
 	}
 
 	@Override
 	public void updateTask(String name, int type) {
-		printAndKeep("[UPDATE TASK] [" + getDescription(type) + "] " + name);
+		printAndKeep(getDescription(type) + " " + name);
 
 	}
 
 	@Override
 	public void endTask(String message, int type) {
-		printAndKeep("[UPDATE TASK] [" + getDescription(type) + "] " + message);
+		printAndKeep(getDescription(type) + " " + message);
 	}
 
 	public String getDescription(int type) {
@@ -222,11 +220,6 @@ public class WorkflowTestContext extends WorkflowContext {
 		if (verbose) {
 			System.out.println(text.replaceAll("<br>", "\n"));
 		}
-		memory.append(text + "\n");
-	}
-
-	public boolean hasInMemory(String text) {
-		return memory.toString().contains(text);
 	}
 
 	public void setVerbose(boolean verbose) {

@@ -49,14 +49,15 @@ public class ContaminationStep extends WorkflowStep {
 			String raw = context.getConfig("raw");
 
 			Collection<File> out = Utils.getVcfFiles(input);
-
+			
+			context.beginTask("Check for Contamination.. ");
+			
 			if (out.size() > 1) {
 				context.endTask("Currently only single VCF file upload is supported!", WorkflowContext.ERROR);
+				return false;
 			}
 
 			File file = out.iterator().next();
-
-			context.beginTask("Check for Contamination.. ");
 
 			VariantSplitter splitter = new VariantSplitter();
 
@@ -99,6 +100,7 @@ public class ContaminationStep extends WorkflowStep {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			context.endTask("Contamination failed", WorkflowContext.ERROR);
 			return false;
 		}
 	}

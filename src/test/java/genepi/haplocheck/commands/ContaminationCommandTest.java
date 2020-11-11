@@ -20,7 +20,7 @@ public class ContaminationCommandTest {
 		ContaminationCommand command = new ContaminationCommand();
 		command.setVcf(folder);
 		command.setOut(getOutput());
-		assertEquals(0, (int) command.call());
+		assertEquals(1, (int) command.call());
 	
 	}
 	
