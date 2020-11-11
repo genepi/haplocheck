@@ -37,7 +37,7 @@ import vcf.Variant;
 public class ContaminationDetection {
 
 	public enum Status {
-		YES, NO, NA;
+		YES, NO, ND;
 	}
 
 	private int heteroplasmyDistance = 2;
@@ -148,7 +148,7 @@ public class ContaminationDetection {
 				}
 
 				if (sampleHeteroplasmies == 0) {
-					status = Status.NA;
+					status = Status.ND;
 				}
 
 				contamination.setStatus(status);
@@ -162,7 +162,7 @@ public class ContaminationDetection {
 				contamination.setClusterInfo(clusters);
 				contamination.setHeteroplasmiesMajor(majorHeteroplasmies);
 				contamination.setHeteroplasmiesMinor(minorHeteroplasmies);
-				contamination.setOverallLevel(status == Status.YES ? formatter.format(overallLevel) : "n/a");
+				contamination.setOverallLevel(status == Status.YES ? formatter.format(overallLevel) : "ND");
 				contamination.setMeanHetlevelMajor(formatter.format(meanHeteroplasmyMajor));
 				contamination.setMeanHetlevelMinor(formatter.format(meanHeteroplasmyMinor));
 				contamination.setDistance(distance);
