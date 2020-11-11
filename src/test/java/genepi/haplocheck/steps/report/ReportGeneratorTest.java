@@ -1,41 +1,32 @@
 package genepi.haplocheck.steps.report;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.stream.Stream;
+import java.io.FileReader;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 import org.junit.Test;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import genepi.haplocheck.steps.contamination.objects.ContaminationObject;
 
 public class ReportGeneratorTest {
 
 	@Test
 	public void testGenerate() throws Exception {
-		
+
+		Gson gson = new Gson();
+
+		Type type = new TypeToken<ArrayList<ContaminationObject>>() {
+		}.getType();
+
+		ArrayList<ContaminationObject> contaminationList = gson.fromJson(new FileReader("test-data/report/cont.json"),
+				type);
+
 		ReportGenerator generator = new ReportGenerator();
-		
-		generator.setContamination(readFile("test-data/report/cont.json"));
-		generator.setSummary(readFile("test-data/report/summary.json"));
+		generator.setContaminationList(contaminationList);
 		generator.generate("output2.html");
 	}
-	
-	
-	 private static String readFile(String filePath) 
-	    {
-	        StringBuilder contentBuilder = new StringBuilder();
-	 
-	        try (Stream<String> stream = Files.lines( Paths.get(filePath), StandardCharsets.UTF_8)) 
-	        {
-	            stream.forEach(s -> contentBuilder.append(s).append("\n"));
-	        }
-	        catch (IOException e) 
-	        {
-	            e.printStackTrace();
-	        }
-	 
-	        return contentBuilder.toString();
-	    }
-	
 
 }
