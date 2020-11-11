@@ -48,11 +48,12 @@ public class ContaminationCommand implements Callable<Integer> {
 		context.setConfig("outputRaw", path + name + ".raw.txt");
 		context.setConfig("outputReport", path + name + ".html");
 		context.setConfig("raw", String.valueOf(raw));
+		context.setVerbose(true);
+
 		ContaminationStep contStep = new ContaminationStep();
 		contStep.setup(context);
-		contStep.run(context);
-		
-		return 0;
+		boolean result = contStep.run(context);
+		return (result) ? 0 : 1;
 
 	}
 

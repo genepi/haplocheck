@@ -49,7 +49,7 @@ public class ClassifyTest {
 		CsvTableReader readerContamination = new CsvTableReader(out, '\t');
 		readerContamination.next();
 		
-		assertEquals(Status.NA.name(), readerContamination.getString("Contamination Status"));
+		assertEquals(Status.ND.name(), readerContamination.getString("Contamination Status"));
 		assertEquals("39", readerContamination.getString("Overall Homoplasmies"));
 		assertEquals("0", readerContamination.getString("Overall Heteroplasmies"));
 		assertEquals("36", readerContamination.getString("Major Homoplasmies Count"));
