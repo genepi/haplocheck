@@ -5,10 +5,13 @@
 Haplocheck detects contamination in mtDNA AND WGS sequencing studies by analyzing only the mitchondrial DNA. You can use our [cloud web service](http://mitoverse.i-med.ac.at) or install it locally. 
 
 
-## Run Haplocheck Standalone (VCF only)
+## Install Haplocheck Standalone (VCF only)
 
-     wget https://github.com/genepi/haplocheck/releases/download/v1.3.0/haplocheck.jar
-     java -jar haplogcheck.jar
+     mkdir haplocheck
+     wget https://github.com/genepi/haplocheck/releases/download/v1.3.1/haplocheck.zip
+     unzip haplocheck.zip
+     ./haplocheck --out <out-file> <input-vcf>
+     
 
 ## Install Haplocheck Workflow (for BAM support with mutserve)
 
