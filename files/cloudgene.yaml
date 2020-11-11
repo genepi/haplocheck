@@ -1,7 +1,7 @@
 name: Haplocheck
 id: haplocheck
 description: A fast method to detect sample contamination in mtDNA and WGS data. <br> To learn more about haplocheck, please have a look at <a href="https://mitoverse.readthedocs.io/en/latest/">https://mitoverse.readthedocs.io/en/latest/</a>.
-version: 1.2.2
+version: 1.3.1
 workflow:
 
   setups:
