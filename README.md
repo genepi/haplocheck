@@ -8,7 +8,7 @@ Haplocheck detects contamination in mtDNA AND WGS sequencing studies by analyzin
 ## Install Haplocheck Standalone (VCF only)
 
      mkdir haplocheck
-     wget https://github.com/genepi/haplocheck/releases/download/v1.3.1/haplocheck.zip
+     wget https://github.com/genepi/haplocheck/releases/download/v1.3.2/haplocheck.zip
      unzip haplocheck.zip
      ./haplocheck --out <out-file> <input-vcf>
      
@@ -16,7 +16,7 @@ Haplocheck detects contamination in mtDNA AND WGS sequencing studies by analyzin
 ## Install Haplocheck Workflow (for BAM support with mutserve)
 
     curl -s install.cloudgene.io | bash -s 2.3.3
-    ./cloudgene install https://github.com/genepi/haplocheck/releases/download/v1.2.2/haplocheck.zip 
+    ./cloudgene install https://github.com/genepi/haplocheck/releases/download/v1.3.2/haplocheck.zip 
 
 
 ## Run Haplocheck Workflow 
@@ -27,7 +27,7 @@ Haplocheck detects contamination in mtDNA AND WGS sequencing studies by analyzin
 wget https://github.com/genepi/haplocheck/raw/master/test-data/contamination/1000G/all/1000g-nobaq.vcf.gz 
     
 #Run haplocheck
-./cloudgene run haplocheck@1.2.2 --files 1000g-nobaq.vcf.gz --format vcf --output results  
+./cloudgene run haplocheck@1.3.2 --files 1000g-nobaq.vcf.gz --format vcf --output results  
     
 #Open results in Browser
 firefox results/report/report.html
