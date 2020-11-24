@@ -4,7 +4,7 @@ library("ggpubr")
 library(Hmisc)
 library(ggpubr)
 
-setwd("/data2/eclipse/mtdna/haplocheck/paper-data");
+#setwd("/data2/eclipse/mtdna/haplocheck/paper-data");
 file = "simulated-data/output/simulation_3_All_500k_kulczynski.txt";
   simAll = read.table(file, header = TRUE, sep=",");
 simAllFilter = filter(simAll,simAll$HaplogrepFilter == 0.5  & simAll$Setup <= 6 & simAll$Group<=8);
@@ -82,8 +82,8 @@ summary(cnFilterBlood$Copy.Number);
 summary(cnFilterLCL$Copy.Number);
 
 ## Calculate 1000G CopyNumber
-f1 ="/data2/eclipse/mtdna/haplocheck/test-data/contamination/1000G/all/1000g-report-deep-nobaq.txt";
-f2 ="/data2/eclipse/mtdna/haplocheck/test-data/contamination/1000G/all/1000g-report-nobaq.txt";
+f1 ="test-data/contamination/1000G/all/1000g-report-deep-nobaq.txt";
+f2 ="test-data/contamination/1000G/all/1000g-report-nobaq.txt";
 deep = read.table(f1, header = TRUE, sep="\t")
 low = read.table(f2, header = TRUE, sep="\t")
 summary(deep$Sample.Coverage);
@@ -102,3 +102,23 @@ ggdensity(low$Sample.Coverage,
 ggdensity(deep$Sample.Coverage, 
           main = "Density plot of 1000G high-coverage",
           xlab = "Coverage")
+
+
+# Figure 2
+
+f1 ="combined_mtcn.csv";
+plot = read.table(f1, header = TRUE, sep="\t");
+plot
+head(plot)
+
+p <- ggplot(plot, aes(x=Group, y=SampleCoverage)) + 
+  geom_violin() + ylab("mtDNA Coverage") + xlab("1000 Genomes Project")
+p = p + theme_bw() + theme(panel.background = element_blank())
+p
+
+finalise_plot(plot_name = p,
+              source = "",
+              save_filepath = "figure2.pdf",
+              width_pixels = 427,
+              height_pixels = 300)
+
