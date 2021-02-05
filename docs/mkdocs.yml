@@ -1,0 +1,25 @@
+site_name: Haplocheck - Contamination Detection in mtDNA studies
+copyright: "Cinder is licensed under the <a href='https://github.com/chrissimpkins/cinder/blob/master/LICENSE.md'>MIT license</a>"
+
+theme:
+  name: null
+  custom_dir: cinder
+  colorscheme: github
+  highlightjs: true
+
+nav:
+  - Getting Started: haplocheck/getting-started.md
+  - Contamination Method: haplocheck/method.md
+  - Interpret Results: haplocheck/interpret.md
+  - FAQ: haplocheck/faq.md
+  - Cite us: haplocheck/cite.md
+  - About: contact.md
+
+extra:
+  social:
+    - type: github-alt
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
