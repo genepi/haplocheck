@@ -53,6 +53,29 @@ public class ContaminationTest {
 	}
 	
 	@Test
+	public void testContaminationPipelineWith1000GFileRc12() throws IOException, ZipException {
+		
+		String folder = "test-data/contamination/1000G/all/mutserve-rc12-1000g.vcf.gz";
+		WorkflowTestContext context = buildContext(folder);
+		ContaminationStep contStep = new ContaminationStep();
+		boolean result = run(context, contStep);
+		assertTrue(result);
+		
+		
+		CsvTableReader readerOut = new CsvTableReader("test-data/tmp/out.txt", '\t');
+		int countHigh = 0;
+		while (readerOut.next()) {
+
+			if (readerOut.getString("Contamination Status").equals(Status.YES.name())) {
+				countHigh++;
+			}
+		}
+
+		assertEquals(127, countHigh);
+	
+	}
+	
+	@Test
 	public void testContaminationPipelineWithVerifyBamExcludedSamples() throws IOException, ZipException {
 		
 		String folder = "test-data/contamination/1000G/1000g-filtered/chip-or-free-mix.vcf.gz";
