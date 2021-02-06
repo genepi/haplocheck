@@ -71,7 +71,7 @@ public class ContaminationTest {
 			}
 		}
 
-		assertEquals(127, countHigh);
+		assertEquals(131, countHigh);
 	
 	}
 	
