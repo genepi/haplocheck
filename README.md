@@ -7,7 +7,7 @@ Haplocheck detects in-sample contamination in mtDNA AND WGS sequencing studies b
 The main features of haplocheck are:
 * Fast tool to detect in-sample contaminaton by analyzing only the mitochondrial content of sequencing data. 
 * Works on VCF and BAM input files.
-* It detects contamination by analyzing polymorphic sites in the mtDNA data and tries to classify them into mitochondrial haplogroups using [haplogrep].(https://haplogrep.i-med.ac.at/).
+* It detects contamination by analyzing polymorphic sites in the mtDNA data and tries to classify them into mitochondrial haplogroups using [haplogrep](https://haplogrep.i-med.ac.at/).
 * It can be used as a proxy tool to estimate the nDNA contamination levels. Our results show that a high concordance to the 1000G contamination levels (using Verifybamid2) can be achieved but can vary in samples showing large differences in the mtDNA copy number (e.g. due to tissue/cell type).  
 
 
