@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/genepi/haplocheck.svg?branch=master)](https://travis-ci.org/genepi/haplocheck)
 [![GitHub release](https://img.shields.io/github/release/genepi/haplocheck.svg)](https://GitHub.com/genepi/haplocheck/releases/)
 
-Haplocheck detects in-sample contamination in mtDNA AND WGS sequencing studies by analyzing only the mitchondrial DNA. You can use our [cloud web service](http://mitoverse.i-med.ac.at) or install it locally. 
+Haplocheck detects in-sample contamination in mtDNA AND WGS sequencing studies by analyzing only the mitchondrial content. To run haplocheck, you can either use our [cloud web service](http://mitoverse.i-med.ac.at) or install it locally. 
 
 The main features of haplocheck are:
 * Fast tool to detect in-sample contaminaton by analyzing only the mitochondrial content of sequencing data. 
