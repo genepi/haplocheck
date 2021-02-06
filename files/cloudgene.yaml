@@ -1,7 +1,7 @@
 name: Haplocheck
 id: haplocheck
-description: A fast method to detect sample contamination in mtDNA and WGS data. <br> To learn more about haplocheck, please have a look at <a href="https://mitoverse.readthedocs.io/en/latest/">https://mitoverse.readthedocs.io/en/latest/</a>.
-version: 1.3.2
+description: A fast method to detect sample contamination in mtDNA and WGS data down to 1 %. <br> To learn more about haplocheck, please have a look at <a href="https://mitoverse.readthedocs.io/en/latest/">https://mitoverse.readthedocs.io/en/latest/</a>.
+version: 1.3.3
 workflow:
 
   setups:
@@ -12,7 +12,7 @@ workflow:
   steps:
 
 #if( $format == "bam" || $format == "cram")
-    - name: Variant Calling using mutserve (v2.0.0-rc7)
+    - name: Variant Calling using mutserve (v2.0.0-rc12)
       jar: mutserve.jar
       params: call --level $level --reference $archive --mapQ $mapQ --baseQ $baseQ --deletions --output $files/out.vcf.gz --no-ansi $files --threads $threads
       runtime: java
@@ -27,7 +27,9 @@ workflow:
       jar: haplocheck.jar
       classname: genepi.haplocheck.steps.ContaminationStep
       output: ${contamination}.txt
+      outputRaw: ${contamination_extended}.txt
       outputReport: ${report}.html
+      raw: true
       
     - name: Sending Mail
       jar: haplocheck.jar
@@ -57,27 +59,26 @@ workflow:
     - id: level
       description: Level
       type: number
-      visible: true 
+      visible: false 
       value: 0.01  
-
             
     - id: baseQ
       description: Minimal Base Quality
       type: number
-      visible: true 
+      visible: false 
       value: 20  
       
     - id: mapQ
       description: Minimal Map Quality
       type: number
-      visible: true
-      value: 20  
+      visible: false
+      value: 30  
 
     - id: threads
       description: Threads for Variant Calling
       type: number
-      visible: true
-      value: 1  
+      visible: false
+      value: 6  
       
 
   outputs:  
@@ -91,11 +92,16 @@ workflow:
       description: Contamination File
       type: local-file
       download: true 
-
+      
+    - id: contamination_extended
+      description: Contamination Extended Information
+      type: local-file
+      download: true
+      
     - id: haplogroups
       description: Final Haplogroups (using complete input profile)
       type: local-file
-      download: true
+      download: false
     
     - id: output
       description: BAM Output Filename
