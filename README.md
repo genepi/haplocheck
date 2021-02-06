@@ -14,7 +14,7 @@ The main features of haplocheck are:
 ## Quick Start (VCF input)
 
      mkdir haplocheck
-     wget https://github.com/genepi/haplocheck/releases/download/v1.3.2/haplocheck.zip
+     wget https://github.com/genepi/haplocheck/releases/download/v1.3.3/haplocheck.zip
      unzip haplocheck.zip
      ./haplocheck --out <out-file> <input-vcf>
      
