@@ -110,11 +110,11 @@ public class InputValidation extends WorkflowStep {
 					try {
 						reader = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.STRICT)
 								.open(SamInputResource.of(new File(file)));
-						if (!new File(file + ".bai").exists() && !new File(file + ".crai").exists()) {
+						/*if (!new File(file + ".bai").exists() && !new File(file + ".crai").exists()) {
 							context.endTask("No index files found for " + new File(file).getName(),
 									WorkflowContext.ERROR);
 							return false;
-						}
+						}*/
 						count++;
 					} catch (Exception e) {
 						context.endTask("Please check CRAM/BAM file: " + e.getMessage(), WorkflowContext.ERROR);
