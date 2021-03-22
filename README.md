@@ -26,7 +26,7 @@ The main features of haplocheck are:
 
 
 ## Documentation
-Full documentation for haplocheck can be found [here](https://mitoverse.readthedocs.io/en/latest/haplocheck/haplocheck/). 
+Full documentation for haplocheck can be found [here](https://mitoverse.readthedocs.io/haplocheck/haplocheck/). 
 
 ## Citation
 Weissensteiner H, Forer L, Fendt L, Kheirkhah A, Salas A, Kronenberg F, Schoenherr S. 2021. Contamination detection in sequencing studies using the mitochondrial phylogeny. Genome Research. http://dx.doi.org/10.1101/gr.256545.119.
